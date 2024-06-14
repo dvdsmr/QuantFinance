@@ -19,4 +19,10 @@ namespace Options
 		return callIntrinsicValue(strikePrice, spotPrice) + putIntrinsicValue(strikePrice, spotPrice);
 	}
 
+	double strangleIntrinsicValue(double strikeCall, double strikePut, double spotPrice)
+	{
+		return callIntrinsicValue(strikeCall, spotPrice) + putIntrinsicValue(strikePut, spotPrice);
+	}
+
+
 }

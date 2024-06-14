@@ -7,6 +7,8 @@ namespace Options
 	double putIntrinsicValue(double strikePrice, double spotPrice);
 	double straddleIntrinsicValue(double strikePrice, double spotPrice);
 	double strangleIntrinsicValue(double strikeCall, double strikePut, double spotPrice);
+
+	void strangleUnitTest();
 }
 
 #endif

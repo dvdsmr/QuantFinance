@@ -1,6 +1,6 @@
 #include "options.h"
 #include <algorithm>
-
+#include <iostream>
 
 namespace Options
 {
@@ -22,6 +22,26 @@ namespace Options
 	double strangleIntrinsicValue(double strikeCall, double strikePut, double spotPrice)
 	{
 		return callIntrinsicValue(strikeCall, spotPrice) + putIntrinsicValue(strikePut, spotPrice);
+	}
+
+
+	// Starting from here, we test the option functions
+
+	void strangleUnitTest()
+	{
+		std::cout << "You hold a strangle (a call and a put at different strikes) for AAPL.\n" << "Please enter the strike price of your call : ";
+		double strikeCall{};
+		std::cin >> strikeCall;
+
+		std::cout << "Please enter the strike price of your put: ";
+		double strikePut{};
+		std::cin >> strikePut;
+
+		std::cout << "Please enter the spot price: ";
+		double spot{};
+		std::cin >> spot;
+
+		std::cout << "The intrinsic value of your strangle is " << Options::strangleIntrinsicValue(strikeCall, strikePut, spot) << ".\n";
 	}
 
 

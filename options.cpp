@@ -4,22 +4,22 @@
 
 namespace Options
 {
-	double callIntrinsicValue(double strikePrice, double spotPrice)
+	auto callIntrinsicValue(double strikePrice, double spotPrice) -> double
 	{
 		return std::max(spotPrice - strikePrice, 0.);
 	}
 
-	double putIntrinsicValue(double strikePrice, double spotPrice)
+	auto putIntrinsicValue(double strikePrice, double spotPrice) -> double
 	{
 		return std::max(strikePrice - spotPrice, 0.);
 	}
 
-	double straddleIntrinsicValue(double strikePrice, double spotPrice)
+	auto straddleIntrinsicValue(double strikePrice, double spotPrice) -> double
 	{
 		return callIntrinsicValue(strikePrice, spotPrice) + putIntrinsicValue(strikePrice, spotPrice);
 	}
 
-	double strangleIntrinsicValue(double strikeCall, double strikePut, double spotPrice)
+	auto strangleIntrinsicValue(double strikeCall, double strikePut, double spotPrice) -> double
 	{
 		return callIntrinsicValue(strikeCall, spotPrice) + putIntrinsicValue(strikePut, spotPrice);
 	}

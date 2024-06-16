@@ -1,7 +1,9 @@
 #include <iostream>
 #include "options.h"
 
-int main()
+auto main() -> int
 {
 	Options::strangleUnitTest();
+
+	return 0;
 }

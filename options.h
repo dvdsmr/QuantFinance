@@ -3,10 +3,10 @@
 
 namespace Options
 {
-	double callIntrinsicValue(double strikePrice, double spotPrice);
-	double putIntrinsicValue(double strikePrice, double spotPrice);
-	double straddleIntrinsicValue(double strikePrice, double spotPrice);
-	double strangleIntrinsicValue(double strikeCall, double strikePut, double spotPrice);
+	auto callIntrinsicValue(double strikePrice, double spotPrice) -> double;
+	auto putIntrinsicValue(double strikePrice, double spotPrice) -> double;
+	auto straddleIntrinsicValue(double strikePrice, double spotPrice) -> double;
+	auto strangleIntrinsicValue(double strikeCall, double strikePut, double spotPrice) -> double;
 
 	void strangleUnitTest();
 }

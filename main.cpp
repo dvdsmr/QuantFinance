@@ -3,7 +3,7 @@
 
 auto main() -> int
 {
-	Options::strangleUnitTest();
+	Options::callCreditSpreadUnitTest();
 
 	return 0;
 }

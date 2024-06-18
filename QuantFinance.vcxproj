@@ -137,10 +137,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="compounding.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="options.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="compounding.h" />
     <ClInclude Include="options.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -21,9 +21,15 @@
     <ClCompile Include="options.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="compounding.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="options.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="compounding.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

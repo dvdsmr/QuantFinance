@@ -4,9 +4,9 @@
 
 auto main() -> int
 {
-	Options::callCreditSpreadUnitTest();
+	//Options::callCreditSpreadUnitTest();
 
-	//Compounding:continuousUnitTest();
+	Compounding::discreteUnitTest();
 
 	return 0;
 }

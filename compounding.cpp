@@ -28,7 +28,26 @@ namespace Compounding
 		std::cin >> time;
 
 		std::cout << "At the risk free rate of " << rate << " and over a time period of " << time << " years, your initial investment of "
-			<< value << "$" << "will change to " << continuous(value, time, rate) << "$.";
+			<< value << "$ will change to " << continuous(value, time, rate) << "$.";
+
+	}
+
+	void discreteUnitTest()
+	{
+		std::cout << "Enter the value of your investment (in $) right now: ";
+		double value{};
+		std::cin >> value;
+
+		std::cout << "Enter the risk free rate of return (per year and with discrete compounding): ";
+		double rate{};
+		std::cin >> rate;
+
+		std::cout << "Enter the number of years you want to keep the investment: ";
+		int years{};
+		std::cin >> years;
+
+		std::cout << "At the risk free rate of " << rate << " and over a time period of " << years << " years, your initial investment of "
+			<< value << "$ will change to " << discrete(value, years, rate) << "$.";
 
 	}
 

@@ -32,5 +32,8 @@
     <ClInclude Include="compounding.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

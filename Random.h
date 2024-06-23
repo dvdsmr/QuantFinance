@@ -69,7 +69,7 @@ namespace Random
 
 	// We define the return of a normal distribution.
 	// At this moment, we only permit double arguments and return.
-	double normal(double mean, double variance)
+	inline double normal(double mean, double variance)
 	{
 		return std::normal_distribution<double>{ mean, variance }(mt);
 	}

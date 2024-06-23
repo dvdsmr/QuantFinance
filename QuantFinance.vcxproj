@@ -138,12 +138,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="compounding.cpp" />
+    <ClCompile Include="distributions.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="sdes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="compounding.h" />
+    <ClInclude Include="distributions.h" />
     <ClInclude Include="options.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="sdes.h" />

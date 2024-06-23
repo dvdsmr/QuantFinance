@@ -2,6 +2,7 @@
 #include "options.h"
 #include "compounding.h"
 #include "Random.h"
+#include "distributions.h"
 #include <iostream>
 
 auto main() -> int
@@ -10,10 +11,6 @@ auto main() -> int
 
 	//Compounding::discreteUnitTest();
 
-	for (int k{1}; k <= 10; k++)
-	{
-		std::cout << Random::normal(0.0, 1.0) << "\n";
-	}
+	std::cout << Distributions::MomentGeneratingFunctions::normal(1.0, 0.0, 1.0);
 
-	return 0;
 }

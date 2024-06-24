@@ -4,9 +4,9 @@
 
 namespace Compounding
 {
-	auto discrete(double value, int timeUnits, double rate) -> double
+	auto discrete(double value, int timeUnits, double rate, int compoundingsPerTimeUnit = 1) -> double
 	{
-		return std::pow(1.0 + rate, timeUnits) * value;
+		return std::pow(1.0 + rate/compoundingsPerTimeUnit, timeUnits*compoundingsPerTimeUnit) * value;
 	}
 	auto continuous(double value, double time, double rate) -> double
 	{

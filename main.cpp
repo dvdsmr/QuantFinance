@@ -7,9 +7,9 @@
 
 auto main() -> int
 {
-	Options::callCreditSpreadUnitTest();
+	//Options::callCreditSpreadUnitTest();
 
-	//Compounding::discreteUnitTest();
+	Compounding::discreteUnitTest();
 
 	//std::cout << Distributions::MomentGeneratingFunctions::normal(1.0, 0.0, 1.0);
 

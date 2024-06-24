@@ -8,47 +8,50 @@
 
 namespace Options
 {
-	auto callPayoff(double strikePrice, double spotPrice) -> double
+	namespace Payoffs
 	{
-		return std::max(spotPrice - strikePrice, 0.);
+		auto call(double strikePrice, double spotPrice) -> double
+		{
+			return std::max(spotPrice - strikePrice, 0.);
+		}
+
+		auto put(double strikePrice, double spotPrice) -> double
+		{
+			return std::max(strikePrice - spotPrice, 0.);
+		}
+
+		auto straddle(double strikePrice, double spotPrice) -> double
+		{
+			return call(strikePrice, spotPrice) + put(strikePrice, spotPrice);
+		}
+
+		auto strangle(double strikeCall, double strikePut, double spotPrice) -> double
+		{
+			return call(strikeCall, spotPrice) + put(strikePut, spotPrice);
+		}
+
+		auto putDebitSpread(double lower, double higher, double spotPrice) -> double
+		{
+			return put(higher, spotPrice) - put(lower, spotPrice);
+		}
+
+		auto putCreditSpread(double lower, double higher, double spotPrice) -> double
+		{
+			return put(lower, spotPrice) - put(higher, spotPrice);
+		}
+
+		auto callDebitSpread(double lower, double higher, double spotPrice) -> double
+		{
+			return call(lower, spotPrice) - call(higher, spotPrice);
+		}
+
+		auto callCreditSpread(double lower, double higher, double spotPrice) -> double
+		{
+			return call(higher, spotPrice) - call(lower, spotPrice);
+		}
 	}
 
-	auto putPayoff(double strikePrice, double spotPrice) -> double
-	{
-		return std::max(strikePrice - spotPrice, 0.);
-	}
-
-	auto straddlePayoff(double strikePrice, double spotPrice) -> double
-	{
-		return callPayoff(strikePrice, spotPrice) + putPayoff(strikePrice, spotPrice);
-	}
-
-	auto stranglePayoff(double strikeCall, double strikePut, double spotPrice) -> double
-	{
-		return callPayoff(strikeCall, spotPrice) + putPayoff(strikePut, spotPrice);
-	}
-
-	auto putDebitSpreadPayoff(double lower, double higher, double spotPrice) -> double
-	{
-		return putPayoff(higher, spotPrice) - putPayoff(lower, spotPrice);
-	}
-
-	auto putCreditSpreadPayoff(double lower, double higher, double spotPrice) -> double
-	{
-		return putPayoff(lower, spotPrice) - putPayoff(higher, spotPrice);
-	}
-
-	auto callDebitSpreadPayoff(double lower, double higher, double spotPrice) -> double
-	{
-		return callPayoff(lower, spotPrice) - callPayoff(higher, spotPrice);
-	}
-
-	auto callCreditSpreadPayoff(double lower, double higher, double spotPrice) -> double
-	{
-		return callPayoff(higher, spotPrice) - callPayoff(lower, spotPrice);
-	}
-
-	// Starting from here, we test the option functions
+	// Starting from here, we test the payoff functions
 
 	void strangleUnitTest()
 	{
@@ -64,7 +67,7 @@ namespace Options
 		double spot{};
 		std::cin >> spot;
 
-		std::cout << "The payoff of your strangle is " << Options::stranglePayoff(strikeCall, strikePut, spot) << ".\n";
+		std::cout << "The payoff of your strangle is " << Options::Payoffs::strangle(strikeCall, strikePut, spot) << ".\n";
 	}
 
 	void callCreditSpreadUnitTest()
@@ -81,7 +84,7 @@ namespace Options
 		double spot{};
 		std::cin >> spot;
 
-		std::cout << "The payoff of your spread " << Options::callCreditSpreadPayoff(strikeShortCall, strikeCall, spot) << ".\n";
+		std::cout << "The payoff of your spread " << Options::Payoffs::callCreditSpread(strikeShortCall, strikeCall, spot) << ".\n";
 	}
 
 }

@@ -3,14 +3,17 @@
 
 namespace Options
 {
-	auto callPayoff(double strikePrice, double spotPrice) -> double;
-	auto putPayoff(double strikePrice, double spotPrice) -> double;
-	auto straddlePayoff(double strikePrice, double spotPrice) -> double;
-	auto stranglePayoff(double strikeCall, double strikePut, double spotPrice) -> double;
-	auto putDebitSpreadPayoff(double lower, double higher, double spotPrice) -> double;
-	auto putCreditSpreadPayoff(double lower, double higher, double spotPrice) -> double;
-	auto callDebitSpreadPayoff(double lower, double higher, double spotPrice) -> double;
-	auto callCreditSpreadPayoff(double lower, double higher, double spotPrice) -> double;
+	namespace Payoffs
+	{
+		auto call(double strikePrice, double spotPrice) -> double;
+		auto put(double strikePrice, double spotPrice) -> double;
+		auto straddle(double strikePrice, double spotPrice) -> double;
+		auto strangle(double strikeCall, double strikePut, double spotPrice) -> double;
+		auto putDebitSpread(double lower, double higher, double spotPrice) -> double;
+		auto putCreditSpread(double lower, double higher, double spotPrice) -> double;
+		auto callDebitSpread(double lower, double higher, double spotPrice) -> double;
+		auto callCreditSpread(double lower, double higher, double spotPrice) -> double;
+	}
 	void strangleUnitTest();
 	void callCreditSpreadUnitTest();
 }

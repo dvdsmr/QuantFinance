@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <random>
+#include <cmath>
 
 // This header-only Random namespace implements a self-seeding Mersenne Twister.
 // Requires C++17 or newer.
@@ -72,6 +73,11 @@ namespace Random
 	inline double normal(double mean, double variance)
 	{
 		return std::normal_distribution<double>{ mean, variance }(mt);
+	}
+
+	inline double logNormal(double mean, double variance)
+	{
+		return std::exp(Random::normal(mean, variance));
 	}
 }
 

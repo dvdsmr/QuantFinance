@@ -9,8 +9,13 @@ auto main() -> int
 {
 	//Options::callCreditSpreadUnitTest();
 
-	Compounding::discreteUnitTest();
+	//Compounding::discreteUnitTest();
 
 	//std::cout << Distributions::MomentGeneratingFunctions::normal(1.0, 0.0, 1.0);
+
+	for (int i = 0; i <= 10; i++)
+	{
+		std::cout << Random::logNormal(0.0, 1.0) << "\n";
+	}
 
 }

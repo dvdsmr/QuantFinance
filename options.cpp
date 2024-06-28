@@ -51,6 +51,18 @@ namespace Options
 		}
 	}
 
+	namespace Pricing
+	{
+		namespace binomialOneStep
+		{
+			auto call(double riskFreeRate, double upTick, double downTick, double strike, double spot) -> double
+			{
+				return 1.0 / riskFreeRate * ((riskFreeRate - downTick) / (upTick - downTick) * Options::Payoffs::call(strike, upTick * spot) +
+										   (upTick - riskFreeRate) / (upTick - downTick) * Options::Payoffs::call(strike, downTick * spot));
+			}
+		}
+	}
+
 	// Starting from here, we test the payoff functions
 
 	void strangleUnitTest()

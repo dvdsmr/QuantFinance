@@ -17,7 +17,7 @@ namespace Options
 
 	namespace Pricing
 	{
-		namespace binomialOneStep
+		namespace BinomialOneStep
 		{
 			auto call(double riskFreeRate, double upTick, double downTick, double strike, double spot) -> double;
 		}

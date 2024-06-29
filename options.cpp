@@ -60,6 +60,11 @@ namespace Options
 				return 1.0 / riskFreeRate * ((riskFreeRate - downTick) / (upTick - downTick) * Options::Payoffs::call(strike, upTick * spot) +
 										   (upTick - riskFreeRate) / (upTick - downTick) * Options::Payoffs::call(strike, downTick * spot));
 			}
+			auto put(double riskFreeRate, double upTick, double downTick, double strike, double spot) -> double
+			{
+				return 1.0 / riskFreeRate * ((riskFreeRate - downTick) / (upTick - downTick) * Options::Payoffs::put(strike, upTick * spot) +
+					(upTick - riskFreeRate) / (upTick - downTick) * Options::Payoffs::put(strike, downTick * spot));
+			}
 		}
 	}
 

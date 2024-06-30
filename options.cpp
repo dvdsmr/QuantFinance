@@ -55,20 +55,33 @@ namespace Options
 	{
 		namespace BinomialOneStep
 		{
-			auto call(double riskFreeRate, double upTick, double downTick, double strike, double spot) -> double
+			auto call(double riskFreeRate, double upTick, double strike, double spot) -> double
 			{
-				return 1.0 / riskFreeRate * ((riskFreeRate - downTick) / (upTick - downTick) * Options::Payoffs::call(strike, upTick * spot) +
-										   (upTick - riskFreeRate) / (upTick - downTick) * Options::Payoffs::call(strike, downTick * spot));
+				const double downTick = 1.0 / upTick;
+				const double riskFreeUpTickProb{ (riskFreeRate - downTick) / (upTick - downTick) };
+				return 1.0 / riskFreeRate * (riskFreeUpTickProb * Options::Payoffs::call(strike, upTick * spot) +
+										   (1- riskFreeUpTickProb) * Options::Payoffs::call(strike, downTick * spot));
 			}
-			auto put(double riskFreeRate, double upTick, double downTick, double strike, double spot) -> double
+			auto put(double riskFreeRate, double upTick, double strike, double spot) -> double
 			{
-				return 1.0 / riskFreeRate * ((riskFreeRate - downTick) / (upTick - downTick) * Options::Payoffs::put(strike, upTick * spot) +
-					(upTick - riskFreeRate) / (upTick - downTick) * Options::Payoffs::put(strike, downTick * spot));
+				const double downTick = 1.0 / upTick;
+				const double riskFreeUpTickProb{ (riskFreeRate - downTick) / (upTick - downTick) };
+				return 1.0 / riskFreeRate * (riskFreeUpTickProb * Options::Payoffs::put(strike, upTick * spot) +
+											(1- riskFreeUpTickProb) * Options::Payoffs::put(strike, downTick * spot));
 			}
 		}
 	}
 
-	// Starting from here, we test the payoff functions
+	// Starting from here, we test the option functions
+	void binomialPricingUnitTest()
+	{
+		const double riskFreeRate{ 1.05 };
+		const double upTick{ 1.1 };
+		const double strike{ 109.0 };
+		const double spot{ 100.0 };
+
+		std::cout << "The value of the call option is " << Options::Pricing::BinomialOneStep::call(riskFreeRate, upTick, strike, spot);
+	}
 
 	void strangleUnitTest()
 	{

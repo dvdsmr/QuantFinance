@@ -19,12 +19,13 @@ namespace Options
 	{
 		namespace BinomialOneStep
 		{
-			auto call(double riskFreeRate, double upTick, double downTick, double strike, double spot) -> double;
-			auto put(double riskFreeRate, double upTick, double downTick, double strike, double spot) -> double;
+			auto call(double riskFreeRate, double upTick, double strike, double spot) -> double;
+			auto put(double riskFreeRate, double upTick, double strike, double spot) -> double;
 		}
 	}
 	void strangleUnitTest();
 	void callCreditSpreadUnitTest();
+	void binomialPricingUnitTest();
 }
 
 #endif

@@ -7,6 +7,11 @@ namespace Distributions
 	{
 		auto normal(double argument, double mean, double volatility) -> double;
 	}
+	namespace Utils
+	{
+		auto binomialCoefficient(int n, int k) -> int;
+		auto factorial(int n) -> int;
+	}
 }
 
 #endif

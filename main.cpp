@@ -13,6 +13,10 @@ auto main() -> int
 
 	//std::cout << Distributions::MomentGeneratingFunctions::normal(1.0, 0.0, 1.0);
 
-	Options::binomialPricingUnitTest();
+	//Options::binomialPricingUnitTest();
+
+	int n{ 10 };
+	int k{ 5 };
+	std::cout << Distributions::Utils::binomialCoefficient(n,k);
 
 }

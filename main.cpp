@@ -15,8 +15,13 @@ auto main() -> int
 
 	//Options::binomialPricingUnitTest();
 
-	int n{ 10 };
-	int k{ 5 };
-	std::cout << Distributions::Utils::binomialCoefficient(n,k);
+	double vol{ 0.2 };
+	double maturity{ 1. };
+	double riskFreeReturn{ 0.05 };
+	double strike{ 120. };
+	double spot{ 100. };
+
+	double price = Options::Pricing::BSM::call(riskFreeReturn, vol, maturity, strike, spot);
+	std::cout << "Price of the call option in the BSM model is " << price;
 
 }

@@ -7,6 +7,10 @@ namespace Distributions
 	{
 		auto normal(double argument, double mean, double volatility) -> double;
 	}
+	namespace CDFs
+	{
+		auto standardNormal(double x) -> double;
+	}
 	namespace Utils
 	{
 		auto binomialCoefficient(int n, int k) -> int;

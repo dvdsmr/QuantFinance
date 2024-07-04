@@ -19,8 +19,13 @@ namespace Options
 	{
 		namespace BinomialOneStep
 		{
-			auto call(double riskFreeRate, double upTick, double strike, double spot) -> double;
-			auto put(double riskFreeRate, double upTick, double strike, double spot) -> double;
+			auto call(double riskFreeRate, double upTick, double strike, double spot, double dividendYield=0.) -> double;
+			auto put(double riskFreeRate, double upTick, double strike, double spot, double dividenYield=0.) -> double;
+		}
+		namespace BSM
+		{
+			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield=0.) -> double;
+			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield=0.) -> double;
 		}
 	}
 	void strangleUnitTest();

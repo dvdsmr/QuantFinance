@@ -14,8 +14,23 @@ namespace Options
 		auto callDebitSpread(double lower, double higher, double spotPrice) -> double;
 		auto callCreditSpread(double lower, double higher, double spotPrice) -> double;
 	}
+
+	namespace Pricing
+	{
+		namespace BinomialOneStep
+		{
+			auto call(double riskFreeRate, double upTick, double strike, double spot, double dividendYield=0.) -> double;
+			auto put(double riskFreeRate, double upTick, double strike, double spot, double dividenYield=0.) -> double;
+		}
+		namespace BSM
+		{
+			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield=0.) -> double;
+			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield=0.) -> double;
+		}
+	}
 	void strangleUnitTest();
 	void callCreditSpreadUnitTest();
+	void binomialPricingUnitTest();
 }
 
 #endif

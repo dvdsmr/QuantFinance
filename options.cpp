@@ -8,17 +8,6 @@
 // ToDo: Exception handling for invalid prices!
 namespace Options
 {
-	enum class Payoff
-	{
-		call,
-		put,
-	};
-
-	enum class Position
-	{
-		longPosition,
-		shortPosition,
-	};
 
 	namespace Payoffs
 	{
@@ -151,16 +140,3 @@ namespace Options
 }
 
 
-// Template for option class
-
-class Option
-{
-public:
-	Option() = default;
-
-private:
-	double strikePrice{ 0. };
-	double maturity{ 10. };
-	Options::Payoff m_payoff{ Options::Payoff::call };
-	Options::Position m_position{ Options::Position::longPosition };
-};

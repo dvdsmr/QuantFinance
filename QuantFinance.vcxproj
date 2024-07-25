@@ -142,10 +142,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="sdes.cpp" />
+    <ClCompile Include="securities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="compounding.h" />
     <ClInclude Include="distributions.h" />
+    <ClInclude Include="securities.h" />
     <ClInclude Include="options.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="sdes.h" />

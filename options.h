@@ -1,8 +1,28 @@
 #ifndef OPTION_RETURNS_H
 #define OPTION_RETURNS_H
 
+#include "securities.h"
+
 namespace Options
 {
+	enum class Payoff
+	{
+		call,
+		put,
+		straddle,
+		strangle,
+		putDebitSpread,
+		putCreditSpread,
+		callDebitSpread,
+		callCreditSpread,
+	};
+
+	enum class Position
+	{
+		longPosition,
+		shortPosition,
+	};
+
 	namespace Payoffs
 	{
 		auto call(double strikePrice, double spotPrice) -> double;
@@ -32,5 +52,20 @@ namespace Options
 	void callCreditSpreadUnitTest();
 	void binomialPricingUnitTest();
 }
+
+// Template for option class
+
+class Option
+{
+public:
+	Option() = default;
+
+private:
+	double strikePrice{ 0. };
+	double maturity{ 10. };
+	Options::Payoff m_payoff{ Options::Payoff::call };
+	Options::Position m_position{ Options::Position::longPosition };
+	SimpleStock m_underlying{ SimpleStock() };
+};
 
 #endif

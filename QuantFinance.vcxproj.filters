@@ -27,6 +27,12 @@
     <ClCompile Include="sdes.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="distributions.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="securities.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="options.h">
@@ -39,6 +45,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="sdes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="distributions.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="securities.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

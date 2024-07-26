@@ -8,7 +8,7 @@ class SimpleStock
 	// by its starting value, its drift and its volatility
 public:
 	// Constructor
-	SimpleStock(double initialPrice = 100., double drift = 0.1, double vol = 0.05)
+	explicit SimpleStock(double initialPrice = 100., double drift = 0.1, double vol = 0.05)
 		: m_initialPrice{ initialPrice }
 		, m_drift{ drift }
 		, m_vol{ vol }

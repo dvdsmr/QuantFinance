@@ -58,7 +58,7 @@ namespace Options
 class Option
 {
 public:
-	Option() = default;
+	explicit Option() = default;
 
 private:
 	double strikePrice{ 0. };

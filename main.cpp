@@ -28,6 +28,9 @@ auto main() -> int
 
 	SimpleStock stock1{};
 	std::cout << "vol of the stock is " << stock1.getVol() << "\n";
+	stock1.setVol(0.02);
+	std::cout << "vol of the stock is " << stock1.getVol() << "\n";
+
 
 	Option opt1{};
 }

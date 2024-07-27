@@ -8,19 +8,19 @@ class SimpleStock
 	// by its starting value, its drift and its volatility
 public:
 	// Constructor
-	SimpleStock(double initialPrice = 100., double drift = 0.1, double vol = 0.05)
+	constexpr SimpleStock(double initialPrice = 100., double drift = 0.1, double vol = 0.05)
 		: m_initialPrice{ initialPrice }
 		, m_drift{ drift }
 		, m_vol{ vol }
 	{}
 	// Setters
-	auto setInitialPrice(double initialPrice) -> void { m_initialPrice = initialPrice; }
-	auto setDrift(double drift) -> void { m_drift = drift; }
-	auto setVol(double vol) -> void { m_vol = vol; }
+	constexpr void setInitialPrice(double initialPrice) { m_initialPrice = initialPrice; }
+	constexpr void setDrift(double drift) { m_drift = drift; }
+	constexpr void setVol(double vol) { m_vol = vol; }
 	// Getters
-	auto getInitialPrice() -> double const { return m_initialPrice; }
-	auto getDrift() -> double const { return m_drift; }
-	auto getVol() -> double const { return m_vol; }
+	constexpr const double& getInitialPrice() const { return m_initialPrice; }
+	constexpr const double& getDrift() const { return m_drift; }
+	constexpr const double& getVol() const { return m_vol; }
 
 private:
 	double m_initialPrice{ 100. };

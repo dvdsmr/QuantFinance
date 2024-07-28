@@ -59,11 +59,12 @@ class Option
 {
 public:
 	explicit constexpr Option() = default;
+	double samplePayoff(double time = 0.);
 
 private:
-	double strikePrice{ 0. };
-	double maturity{ 10. };
-	Options::Payoff m_payoff{ Options::Payoff::call };
+	double m_strike{ 100. };
+	double m_maturity{ 10. };
+	Options::Payoff m_type{ Options::Payoff::call };
 	Options::Position m_position{ Options::Position::longPosition };
 	SimpleStock m_underlying{ SimpleStock() };
 };

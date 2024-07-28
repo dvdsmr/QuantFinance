@@ -8,7 +8,9 @@ class SimpleStock
 	// by its starting value, its drift and its volatility
 public:
 	// Constructor
-	explicit constexpr SimpleStock(double initialPrice = 100., double drift = 0.1, double vol = 0.05)
+	explicit constexpr SimpleStock(double initialPrice = 100., 
+								   double drift = 0.1, 
+								   double vol = 0.05)
 		: m_initialPrice{ initialPrice }
 		, m_drift{ drift }
 		, m_vol{ vol }
@@ -21,6 +23,8 @@ public:
 	constexpr const double& getInitialPrice() const { return m_initialPrice; }
 	constexpr const double& getDrift() const { return m_drift; }
 	constexpr const double& getVol() const { return m_vol; }
+
+	double samplePrice(double time = 0.);
 
 private:
 	double m_initialPrice{ 100. };

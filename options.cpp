@@ -139,4 +139,16 @@ namespace Options
 
 }
 
+// currently only simple options with a single strike price considered
+double Option::samplePayoff(double time)
+{
+	double spot = m_underlying.samplePrice(time);
+	switch (m_type)
+	{
+	case Options::Payoff::call: return Options::Payoffs::call(m_strike, spot);
+	case Options::Payoff::put: return Options::Payoffs::put(m_strike, spot);
+	case Options::Payoff::straddle: return Options::Payoffs::straddle(m_strike, spot);
+	default: return Options::Payoffs::call(m_strike, spot);
+	}
+}
 

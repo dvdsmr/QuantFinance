@@ -5,24 +5,6 @@
 
 namespace Options
 {
-	enum class Payoff
-	{
-		call,
-		put,
-		straddle,
-		strangle,
-		putDebitSpread,
-		putCreditSpread,
-		callDebitSpread,
-		callCreditSpread,
-	};
-
-	enum class Position
-	{
-		longPosition,
-		shortPosition,
-	};
-
 	namespace Payoffs
 	{
 		auto call(double strikePrice, double spotPrice) -> double;
@@ -58,14 +40,31 @@ namespace Options
 class Option
 {
 public:
+	enum Payoff
+	{
+		call,
+		put,
+		straddle,
+		strangle,
+		putDebitSpread,
+		putCreditSpread,
+		callDebitSpread,
+		callCreditSpread,
+	};
+
+	enum Position
+	{
+		longPosition,
+		shortPosition,
+	};
 	explicit constexpr Option() = default;
 	double samplePayoff(double time = 0.);
 
 private:
 	double m_strike{ 100. };
 	double m_maturity{ 10. };
-	Options::Payoff m_type{ Options::Payoff::call };
-	Options::Position m_position{ Options::Position::longPosition };
+	Payoff m_type{ call };
+	Position m_position{ longPosition };
 	SimpleStock m_underlying{ SimpleStock() };
 };
 

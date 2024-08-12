@@ -1,5 +1,6 @@
 #ifndef SECURITIES_H
 #define SECURITIES_H
+#include <string_view>
 
 class SimpleStock
 {
@@ -24,7 +25,7 @@ public:
 	constexpr const double& getDrift() const { return m_drift; }
 	constexpr const double& getVol() const { return m_vol; }
 
-	double samplePrice(double time = 0.);
+	double samplePrice(double time = 0., std::string_view model = "bsm");
 
 private:
 	double m_initialPrice{ 100. };

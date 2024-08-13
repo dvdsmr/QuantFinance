@@ -33,6 +33,6 @@ auto main() -> int
 
 
 	Option opt1{};
-	std::cout << "sampling stock price " << stock1.samplePrice(2.) << ". \n";
+	std::cout << "sampling stock price " << stock1.samplePrice(2.,"bachelier") << ". \n";
 	std::cout << "sampling option price " << opt1.samplePayoff(2.) << ". \n";
 }

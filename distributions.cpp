@@ -38,6 +38,15 @@ namespace Distributions
 		}
 	}
 
+	namespace PDFs
+	{
+		auto standardNormal(double x) -> double
+		{
+			double pi = 3.1415926535;
+			return 1.0 / sqrt(2 * pi) * exp(-x * x / 2.0);
+		}
+	}
+
 	namespace Utils
 	{
 		auto factorial(int n) -> int

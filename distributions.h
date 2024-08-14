@@ -11,6 +11,10 @@ namespace Distributions
 	{
 		auto standardNormal(double x) -> double;
 	}
+	namespace PDFs
+	{
+		auto standardNormal(double x) -> double;
+	}
 	namespace Utils
 	{
 		auto binomialCoefficient(int n, int k) -> int;

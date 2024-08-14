@@ -102,6 +102,12 @@ namespace Options
 				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
 				return std::exp(-dividendYield * maturity) * Distributions::CDFs::standardNormal(d1) - std::exp(-dividendYield * maturity);
 			}
+
+			auto callGamma(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
+				return std::exp(-dividendYield * maturity) * Distributions::CDFs::standardNormal(d1);
+			}
 		}
 	}
 

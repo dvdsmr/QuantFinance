@@ -38,7 +38,9 @@ namespace Options
 }
 
 // Template for option class
-
+// todo: make payoffs etc friend functions
+// todo: - rename payoff to type and consider only basic payoffs
+//       - complex options shoukd be defined as linear combinations of basic options
 class Option
 {
 public:

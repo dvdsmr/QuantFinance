@@ -89,6 +89,19 @@ namespace Options
 				double callPrice = Options::Pricing::BSM::call(riskFreeReturn, vol, maturity, strike, spot, dividendYield);
 				return callPrice + strike * std::exp(-riskFreeReturn * maturity) - spot * std::exp(-dividendYield * maturity);
 			}
+
+			auto callDelta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
+				return std::exp(-dividendYield * maturity) * Distributions::CDFs::standardNormal(d1);
+			}
+
+			// calculate put delta using put-call parity
+			auto putDelta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
+				return std::exp(-dividendYield * maturity) * Distributions::CDFs::standardNormal(d1) - std::exp(-dividendYield * maturity);
+			}
 		}
 	}
 

@@ -73,6 +73,7 @@ namespace Options
 		}
 
 
+		// todo: don't repeat d1, d2 definition in every function
 		namespace BSM
 		{
 			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
@@ -99,14 +100,48 @@ namespace Options
 			// calculate put delta using put-call parity
 			auto putDelta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
 			{
-				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
-				return std::exp(-dividendYield * maturity) * Distributions::CDFs::standardNormal(d1) - std::exp(-dividendYield * maturity);
+				return callDelta(riskFreeReturn, vol, maturity, strike, spot, dividendYield) - std::exp(-dividendYield * maturity);
 			}
 
 			auto callGamma(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
 			{
 				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
-				return std::exp(-dividendYield * maturity) * Distributions::CDFs::standardNormal(d1);
+				return std::exp(-dividendYield * maturity) * Distributions::PDFs::standardNormal(d1) / vol / spot / std::sqrt(maturity);
+			}
+
+			// by put call parity, Gamma is the same for puts and calls in the BSM model
+			auto putGamma(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				return callGamma(riskFreeReturn,vol,maturity,strike,spot,dividendYield);
+			}
+
+			auto callVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
+				return std::exp(-dividendYield * maturity) * Distributions::PDFs::standardNormal(d1) * spot * std::sqrt(maturity);
+			}
+
+			// put call parity
+			auto putVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				return callVega(riskFreeReturn, vol, maturity, strike, spot, dividendYield);
+			}
+
+			auto callTheta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
+				double d2 = d1 - vol * std::sqrt(maturity);
+				return -std::exp(-dividendYield * maturity) * spot * Distributions::PDFs::standardNormal(d1) * vol / 2.0 / std::sqrt(maturity)
+					+ dividendYield * std::exp(-dividendYield * maturity) * spot * Distributions::CDFs::standardNormal(d1)
+					- riskFreeReturn * strike * std::exp(-riskFreeReturn * maturity) * Distributions::CDFs::standardNormal(d2);
+			}
+
+			// using put call parity
+			auto putTheta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				return callTheta(riskFreeReturn, vol, maturity, strike, spot, dividendYield)
+					+ riskFreeReturn * std::exp(-riskFreeReturn * maturity) * strike
+					- dividendYield * std::exp(-dividendYield * maturity) * spot;
 			}
 		}
 	}

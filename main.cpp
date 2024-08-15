@@ -4,7 +4,9 @@
 #include "Random.h"
 #include "distributions.h"
 #include "securities.h"
+#include "sdes.h"
 #include <iostream>
+#include <vector>
 
 auto main() -> int
 {
@@ -35,4 +37,10 @@ auto main() -> int
 	Option opt1{};
 	std::cout << "sampling stock price " << stock1.samplePrice(2.,"bachelier") << ". \n";
 	std::cout << "sampling option price " << opt1.samplePayoff(2.) << ". \n";
+
+	std::vector<double> path{ SDE::geometricBrownianMotionPath(100.0, 10.0, 100, 1.0, 2.0) };
+	for (int i{ 0 }; i <= 99; i++)
+	{
+		std::cout << path[static_cast<std::size_t>(i)] << " ";
+	}
 }

@@ -6,6 +6,7 @@
 #include "securities.h"
 #include "sdes.h"
 #include "saving.h"
+#include "stockpaths.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -46,5 +47,11 @@ auto main() -> int
 	for (int i{ 0 }; i <= 99; i++)
 	{
 		std::cout << path[static_cast<std::size_t>(i)] << " ";
+	}
+
+	StockPath spath{ SDE::geometricBrownianMotionPath(100.0, 1.0, 100, 0.04, 0.05) };
+	for (int i{ 0 }; i <= 99; i++)
+	{
+		std::cout << spath.m_stockVals[static_cast<std::size_t>(i)] << " ";
 	}
 }

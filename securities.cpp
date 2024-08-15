@@ -1,5 +1,6 @@
 #include "securities.h"
 #include "sdes.h"
+#include "stockpaths.h"
 #include <string_view>
 #include <iostream>
 

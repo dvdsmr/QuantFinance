@@ -2,6 +2,7 @@
 #define SECURITIES_H
 #include <string_view>
 
+
 class SimpleStock
 {
 	// This is a class of modelled stocks which follow GBM/Bachelier.

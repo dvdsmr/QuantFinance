@@ -45,21 +45,21 @@ namespace Options
 
 // Template for option class
 // todo: make payoffs etc friend functions
-// todo: - rename payoff to type and consider only basic payoffs
-//       - complex options shoukd be defined as linear combinations of basic options
+// todo: - complex options should be defined as linear combinations of basic options
 class Option
 {
 public:
-	enum Payoff
+	enum PayoffType
 	{
 		call,
 		put,
-		straddle,
-		strangle,
-		putDebitSpread,
-		putCreditSpread,
-		callDebitSpread,
-		callCreditSpread,
+	};
+
+	enum ExerciseType
+	{
+		european,
+		american,
+		asian,
 	};
 
 	enum Position
@@ -73,7 +73,8 @@ public:
 private:
 	double m_strike{ 100. };
 	double m_maturity{ 10. };
-	Payoff m_type{ call };
+	PayoffType m_type{ call };
+	ExerciseType m_etype{ european };
 	Position m_position{ longPosition };
 	SimpleStock m_underlying{ SimpleStock() };
 };

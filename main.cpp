@@ -5,8 +5,10 @@
 #include "distributions.h"
 #include "securities.h"
 #include "sdes.h"
+#include "saving.h"
 #include <iostream>
 #include <vector>
+#include <string>
 
 auto main() -> int
 {
@@ -38,7 +40,9 @@ auto main() -> int
 	std::cout << "sampling stock price " << stock1.samplePrice(2.,"bachelier") << ". \n";
 	std::cout << "sampling option price " << opt1.samplePayoff(2.) << ". \n";
 
-	std::vector<double> path{ SDE::geometricBrownianMotionPath(100.0, 10.0, 100, 1.0, 2.0) };
+	//std::vector<double> path{ SDE::geometricBrownianMotionPath(100.0, 1.0, 100, 0.04, 0.05) };
+	//Saving::write_vector_to_file(path, "Data/GBMpath");
+	std::vector<double> path{ Saving::read_vector_from_file<double>("Data/GBMpath") };
 	for (int i{ 0 }; i <= 99; i++)
 	{
 		std::cout << path[static_cast<std::size_t>(i)] << " ";

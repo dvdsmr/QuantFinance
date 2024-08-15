@@ -1,5 +1,6 @@
 #ifndef SAVING_H
 #define SAVING_H
+#include "stockpaths.h"
 #include <fstream>
 #include <vector>
 
@@ -28,6 +29,30 @@ namespace Saving
         memcpy(&newVector[0], &buffer[0], buffer.size());
         return newVector;
     }
+
+    void write_stockpath_to_csv(std::string filename, StockPath sPath) {
+        // Make a CSV file with one or more columns of integer values
+        // Each column of data is represented by the pair <column name, column data>
+        //   as std::pair<std::string, std::vector<int>>
+        // The dataset is represented as a vector of these columns
+        // Note that all columns should be the same size
+
+        // Create an output filestream object
+        std::ofstream myFile(filename);
+
+        // Send data to the stream
+        for (int i = 0; i < sPath.m_length; ++i)
+        {
+            myFile << sPath.m_timeVals[static_cast<std::size_t>(i)]
+                    << ","
+                    << sPath.m_stockVals[static_cast<std::size_t>(i)]
+                    << "\n";
+        }
+
+        // Close the file
+        myFile.close();
+    }
+
 }
 
 

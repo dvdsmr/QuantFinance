@@ -54,4 +54,5 @@ auto main() -> int
 	{
 		std::cout << spath.m_stockVals[static_cast<std::size_t>(i)] << " ";
 	}
+	Saving::write_stockpath_to_csv("Data/stockPath.csv", spath);
 }

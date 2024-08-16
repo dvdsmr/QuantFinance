@@ -27,18 +27,22 @@ namespace SDE
 	{
 		return initialState * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
 	}
+
+	// ToDo: - the building of the stockpath is suboptimal as it makes copies of the vectors
+	//		 - would be better to build the stockpath directly, declaring this function as a friend in stockpath 
 	auto geometricBrownianMotionPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> StockPath
 	{
-		std::vector<double> path(static_cast<std::size_t>(timePoints));
-		std::vector<double> times(static_cast<std::size_t>(timePoints));
-		path[static_cast<std::size_t>(0)] = initialState;
-		times[static_cast<std::size_t>(0)] = 0.0;
+		StockPath spath{ timePoints };
+		spath.m_stockVals[static_cast<std::size_t>(0)] = initialState;
+		spath.m_timeVals[static_cast<std::size_t>(0)] = 0.0;
 		double time = terminalTime / (timePoints - 1);
-		for (std::size_t i{1}; i <= timePoints - 1; i++)
+		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
 		{
-			times[i] = static_cast<double>(i) * time;
-			path[i] = path[i-1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
+			spath.m_timeVals[i] = static_cast<double>(i) * time;
+			spath.m_stockVals[i] = spath.m_stockVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
 		}
-		return StockPath( timePoints, path, times );
+		return spath;
 	}
+
+
 }

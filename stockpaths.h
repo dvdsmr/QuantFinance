@@ -19,6 +19,7 @@ struct StockPath
 		, m_stockVals{ stockVals }
 		, m_timeVals{ timeVals }
 	{}
+
 };
 
 #endif

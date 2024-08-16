@@ -30,7 +30,7 @@ namespace Saving
         return newVector;
     }
 
-    void write_stockpath_to_csv(std::string filename, StockPath sPath) {
+    void write_stockpath_to_csv(std::string filename, const StockPath& sPath) {
         // Make a CSV file with one or more columns of integer values
         // Each column of data is represented by the pair <column name, column data>
         //   as std::pair<std::string, std::vector<int>>
@@ -41,11 +41,11 @@ namespace Saving
         std::ofstream myFile(filename);
 
         // Send data to the stream
-        for (int i = 0; i < sPath.m_length; ++i)
+        for (std::size_t i{ 0 }; i < sPath.m_length; ++i)
         {
-            myFile << sPath.m_timeVals[static_cast<std::size_t>(i)]
+            myFile << sPath.m_timeVals[i]
                     << ","
-                    << sPath.m_stockVals[static_cast<std::size_t>(i)]
+                    << sPath.m_stockVals[i]
                     << "\n";
         }
 

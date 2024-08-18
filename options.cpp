@@ -50,6 +50,7 @@ namespace Options
 		{
 			return call(higher, spotPrice) - call(lower, spotPrice);
 		}
+
 	}
 
 	namespace Pricing

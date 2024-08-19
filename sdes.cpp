@@ -2,6 +2,7 @@
 #include "stockpaths.h"
 #include <cmath>
 #include <vector>
+#include <cassert>
 
 
 namespace SDE
@@ -55,10 +56,14 @@ namespace SDE
 	// careful: the step is only accurate for very small time steps
 	auto HestonPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> StockPath
 	{
+		// assert the Feller condition, which ensures that the process is positive
+		assert(2 * reversionRate * longVariance > volVol * volVol);
+
 		StockPath spath{ timePoints };
 		spath.m_stockVals[static_cast<std::size_t>(0)] = initialState;
 		spath.m_timeVals[static_cast<std::size_t>(0)] = 0.0;
 		double time = terminalTime / (timePoints - 1);
+		double var {initialVariance};
 		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
 		{
 			spath.m_timeVals[i] = static_cast<double>(i) * time;
@@ -70,10 +75,12 @@ namespace SDE
 			double increment2{ std::sqrt((1 + correlation) / 2.0) * normal1 - std::sqrt((1 - correlation) / 2.0) * normal2 };
 
 			// update values
-			spath.m_stockVals[i] = HestonPriceStep(initialState, time, drift, initialVariance, increment1);
+			spath.m_stockVals[i] = HestonPriceStep(spath.m_stockVals[i-1], time, drift, var, increment1);
 
 			// make step with variance process for next step
-			initialVariance = HestonVarianceStep(initialVariance, time, longVariance, increment2, reversionRate, volVol);
+			//increment2++;
+			//increment1++;
+			var = HestonVarianceStep(var, time, longVariance, increment2, reversionRate, volVol);
 		}
 		return spath;
 

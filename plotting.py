@@ -18,11 +18,11 @@ def plotStockCSV(filename):
     ax.plot(stockData[:,0],stockData[:,1],'b-')
     ax.set_xlabel("Time")
     ax.set_ylabel("Stock price")
-    plt.savefig("plots/stockPath.png")
+    plt.savefig("Plots/stockPath.png")
     plt.plot()
 
 if __name__ == "__main__":
-    my_data = plotStockCSV("Data/stockPath")
+    plotStockCSV("Data/stockPath.csv")
 
 
 

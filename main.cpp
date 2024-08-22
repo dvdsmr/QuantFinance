@@ -56,8 +56,12 @@ auto main() -> int
 	}
 
 	//HestonPath(initialState, terminalTime, timePoints, drift, initialVariance, longVariance, correlation, reversionRate, volVol)
-	StockPath spath2{ SDE::HestonPath(100.0, 1.0, 1000, 0.04, 1.0, 2.7,0.2,0.1,0.2) };
-	Saving::write_stockpath_to_csv("Data/stockPath.csv", spath2);
+	StockPath spath2{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+	Saving::write_stockpath_to_csv("Data/stockPath1.csv", spath2);
+	StockPath spath3{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+	Saving::write_stockpath_to_csv("Data/stockPath2.csv", spath3);
+	StockPath spath4{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+	Saving::write_stockpath_to_csv("Data/stockPath3.csv", spath4);
 
 	return 0;
 }

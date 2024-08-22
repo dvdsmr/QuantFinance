@@ -78,8 +78,6 @@ namespace SDE
 			spath.m_stockVals[i] = HestonPriceStep(spath.m_stockVals[i-1], time, drift, var, increment1);
 
 			// make step with variance process for next step
-			//increment2++;
-			//increment1++;
 			var = HestonVarianceStep(var, time, longVariance, increment2, reversionRate, volVol);
 		}
 		return spath;

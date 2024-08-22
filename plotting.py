@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 import csv
 from numpy import genfromtxt
 
+plt.rcParams.update({'font.size': 22})
 
 def plotStockPath(stockVals, timeVals):
     assert len(stockVals) == len(timeVals)
@@ -12,17 +13,19 @@ def plotStockPath(stockVals, timeVals):
     plt.savefig("plots/stockPath.png")
     plt.plot()
 
-def plotStockCSV(filename):
-    stockData = genfromtxt(filename, delimiter=',')
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(stockData[:,0],stockData[:,1],'b-')
+def plotStockCSV(filenames):
+    stockData = [genfromtxt(filename, delimiter=',') for filename in filenames]
+    fig, ax = plt.subplots(figsize=(13, 8))
+    for data in stockData:
+        ax.plot(data[:,0],data[:,1])
     ax.set_xlabel("Time")
     ax.set_ylabel("Stock price")
+    plt.title("Paths of a Heston Model")
     plt.savefig("Plots/stockPath.png")
     plt.plot()
 
 if __name__ == "__main__":
-    plotStockCSV("Data/stockPath.csv")
+    plotStockCSV(["Data/stockPath1.csv","Data/stockPath2.csv","Data/stockPath3.csv"])
 
 
 

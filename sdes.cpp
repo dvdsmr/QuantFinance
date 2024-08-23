@@ -1,5 +1,5 @@
 #include "Random.h"
-#include "stockpaths.h"
+#include "xyvals.h"
 #include <cmath>
 #include <vector>
 #include <cassert>
@@ -29,16 +29,16 @@ namespace SDE
 		return initialState * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
 	}
 
-	auto geometricBrownianMotionPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> StockPath
+	auto geometricBrownianMotionPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals
 	{
-		StockPath spath{ timePoints };
-		spath.m_stockVals[static_cast<std::size_t>(0)] = initialState;
-		spath.m_timeVals[static_cast<std::size_t>(0)] = 0.0;
+		XYVals spath{ timePoints };
+		spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
+		spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
 		double time = terminalTime / (timePoints - 1);
 		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
 		{
-			spath.m_timeVals[i] = static_cast<double>(i) * time;
-			spath.m_stockVals[i] = spath.m_stockVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
+			spath.m_xVals[i] = static_cast<double>(i) * time;
+			spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
 		}
 		return spath;
 	}
@@ -54,19 +54,19 @@ namespace SDE
 	}
 
 	// careful: the step is only accurate for very small time steps
-	auto HestonPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> StockPath
+	auto HestonPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals
 	{
 		// assert the Feller condition, which ensures that the process is positive
 		assert(2 * reversionRate * longVariance > volVol * volVol);
 
-		StockPath spath{ timePoints };
-		spath.m_stockVals[static_cast<std::size_t>(0)] = initialState;
-		spath.m_timeVals[static_cast<std::size_t>(0)] = 0.0;
+		XYVals spath{ timePoints };
+		spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
+		spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
 		double time = terminalTime / (timePoints - 1);
 		double var {initialVariance};
 		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
 		{
-			spath.m_timeVals[i] = static_cast<double>(i) * time;
+			spath.m_xVals[i] = static_cast<double>(i) * time;
 
 			// generate correlated standard normals
 			double normal1{ Random::normal(0.0,1.0) };
@@ -75,7 +75,7 @@ namespace SDE
 			double increment2{ std::sqrt((1 + correlation) / 2.0) * normal1 - std::sqrt((1 - correlation) / 2.0) * normal2 };
 
 			// update values
-			spath.m_stockVals[i] = HestonPriceStep(spath.m_stockVals[i-1], time, drift, var, increment1);
+			spath.m_yVals[i] = HestonPriceStep(spath.m_yVals[i-1], time, drift, var, increment1);
 
 			// make step with variance process for next step
 			var = HestonVarianceStep(var, time, longVariance, increment2, reversionRate, volVol);

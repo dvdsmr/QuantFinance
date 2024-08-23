@@ -56,7 +56,7 @@
     <ClInclude Include="saving.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="stockpaths.h">
+    <ClInclude Include="xyvals.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

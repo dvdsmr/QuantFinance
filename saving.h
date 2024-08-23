@@ -1,6 +1,6 @@
 #ifndef SAVING_H
 #define SAVING_H
-#include "stockpaths.h"
+#include "xyvals.h"
 #include <fstream>
 #include <vector>
 
@@ -30,22 +30,16 @@ namespace Saving
         return newVector;
     }
 
-    void write_stockpath_to_csv(std::string filename, const StockPath& sPath) {
-        // Make a CSV file with one or more columns of integer values
-        // Each column of data is represented by the pair <column name, column data>
-        //   as std::pair<std::string, std::vector<int>>
-        // The dataset is represented as a vector of these columns
-        // Note that all columns should be the same size
-
+    void write_xyvals_to_csv(std::string filename, const XYVals& sPath) {
         // Create an output filestream object
         std::ofstream myFile(filename);
 
         // Send data to the stream
         for (std::size_t i{ 0 }; i < sPath.m_length; ++i)
         {
-            myFile << sPath.m_timeVals[i]
+            myFile << sPath.m_xVals[i]
                     << ","
-                    << sPath.m_stockVals[i]
+                    << sPath.m_yVals[i]
                     << "\n";
         }
 

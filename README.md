@@ -6,6 +6,6 @@ The repository contains tools to simulate modern stochastic models for stock mov
 
 ![Heston model paths.](Plots/stockPath.png)
 
-Canonical models for derivative pricing are included. The below plot shows the development of the price, Delta and Gamma of a european call option in the Black-Scholes-Mertin model as time to maturity increases.
+Canonical models for derivative pricing are included. The below plot shows the development of the price, Delta and Gamma of a european call option in the Black-Scholes-Merton model as time to maturity increases.
 
 ![European call option in BSM model.](Plots/optionPrice.gif)

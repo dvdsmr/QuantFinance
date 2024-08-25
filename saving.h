@@ -47,6 +47,24 @@ namespace Saving
         myFile.close();
     }
 
+    void write_table_to_csv(std::string filename, const DataTable& table) {
+        // Create an output filestream object
+        std::ofstream myFile(filename);
+
+        // Send data to the stream
+        for (std::size_t i{ 0 }; i < table.m_numRows; ++i)
+        {
+            for (std::size_t j{ 0 }; j < table.m_numCols; ++j)
+            {
+                myFile << table.m_table[i][j] << ",";
+            }
+            myFile << "\n";
+        }
+
+        // Close the file
+        myFile.close();
+    }
+
 }
 
 

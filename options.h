@@ -2,6 +2,7 @@
 #define OPTION_RETURNS_H
 
 #include "securities.h"
+#include "xyvals.h"
 
 namespace Options
 {
@@ -36,6 +37,11 @@ namespace Options
 			auto putVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto callTheta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto putTheta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+		
+			namespace DataGeneration
+			{
+				auto call(double riskFreeReturn, double vol, double maturity, double strike, double dividendYield) -> DataTable;
+			}
 		}
 	}
 	void strangleUnitTest();

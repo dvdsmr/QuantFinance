@@ -1,5 +1,7 @@
 #include "options.h"
 #include "distributions.h"
+#include "xyvals.h"
+#include "numpy.h"
 #include <algorithm>
 #include <iostream>
 #include <cmath>
@@ -145,6 +147,48 @@ namespace Options
 					- dividendYield * std::exp(-dividendYield * maturity) * spot;
 			}
 
+			namespace DataGeneration
+			{
+				auto call(double riskFreeReturn, double vol, double maturity, double strike, double dividendYield) -> DataTable
+				{
+					// we initialize the data table consisting of the option prices for different spot-time pairs
+					DataTable prices(static_cast<std::size_t>(101), static_cast<std::size_t>(101));
+
+					// we define the time-spot grid on which we calculate the BSM option prices
+					std::vector<double> spots{np::linspace<double>(strike - 10.0, strike + 10.0, 100)};
+					std::vector<double> timesToMaturity{ np::linspace<double>(0., maturity, 100) };
+
+					// we define the first column to be the time to maturity and the first row to be the spot
+					for (std::size_t i{1}; i <= std::size(timesToMaturity); ++i)
+					{
+						prices.m_table[i][0] = timesToMaturity[i-1];
+					}
+					for (std::size_t j{ 1 }; j <= std::size(spots); ++j)
+					{
+						prices.m_table[0][j] = spots[j-1];
+					}
+					// arbitray initialization of corner element
+					prices.m_table[0][0] = 0.0;
+
+					// compute all prices and place them in the data table
+					// ToDo: this should be optimized later (i, j are ugly)
+					
+					// define row and column indices
+					std::size_t i{ 1 };
+					std::size_t j{ 1 };
+					for (const auto& time : timesToMaturity)
+					{
+						for (const auto& spot : spots)
+						{
+							prices.m_table[i][j] = Options::Pricing::BSM::call(riskFreeReturn, vol, time, strike, spot, dividendYield);
+							++j;
+						}
+						++i;
+						j = 1;
+					}
+					return prices;
+				}
+			}
 
 		}
 	}

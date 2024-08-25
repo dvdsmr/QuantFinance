@@ -152,6 +152,7 @@
     <ClInclude Include="options.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="sdes.h" />
+    <ClInclude Include="numpy.h" />
     <ClInclude Include="xyvals.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

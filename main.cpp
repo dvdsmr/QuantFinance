@@ -66,5 +66,9 @@ auto main() -> int
 	DataTable table(static_cast<std::size_t>(10), static_cast<std::size_t>(10));
 	std::cout << table.m_table[0][0];
 
+	// generate call option price data
+	DataTable optionPrices{ Options::Pricing::BSM::DataGeneration::call(0.05, 0.04, 1., 100., 0.01) };
+	Saving::write_table_to_csv("Data/callPrices.csv", optionPrices);
+
 	return 0;
 }

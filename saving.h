@@ -56,7 +56,9 @@ namespace Saving
         {
             for (std::size_t j{ 0 }; j < table.m_numCols; ++j)
             {
-                myFile << table.m_table[i][j] << ",";
+                myFile << table.m_table[i][j];
+                if (j < table.m_numCols-1)  
+                    myFile << ",";
             }
             myFile << "\n";
         }

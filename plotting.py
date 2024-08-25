@@ -1,6 +1,10 @@
 from matplotlib import pyplot as plt
 import csv
 from numpy import genfromtxt
+import numpy as np
+
+from matplotlib import animation
+
 
 plt.rcParams.update({'font.size': 22})
 
@@ -24,8 +28,34 @@ def plotStockCSV(filenames):
     plt.savefig("Plots/stockPath.png")
     plt.plot()
 
+def plotOptionCSV(filenames):
+    data = [genfromtxt(filename, delimiter=',') for filename in filenames]
+    fig, ax = plt.subplots(figsize=(14, 8))
+
+    def animate(i):
+        ax.clear()
+        plt.title(f"European call in BSM model with T={data[0][1+i,0]:.2f}")
+        ax.set_xlabel('Spot price')
+        ax.set_ylabel('Option price')
+        ax.set_ylim(-1.,np.max(data[0][1:,1:]))
+        ax.set_xlim(np.min(data[0][0,1:]),np.max(data[0][0,1:]))
+        ax.grid(True)
+        ax.plot(data[0][0,1:],data[0][1+i,1:],'b-',label="Price")
+        ax.plot(data[1][0,1:],data[1][1+i,1:],'r-',label="Delta")
+        ax.plot(data[2][0,1:],data[2][1+i,1:],'g-',label="Gamma")
+        ax.legend(loc="upper left")
+
+    ani = animation.FuncAnimation(fig, animate, repeat=True,
+                                    frames=data[0].shape[0]-1, interval=50)
+
+    writer = animation.PillowWriter(fps=10,
+                                    metadata=dict(artist='Me'),
+                                    bitrate=1800)
+    ani.save('plots/optionPrice.gif', writer=writer)
+
 if __name__ == "__main__":
-    plotStockCSV(["Data/stockPath1.csv","Data/stockPath2.csv","Data/stockPath3.csv"])
+    # plotStockCSV(["Data/stockPath1.csv","Data/stockPath2.csv","Data/stockPath3.csv"])
+    plotOptionCSV(["Data/callPrices.csv","Data/callDeltas.csv","Data/callGammas.csv"])
 
 
 

@@ -10,7 +10,7 @@ struct XYVals
 
 	XYVals(std::size_t length)
 		: m_length{length}
-		, m_yVals{ std::vector<double>(length)}
+		, m_yVals{ std::vector<double>(length) }
 		, m_xVals{ std::vector<double>(length) }
 	{}
 
@@ -20,6 +20,20 @@ struct XYVals
 		, m_xVals{ xVals }
 	{}
 
+};
+
+
+struct DataTable
+{
+	std::vector<std::vector<double>> m_table;
+	std::size_t m_numRows{ 1 };
+	std::size_t m_numCols{ 1 };
+
+	DataTable(std::size_t numRows, std::size_t numCols)
+		: m_numRows{ numRows }
+		, m_numCols{ numCols }
+		, m_table{ std::vector<std::vector<double>>(numRows, std::vector<double>(numCols, 0)) }
+	{}
 };
 
 

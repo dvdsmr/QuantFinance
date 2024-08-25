@@ -144,6 +144,8 @@ namespace Options
 					+ riskFreeReturn * std::exp(-riskFreeReturn * maturity) * strike
 					- dividendYield * std::exp(-dividendYield * maturity) * spot;
 			}
+
+
 		}
 	}
 

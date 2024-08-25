@@ -63,5 +63,8 @@ auto main() -> int
 	XYVals spath4{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
 	Saving::write_xyvals_to_csv("Data/stockPath3.csv", spath4);
 
+	DataTable table(static_cast<std::size_t>(10), static_cast<std::size_t>(10));
+	std::cout << table.m_table[0][0];
+
 	return 0;
 }

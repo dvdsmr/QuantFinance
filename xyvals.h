@@ -57,8 +57,8 @@ struct LabeledTable
 	    , m_colLabel{ colLabel }
 		, m_numRows{ numRows }
 		, m_numCols{ numCols }
-		, m_rowVals{ std::vector < double>(numRows) }
-		, m_colVals{ std::vector < double>(numCols) }
+		, m_rowVals{ std::vector<double>(numRows) }
+		, m_colVals{ std::vector<double>(numCols) }
 		, m_table{ std::vector<std::vector<double>>(numRows, std::vector<double>(numCols, 0)) }
 	{}
 };

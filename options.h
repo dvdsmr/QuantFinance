@@ -41,6 +41,7 @@ namespace Options
 			namespace DataGeneration
 			{
 				auto call(double riskFreeReturn, double vol, double maturity, double strike, double dividendYield) -> DataTable;
+				auto callPriceSurface(double riskFreeReturn, double vol, double spot, double dividendYield) -> LabeledTable;
 			}
 		}
 	}

@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <iostream>
 #include <cmath>
+#include <string>
+#include <string_view>
 
 
 // ToDo: Exception handling for invalid prices!
@@ -187,6 +189,40 @@ namespace Options
 						j = 1;
 					}
 					return prices;
+				}
+
+				auto callPriceSurface(double riskFreeReturn, double vol, double spot, double dividendYield) -> LabeledTable
+				{
+					// number of row and col vals
+					int numVals{ 100 };
+
+					// initialize the price table
+					using namespace std::string_view_literals;
+					LabeledTable priceSurface("Time to maturity"sv, 
+											  static_cast<std::size_t>(numVals),
+											  "Strike"sv,
+											  static_cast<std::size_t>(numVals)
+											 );
+
+					// define strikes and maturities
+					priceSurface.m_rowVals = np::linspace<double>(0., 1., numVals);
+					priceSurface.m_colVals = np::linspace<double>(spot-10., spot+10., numVals);
+
+					// get the table values by the BSM model
+					for (std::size_t row{ 0 }; row < std::size(priceSurface.m_rowVals); ++row)
+					{
+						for (std::size_t col{ 0 }; col < std::size(priceSurface.m_colVals); ++col)
+						{
+							priceSurface.m_table[row][col] = Options::Pricing::BSM::call(riskFreeReturn, 
+																						vol, 
+																						priceSurface.m_rowVals[row],	
+																						priceSurface.m_colVals[col], 
+																						spot, 
+																						dividendYield);
+						}
+					}
+
+					return priceSurface;
 				}
 			}
 

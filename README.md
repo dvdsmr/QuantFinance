@@ -1,4 +1,4 @@
-# Quantittaive Finance with C++
+# Quantitative Finance with C++
 This repo contains a code basis for quantitative methods in finance, coded C++ and visualized using Python. 
 
 The repository contains tools to simulate modern stochastic models for stock movements. The example plot below shows three paths of a Heston model, used to to model stock prices with a stochastic volatility process.
@@ -6,4 +6,6 @@ The repository contains tools to simulate modern stochastic models for stock mov
 
 ![Heston model paths.](Plots/stockPath.png)
 
-Canonical models for derivative pricing are included. The below plot shows the development of the price, Delta and Gamma of a european call option in the Black-Scholes-Mertin model as time to maturity increases.
+Canonical models for derivative pricing are included. The below plot shows the development of the price, Delta and Gamma of a european call option in the Black-Scholes-Merton model as time to maturity increases.
+
+![European call option in BSM model.](Plots/optionPrice.gif)

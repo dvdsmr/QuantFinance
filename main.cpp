@@ -56,19 +56,19 @@ auto main() -> int
 	}
 
 	//HestonPath(initialState, terminalTime, timePoints, drift, initialVariance, longVariance, correlation, reversionRate, volVol)
-	XYVals spath2{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
-	Saving::write_xyvals_to_csv("Data/stockPath1.csv", spath2);
-	XYVals spath3{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
-	Saving::write_xyvals_to_csv("Data/stockPath2.csv", spath3);
-	XYVals spath4{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
-	Saving::write_xyvals_to_csv("Data/stockPath3.csv", spath4);
+	//XYVals spath2{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+	//Saving::write_xyvals_to_csv("Data/stockPath1.csv", spath2);
+	//XYVals spath3{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+	//Saving::write_xyvals_to_csv("Data/stockPath2.csv", spath3);
+	//XYVals spath4{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+	//Saving::write_xyvals_to_csv("Data/stockPath3.csv", spath4);
 
 	DataTable table(static_cast<std::size_t>(10), static_cast<std::size_t>(10));
 	std::cout << table.m_table[0][0];
 
 	// generate call option price data
-	DataTable optionPrices{ Options::Pricing::BSM::DataGeneration::call(0.05, 0.04, 1., 100., 0.01) };
-	Saving::write_table_to_csv("Data/callPrices.csv", optionPrices);
+	//DataTable optionPrices{ Options::Pricing::BSM::DataGeneration::call(0.05, 0.04, 1., 100., 0.01) };
+	//Saving::write_table_to_csv("Data/callPrices.csv", optionPrices);
 
 	return 0;
 }

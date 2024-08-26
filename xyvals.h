@@ -1,6 +1,8 @@
 #ifndef XYVALS_H
 #define XYVALS_H
-#include <vector>
+#include<vector>
+#include<string>
+#include<string_view>
 
 struct XYVals
 {
@@ -31,6 +33,29 @@ struct DataTable
 
 	DataTable(std::size_t numRows, std::size_t numCols)
 		: m_numRows{ numRows }
+		, m_numCols{ numCols }
+		, m_table{ std::vector<std::vector<double>>(numRows, std::vector<double>(numCols, 0)) }
+	{}
+};
+
+struct LabeledTable
+{
+	std::string m_rowLabel{ "None" };
+	std::string m_colLabel{ "None" };
+	std::size_t m_numRows{ 1 };
+	std::size_t m_numCols{ 1 };
+	std::vector<double> m_rowVals{ std::vector < double>(m_numRows) };
+	std::vector<double> m_colVals{ std::vector < double>(m_numCols) };
+	std::vector<std::vector<double>> m_table;
+
+	LabeledTable(std::string_view rowLabel,
+			     std::size_t numRows, 
+				 std::string_view colLabel,
+				 std::size_t numCols
+				)
+		: m_rowLabel{ rowLabel }
+	    , m_colLabel{ colLabel }
+		, m_numRows{ numRows }
 		, m_numCols{ numCols }
 		, m_table{ std::vector<std::vector<double>>(numRows, std::vector<double>(numCols, 0)) }
 	{}

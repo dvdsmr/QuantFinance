@@ -70,5 +70,9 @@ auto main() -> int
 	//DataTable optionPrices{ Options::Pricing::BSM::DataGeneration::call(0.05, 0.04, 1., 100., 0.01) };
 	//Saving::write_table_to_csv("Data/callPrices.csv", optionPrices);
 
+	std::cout << "\n";
+	LabeledTable priceSurface{ Options::Pricing::BSM::DataGeneration::callPriceSurface(0.05, 0.1, 100., 0.02) };
+	std::cout << priceSurface.m_rowLabel << " " << priceSurface.m_colLabel << "\n";
+
 	return 0;
 }

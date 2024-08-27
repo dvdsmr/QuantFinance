@@ -201,7 +201,8 @@ namespace Options
 					LabeledTable priceSurface("Time to maturity"sv, 
 											  static_cast<std::size_t>(numVals),
 											  "Strike"sv,
-											  static_cast<std::size_t>(numVals)
+											  static_cast<std::size_t>(numVals),
+											  "BSM option price"sv
 											 );
 
 					// define strikes and maturities

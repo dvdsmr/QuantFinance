@@ -42,6 +42,7 @@ struct LabeledTable
 {
 	std::string m_rowLabel{ "None" };
 	std::string m_colLabel{ "None" };
+	std::string m_tableLabel{ "None" };
 	std::size_t m_numRows{ 1 };
 	std::size_t m_numCols{ 1 };
 	std::vector<double> m_rowVals{ std::vector < double>(m_numRows) };
@@ -51,10 +52,12 @@ struct LabeledTable
 	LabeledTable(std::string_view rowLabel,
 			     std::size_t numRows, 
 				 std::string_view colLabel,
-				 std::size_t numCols
+				 std::size_t numCols,
+				 std::string_view tableLabel
 				)
 		: m_rowLabel{ rowLabel }
 	    , m_colLabel{ colLabel }
+		, m_tableLabel{ tableLabel }
 		, m_numRows{ numRows }
 		, m_numCols{ numCols }
 		, m_rowVals{ std::vector<double>(numRows) }

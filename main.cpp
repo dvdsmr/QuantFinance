@@ -1,78 +1,70 @@
 #include <iostream>
 #include "options.h"
 #include "compounding.h"
-#include "Random.h"
-#include "distributions.h"
-#include "securities.h"
-#include "sdes.h"
-#include "saving.h"
 #include "xyvals.h"
-#include <iostream>
 #include <vector>
 #include <string>
+#include <math.h>
+#include "nlopt.h"
+
+double myfunc(unsigned n, const double* x, double* grad, void* my_func_data)
+{
+    n;
+    my_func_data;
+    if (grad) {
+        grad[0] = 0.0;
+        grad[1] = 0.5 / sqrt(x[1]);
+    }
+    return sqrt(x[1]);
+}
+
+
+typedef struct {
+    double a, b;
+} my_constraint_data;
+
+double myconstraint(unsigned n, const double* x, double* grad, void* data)
+{
+    n;
+    my_constraint_data* d = (my_constraint_data*)data;
+    double a = d->a, b = d->b;
+    if (grad) {
+        grad[0] = 3 * a * (a * x[0] + b) * (a * x[0] + b);
+        grad[1] = -1.0;
+    }
+    return ((a * x[0] + b) * (a * x[0] + b) * (a * x[0] + b) - x[1]);
+}
 
 auto main() -> int
 {
-	//Options::callCreditSpreadUnitTest();
+    double lb[2] = { -HUGE_VAL, 0 }; 
+    nlopt_opt opt;
 
-	//Compounding::discreteUnitTest();
+    opt = nlopt_create(NLOPT_LD_MMA, 2); 
+    /*
+    nlopt_set_lower_bounds(opt, lb);
+    nlopt_set_min_objective(opt, myfunc, NULL);
 
-	//std::cout << Distributions::MomentGeneratingFunctions::normal(1.0, 0.0, 1.0);
+    my_constraint_data data[2] = { {2,0}, {-1,1} };
 
-	//Options::binomialPricingUnitTest();
+    nlopt_add_inequality_constraint(opt, myconstraint, &data[0], 1e-8);
+    nlopt_add_inequality_constraint(opt, myconstraint, &data[1], 1e-8);
 
-	double vol{ 0.2 };
-	double maturity{ 1. };
-	double riskFreeReturn{ 0.05 };
-	double strike{ 120. };
-	double spot{ 100. };
+    nlopt_set_xtol_rel(opt, 1e-4);
 
-	double price = Options::Pricing::BSM::call(riskFreeReturn, vol, maturity, strike, spot);
-	std::cout << "Price of the call option in the BSM model is " << price << "\n";
+    double x[2] = { 1.234, 5.678 };  
+    double minf; 
+    if (nlopt_optimize(opt, x, &minf) < 0) {
+        printf("nlopt failed!\n");
+    }
+    else {
+        printf("found minimum at f(%g,%g) = %0.10g\n", x[0], x[1], minf);
+    }
 
+    nlopt_destroy(opt);
 
-	SimpleStock stock1{};
-	std::cout << "vol of the stock is " << stock1.getVol() << "\n";
-	stock1.setVol(0.02);
-	std::cout << "vol of the stock is " << stock1.getVol() << "\n";
-
-
-	Option opt1{};
-	std::cout << "sampling stock price " << stock1.samplePrice(2.,"bachelier") << ". \n";
-	std::cout << "sampling option price " << opt1.samplePayoff(2.) << ". \n";
-
-	//std::vector<double> path{ SDE::geometricBrownianMotionPath(100.0, 1.0, 100, 0.04, 0.05) };
-	//Saving::write_vector_to_file(path, "Data/GBMpath");
-	std::vector<double> path{ Saving::read_vector_from_file<double>("Data/GBMpath") };
-	for (int i{ 0 }; i <= 99; i++)
-	{
-		std::cout << path[static_cast<std::size_t>(i)] << " ";
-	}
-
-	XYVals spath{ SDE::geometricBrownianMotionPath(100.0, 1.0, 100, 0.04, 0.05) };
-	for (int i{ 0 }; i <= 99; i++)
-	{
-		std::cout << spath.m_yVals[static_cast<std::size_t>(i)] << " ";
-	}
-
-	//HestonPath(initialState, terminalTime, timePoints, drift, initialVariance, longVariance, correlation, reversionRate, volVol)
-	//XYVals spath2{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
-	//Saving::write_xyvals_to_csv("Data/stockPath1.csv", spath2);
-	//XYVals spath3{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
-	//Saving::write_xyvals_to_csv("Data/stockPath2.csv", spath3);
-	//XYVals spath4{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
-	//Saving::write_xyvals_to_csv("Data/stockPath3.csv", spath4);
-
-	DataTable table(static_cast<std::size_t>(10), static_cast<std::size_t>(10));
-	std::cout << table.m_table[0][0];
-
-	// generate call option price data
-	//DataTable optionPrices{ Options::Pricing::BSM::DataGeneration::call(0.05, 0.04, 1., 100., 0.01) };
-	//Saving::write_table_to_csv("Data/callPrices.csv", optionPrices);
-
-	std::cout << "\n";
-	LabeledTable priceSurface{ Options::Pricing::BSM::DataGeneration::callPriceSurface(0.05, 0.1, 100., 0.02) };
-	std::cout << priceSurface.m_rowLabel << " " << priceSurface.m_colLabel << " " << priceSurface.m_tableLabel << "\n";
+    */
+    
 
 	return 0;
 }

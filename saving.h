@@ -67,6 +67,38 @@ namespace Saving
         myFile.close();
     }
 
+    void write_labeledTable_to_csv(std::string filename, const LabeledTable& table) {
+        // Create an output filestream object
+        std::ofstream myFile(filename);
+
+        // send xVals to the stream
+        myFile << ","; // first entry of table is empty
+        for (std::size_t i{ 0 }; i < table.m_numCols; ++i)
+        {
+            myFile << table.m_colVals[i];
+            if (i < table.m_numCols - 1)
+                myFile << ",";
+        }
+        myFile << "\n";
+
+        // Send yVals and table data to the stream
+        for (std::size_t i{ 0 }; i < table.m_numRows; ++i)
+        {
+            myFile << table.m_rowVals[i];
+            myFile << ",";
+            for (std::size_t j{ 0 }; j < table.m_numCols; ++j)
+            {
+                myFile << table.m_table[i][j];
+                if (j < table.m_numCols - 1)
+                    myFile << ",";
+            }
+            myFile << "\n";
+        }
+
+        // Close the file
+        myFile.close();
+    }
+
 }
 
 

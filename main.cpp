@@ -74,5 +74,7 @@ auto main() -> int
 	LabeledTable priceSurface{ Options::Pricing::BSM::DataGeneration::callPriceSurface(0.05, 0.1, 100., 0.02) };
 	std::cout << priceSurface.m_rowLabel << " " << priceSurface.m_colLabel << " " << priceSurface.m_tableLabel << "\n";
 
+	Saving::write_labeledTable_to_csv("Data/PriceSurface.csv", priceSurface);
+
 	return 0;
 }

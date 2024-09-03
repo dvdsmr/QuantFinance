@@ -198,7 +198,8 @@ namespace Options
 
 					// initialize the price table
 					using namespace std::string_view_literals;
-					LabeledTable priceSurface("Time to maturity"sv, 
+					LabeledTable priceSurface("BSM european call price surface"sv,
+											  "Time to maturity"sv, 
 											  static_cast<std::size_t>(numVals),
 											  "Strike"sv,
 											  static_cast<std::size_t>(numVals),

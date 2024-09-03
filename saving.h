@@ -72,7 +72,7 @@ namespace Saving
         std::ofstream myFile(filename);
 
         // send labels to the stream for the first row
-        myFile << table.m_rowLabel << "," << table.m_colLabel << "," << table.m_tableLabel << "\n";
+        myFile << table.m_tableName << "," << table.m_rowLabel << "," << table.m_colLabel << "," << table.m_tableLabel << "\n";
 
         // send xVals to the stream
         myFile << ","; // first entry of table is empty

@@ -15,7 +15,8 @@ namespace Volatility
 
 			// initialize the price table
 			using namespace std::string_view_literals;
-			LabeledTable volSurface(priceSurface.m_rowLabel,
+			LabeledTable volSurface(priceSurface.m_tableName,
+				priceSurface.m_rowLabel,
 				priceSurface.m_numRows,
 				priceSurface.m_colLabel,
 				priceSurface.m_numCols,

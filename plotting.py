@@ -30,15 +30,19 @@ def plotStockCSV(filenames):
     plt.plot()
 
 def plotSurface(filename):
+
+    plt.rcParams.update({'font.size': 12})
+
     labels = genfromtxt(filename, delimiter=',', max_rows=1, dtype=None)
     surface = genfromtxt(filename, delimiter=',', skip_header=1)
 
-    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+    fig = plt.figure()
+    ax = fig.add_subplot(projection = '3d')
 
-    ylabel = labels[0]
-    xlabel = labels[1]
-    zlabel = labels[2]
-    print(labels)
+    title = labels[0]
+    ylabel = labels[1]
+    xlabel = labels[2]
+    zlabel = labels[3]
 
     # make data
     x = surface[0,1:]
@@ -54,9 +58,18 @@ def plotSurface(filename):
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_zlabel(zlabel)
+    ax.set_title(title)
 
     # Add a color bar which maps values to colors.
-    fig.colorbar(surf, shrink=0.5, aspect=5)
+    # fig.colorbar(surf, shrink=0.5, aspect=5)
+
+    # Contours for X and Y axis
+    ax.contour(X, Y, Z, cmap = cm.coolwarm, offset = np.max(X), zdir = 'x')
+    ax.contour(X, Y, Z, cmap = cm.coolwarm, offset = np.max(Y), zdir = 'y')
+
+    # Filled contour with contour lines
+    ax.contour(X, Y, Z, colors = 'black', offset = -1)
+    ax.contourf(X, Y, Z, cmap = cm.coolwarm, offset = -1, alpha = 0.75)
 
     plt.show()
     plt.savefig("plots/priceSurface.png")

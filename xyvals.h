@@ -40,6 +40,7 @@ struct DataTable
 
 struct LabeledTable
 {
+	std::string m_tableName{ "None" };
 	std::string m_rowLabel{ "None" };
 	std::string m_colLabel{ "None" };
 	std::string m_tableLabel{ "None" };
@@ -49,13 +50,15 @@ struct LabeledTable
 	std::vector<double> m_colVals{ std::vector < double>(m_numCols) };
 	std::vector<std::vector<double>> m_table;
 
-	LabeledTable(std::string_view rowLabel,
+	LabeledTable(std::string_view tableName,
+				 std::string_view rowLabel,
 			     std::size_t numRows, 
 				 std::string_view colLabel,
 				 std::size_t numCols,
 				 std::string_view tableLabel
 				)
-		: m_rowLabel{ rowLabel }
+		: m_tableName{ tableName }
+		, m_rowLabel{ rowLabel }
 	    , m_colLabel{ colLabel }
 		, m_tableLabel{ tableLabel }
 		, m_numRows{ numRows }

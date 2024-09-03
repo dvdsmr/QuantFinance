@@ -26,13 +26,19 @@ def plotStockCSV(filenames):
     ax.set_xlabel("Time")
     ax.set_ylabel("Stock price")
     plt.title("Paths of a Heston Model")
-    plt.savefig("Plots/stockPath.png")
+    plt.savefig("Plots/stockPath.png")            
     plt.plot()
 
 def plotSurface(filename):
-    surface = genfromtxt(filename, delimiter=',')
+    labels = genfromtxt(filename, delimiter=',', max_rows=1, dtype=None)
+    surface = genfromtxt(filename, delimiter=',', skip_header=1)
 
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+
+    ylabel = labels[0]
+    xlabel = labels[1]
+    zlabel = labels[2]
+    print(labels)
 
     # make data
     x = surface[0,1:]
@@ -43,6 +49,11 @@ def plotSurface(filename):
     # Plot the surface.
     surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
                            linewidth=0, antialiased=False)
+
+    # set labels read from the labeled table
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_zlabel(zlabel)
 
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.5, aspect=5)

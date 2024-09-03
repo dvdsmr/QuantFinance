@@ -58,7 +58,7 @@ def plotSurface(filename):
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_zlabel(zlabel)
-    ax.set_title(title)
+    plt.title(title)
 
     # Add a color bar which maps values to colors.
     # fig.colorbar(surf, shrink=0.5, aspect=5)
@@ -71,8 +71,8 @@ def plotSurface(filename):
     ax.contour(X, Y, Z, colors = 'black', offset = -1)
     ax.contourf(X, Y, Z, cmap = cm.coolwarm, offset = -1, alpha = 0.75)
 
-    plt.show()
     plt.savefig("plots/priceSurface.png")
+    plt.show()
 
 def plotOptionCSV(filenames):
     data = [genfromtxt(filename, delimiter=',') for filename in filenames]

@@ -5,7 +5,7 @@ We can showcase the price surfaces in the Black-Scholes-Merton model for europea
 
 European call             |  European put
 :-------------------------:|:-------------------------:
-![]([https://...Dark.png](https://github.com/dvdsmr/QuantFinance/blob/master/Plots/priceSurface.png))  |  ![]([https://...Ocean.png](https://github.com/dvdsmr/QuantFinance/blob/master/Plots/priceSurfacePut.png))
+![Call](Plots/priceSurface.png) |  ![Put](Plots/priceSurfacePut.png)
 
 
 The repository contains tools to simulate modern stochastic models for stock movements. The example plot below shows three paths of a Heston model, used to to model stock prices with a stochastic volatility process.

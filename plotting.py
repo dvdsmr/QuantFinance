@@ -71,7 +71,7 @@ def plotSurface(filename):
     ax.contour(X, Y, Z, colors = 'black', offset = -1)
     ax.contourf(X, Y, Z, cmap = cm.coolwarm, offset = -1, alpha = 0.75)
 
-    plt.savefig("plots/priceSurface.png")
+    plt.savefig("plots/priceSurfacePut.png")
     plt.show()
 
 def plotOptionCSV(filenames):
@@ -102,6 +102,6 @@ def plotOptionCSV(filenames):
 if __name__ == "__main__":
     # plotStockCSV(["Data/stockPath1.csv","Data/stockPath2.csv","Data/stockPath3.csv"])
     # plotOptionCSV(["Data/callPrices.csv","Data/callDeltas.csv","Data/callGammas.csv"])
-    plotSurface("Data/PriceSurface.csv")
+    plotSurface("Data/PriceSurfacePut.csv")
 
 

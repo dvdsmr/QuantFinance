@@ -3,6 +3,7 @@
 #include<vector>
 #include<string>
 #include<string_view>
+#include<list>
 
 struct XYVals
 {
@@ -67,6 +68,15 @@ struct LabeledTable
 		, m_colVals{ std::vector<double>(numCols) }
 		, m_table{ std::vector<std::vector<double>>(numRows, std::vector<double>(numCols, 0)) }
 	{}
+};
+
+
+struct PriceGrid
+{
+	std::string_view m_gridName{ "None" };
+	std::string_view m_xLabel{ "None" };
+	std::vector<double> m_xVals{};
+	std::list < std::vector<double> > m_gridVals;
 };
 
 

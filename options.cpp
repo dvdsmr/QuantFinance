@@ -76,16 +76,18 @@ namespace Options
 											(1- riskFreeUpTickProb) * Options::Payoffs::put(strike, downTick * spot));
 			}
 
-			auto callGrid(double riskFreeRate, double upTick, double strike, const std::vector<double>& spots, double dividendYield) -> PriceGrid
+			auto callGrid(double riskFreeRate, double upTick, double strike, int length, double dividendYield) -> PriceGrid
 			{
-				int length{ static_cast<int>(std::size(spots)) };
 
-				PriceGrid priceGrid{ "BSM call rpice grid", "Periods to maturity", np::linspace<int>(length,0,length) };
+				PriceGrid priceGrid{ "BSM call price grid", "Periods to maturity", np::linspace<int>(length,0,length) };
 				// ToDO compute price grid
 				riskFreeRate;
 				upTick;
 				strike;
 				dividendYield;
+
+				// build list of price vectors starting from the terminal prices
+
 				return priceGrid;
 			}
 		}

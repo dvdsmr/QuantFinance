@@ -49,12 +49,14 @@ namespace Distributions
 
 	namespace Utils
 	{
-		auto factorial(int n) -> int
+		template <typename T>
+		auto factorial(T n) -> T
 		{
 			return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 		}
 
-		auto binomialCoefficient(int n, int k) -> int
+		template <typename T>
+		auto binomialCoefficient(T n, T k) -> T
 		{
 			return factorial(n) / (factorial(k) * factorial(n - k));
 		}

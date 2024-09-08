@@ -17,8 +17,11 @@ namespace Distributions
 	}
 	namespace Utils
 	{
-		auto binomialCoefficient(int n, int k) -> int;
-		auto factorial(int n) -> int;
+		template <typename T>
+		auto binomialCoefficient(T n, T k) -> T;
+
+		template <typename T>
+		auto factorial(T n) -> T;
 	}
 }
 

@@ -21,6 +21,8 @@ auto main() -> int
 
 	//Options::binomialPricingUnitTest();
 
+	/*
+
 	double vol{ 0.2 };
 	double maturity{ 1. };
 	double riskFreeReturn{ 0.05 };
@@ -83,6 +85,42 @@ auto main() -> int
 	std::cout << callPriceGrid.m_gridName << " " << callPriceGrid.m_xLabel << "\n";
 	std::cout << callPriceGrid.m_gridVals[5][4];
 
+	*/
+
+	// advanced topics in derivative pricing
+
+	double spot = 171.01;
+	double strike = 180.0;
+	double maturity = 1.0;
+	double interest = 0.03;
+	double dividendYield = 0.0;
+	[[maybe_unused]] double drift = 0.05;
+	double vol = 0.1;
+
+
+	double price{ Options::Pricing::BSM::call(interest, vol, maturity, strike, spot, dividendYield) };
+	double delta{ Options::Pricing::BSM::callDelta(interest, vol, maturity, strike, spot, dividendYield) };
+	double gamma{ Options::Pricing::BSM::callGamma(interest, vol, maturity, strike, spot, dividendYield) };
+	double vega{ Options::Pricing::BSM::callVega(interest, vol, maturity, strike, spot, dividendYield) };
+	double theta{ Options::Pricing::BSM::callTheta(interest, vol, maturity, strike, spot, dividendYield) };
+
+	std::cout << "price: " << price << "\n";
+	std::cout << "delta: " << delta << "\n";
+	std::cout << "gamma: " << gamma << "\n";
+	std::cout << "vega: " << vega << "\n";
+	std::cout << "theta: " << theta << "\n";
+
+	// first delta hedge
+	double pricePaid = delta * spot - price;
+	std::cout << "Price paid for delta hedged portfolio: " << pricePaid << "\n";
+
+	// second delta hedge
+	double newSpot{ 180.2 };
+	double newMaturity{ 1. / 12. * 11. };
+	double newDelta{ Options::Pricing::BSM::callDelta(interest, vol, newMaturity, strike, newSpot, dividendYield) };
+	std::cout << "The new delta after one month is " << newDelta << "\n";
+	std::cout << "Hence, we have to buy an additional " << newDelta - delta << " shares.\n";
+	std::cout << "This will cost " << (newDelta - delta) * newSpot << "$.\n";
 
 	return 0;
 }

@@ -24,6 +24,8 @@ namespace Options
 		{
 			auto call(double riskFreeRate, double upTick, double strike, double spot, double dividendYield=0.) -> double;
 			auto put(double riskFreeRate, double upTick, double strike, double spot, double dividenYield=0.) -> double;
+			auto callGrid(double riskFreeRate, double upTick, double strike, const std::vector<double>& spots, double dividendYield) -> PriceGrid;
+
 		}
 		namespace BSM
 		{

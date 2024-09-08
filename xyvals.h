@@ -76,7 +76,7 @@ struct PriceGrid
 	std::string_view m_gridName{ "None" };
 	std::string_view m_xLabel{ "None" };
 	std::vector<int> m_xVals{};
-	std::list < std::vector<double> > m_gridVals;
+	std::vector < std::vector<double> > m_gridVals{};
 };
 
 

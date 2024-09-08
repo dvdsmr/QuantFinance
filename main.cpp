@@ -26,6 +26,9 @@ auto main() -> int
 	double riskFreeReturn{ 0.05 };
 	double strike{ 120. };
 	double spot{ 100. };
+	double dividendYield{ 0.03 };
+	int length{ 10 };
+	double upTick{ 1.05 };
 
 	double price = Options::Pricing::BSM::call(riskFreeReturn, vol, maturity, strike, spot);
 	std::cout << "Price of the call option in the BSM model is " << price << "\n";
@@ -75,6 +78,11 @@ auto main() -> int
 	std::cout << priceSurface.m_rowLabel << " " << priceSurface.m_colLabel << " " << priceSurface.m_tableLabel << "\n";
 
 	Saving::write_labeledTable_to_csv("Data/PriceSurface.csv", priceSurface);
+
+	PriceGrid callPriceGrid{ Options::Pricing::BinomialOneStep::callGrid(riskFreeReturn,upTick,strike,spot,length,dividendYield) };
+	std::cout << callPriceGrid.m_gridName << " " << callPriceGrid.m_xLabel << "\n";
+	std::cout << callPriceGrid.m_gridVals[5][4];
+
 
 	return 0;
 }

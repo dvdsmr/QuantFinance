@@ -76,17 +76,28 @@ namespace Options
 											(1- riskFreeUpTickProb) * Options::Payoffs::put(strike, downTick * spot));
 			}
 
-			auto callGrid(double riskFreeRate, double upTick, double strike, int length, double dividendYield) -> PriceGrid
+			auto callGrid(double riskFreeRate, double upTick, double strike, double spot, int length, double dividendYield) -> PriceGrid
 			{
+				const double downTick = 1.0 / upTick;
+				const double riskFreeUpTickProb{ (riskFreeRate - downTick - dividendYield) / (upTick - downTick) };
 
 				PriceGrid priceGrid{ "BSM call price grid", "Periods to maturity", np::linspace<int>(length,0,length) };
-				// ToDO compute price grid
-				riskFreeRate;
-				upTick;
-				strike;
-				dividendYield;
+
 
 				// build list of price vectors starting from the terminal prices
+				priceGrid.m_gridVals.push_back(std::vector<double>{});
+				for (int i{ 0 }; i < length; ++i)
+				{
+					priceGrid.m_gridVals[0].push_back(Options::Payoffs::call(strike,spot*std::pow(upTick,i)*std::pow(downTick,length-1-i)));
+				}
+				for (std::size_t time{ 1 }; time < length; ++time)
+				{
+					priceGrid.m_gridVals.push_back(std::vector<double>{});
+					for (std::size_t state{ 0 }; state < length - time; ++state)
+					{
+						priceGrid.m_gridVals[time].push_back(1.0 / riskFreeRate * (riskFreeUpTickProb * priceGrid.m_gridVals[time - 1][state + 1] + (1 - riskFreeUpTickProb) * priceGrid.m_gridVals[time - 1][state]));
+					}
+				}
 
 				return priceGrid;
 			}

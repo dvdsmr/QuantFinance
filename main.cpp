@@ -121,6 +121,19 @@ auto main() -> int
 	std::cout << "The new delta after one month is " << newDelta << "\n";
 	std::cout << "Hence, we have to buy an additional " << newDelta - delta << " shares.\n";
 	std::cout << "This will cost " << (newDelta - delta) * newSpot << "$.\n";
+	std::cout << "\n";
+
+	// vol surface part
+	double strikeSold{ 185. };
+	double portfolioValue{ Options::Pricing::BSM::call(interest, vol, maturity, strikeSold, spot, dividendYield) - price };
+	std::cout << "The value of the portfolio is " << portfolioValue << "\n";
+
+	// with vol skew
+	[[maybe_unused]]double vol180{ std::min(1.0,18.0 / 180.0) }; // not that this is equal to 0.1, which is the previous vol
+	double vol185{ std::min(1.0,18.0 / 185.0) };
+	double portfolioValueSkew{ Options::Pricing::BSM::call(interest, vol185, maturity, strikeSold, spot, dividendYield) - price };
+	std::cout << "The value of the portfolio with skew is " << portfolioValueSkew << "\n";
+
 
 	return 0;
 }

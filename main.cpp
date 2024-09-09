@@ -133,7 +133,12 @@ auto main() -> int
 	double vol185{ std::min(1.0,18.0 / 185.0) };
 	double portfolioValueSkew{ Options::Pricing::BSM::call(interest, vol185, maturity, strikeSold, spot, dividendYield) - price };
 	std::cout << "The value of the portfolio with skew is " << portfolioValueSkew << "\n";
+	std::cout << "\n";
 
+	// digital option pricing
+	// note that without skew, the digital option price is fixed by the BSM model
+	double digitalPrice{ -Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strike, spot, dividendYield) };
+	std::cout << "The digital option price without skew is " << digitalPrice << "\n";
 
 	return 0;
 }

@@ -175,6 +175,20 @@ namespace Options
 					- dividendYield * std::exp(-dividendYield * maturity) * spot;
 			}
 
+			// for digital option pricing
+			auto callStrikeDerivative(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double d1{ (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity) };
+				double d1deriv{ -1.0 / strike / vol / std::sqrt(maturity) };
+				double d2{ d1 - vol * std::sqrt(maturity) };
+				double d2deriv{ d1deriv };
+				return spot * std::exp(-dividendYield * maturity) * Distributions::PDFs::standardNormal(d1) * d1deriv
+					- std::exp(-riskFreeReturn * maturity) * Distributions::CDFs::standardNormal(d2)
+					- strike * std::exp(-riskFreeReturn * maturity) * Distributions::PDFs::standardNormal(d2) * d2deriv;
+			}
+
+
+
 			namespace DataGeneration
 			{
 				auto call(double riskFreeReturn, double vol, double maturity, double strike, double dividendYield) -> DataTable

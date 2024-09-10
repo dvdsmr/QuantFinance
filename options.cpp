@@ -187,6 +187,26 @@ namespace Options
 					- strike * std::exp(-riskFreeReturn * maturity) * Distributions::PDFs::standardNormal(d2) * d2deriv;
 			}
 
+			auto callStrikeDerivativeApprox(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double d1{ (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity) };
+				double d2{ d1 - vol * std::sqrt(maturity) };
+				return -std::exp(-riskFreeReturn * maturity) * Distributions::CDFs::standardNormal(d2);
+			}
+
+			auto callStrikeSpotDerivativeApprox(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				[[maybe_unused]] double d1{ (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity) };
+				[[maybe_unused]] double d1deriv{ -1.0 / strike / vol / std::sqrt(maturity) };
+				[[maybe_unused]] double d1derivSpot{ 1.0 / spot / vol / std::sqrt(maturity) };
+				[[maybe_unused]] double d1derivStrikeSpot{ 0.0 };
+				[[maybe_unused]] double d2{ d1 - vol * std::sqrt(maturity) };
+				[[maybe_unused]] double d2deriv{ d1deriv };
+				[[maybe_unused]] double d2derivSpot{ d1derivSpot };
+				[[maybe_unused]] double d2derivStrikeSpot{ 0.0 };
+				return -std::exp(-riskFreeReturn * maturity) * Distributions::PDFs::standardNormal(d2) * d2derivSpot;
+			}
+
 
 
 			namespace DataGeneration

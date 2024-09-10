@@ -140,5 +140,25 @@ auto main() -> int
 	double digitalPrice{ -Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strike, spot, dividendYield) };
 	std::cout << "The digital option price without skew is " << digitalPrice << "\n";
 
+	// the derivative of the callStrikeDerivative is
+	double digitalDelta{ -Options::Pricing::BSM::callStrikeSpotDerivativeApprox(interest, vol, maturity, strike, spot, dividendYield) };
+	std::cout << "The delta of the digital is approximately " << digitalDelta << "\n";
+	std::cout << "Hedging this will cost " << digitalDelta * spot << "$.\n";
+	std::cout << "\n";
+
+	// digital portfolio
+	double digitalPortfolioValue{ -Options::Pricing::BSM::callStrikeDerivative(interest, vol185, maturity, strikeSold, spot, dividendYield) 
+						 + Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strike, spot, dividendYield)
+	};
+	std::cout << "The value of the digital portfolio is " << digitalPortfolioValue << "\n";
+
+	// digital portfolio with skew
+	double vega185{ Options::Pricing::BSM::callVega(interest, vol, maturity, strikeSold, spot, dividendYield) };
+	double digitalPortfolioValueSkew{ -Options::Pricing::BSM::callStrikeDerivative(interest, vol185, maturity, strikeSold, spot, dividendYield) - vega185 * (-18.0/185.0/185.0)
+						 + Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strike, spot, dividendYield) + vega * (-18.0/180.0/180.0)
+	};
+	std::cout << "The value of the digital portfolio with skew is " << digitalPortfolioValueSkew << "\n";
+
+
 	return 0;
 }

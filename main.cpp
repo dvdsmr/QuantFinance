@@ -159,6 +159,38 @@ auto main() -> int
 	};
 	std::cout << "The value of the digital portfolio with skew is " << digitalPortfolioValueSkew << "\n";
 
+	std::cout << "\n";
+	// Continuing assignment 
+	spot = 100.;
+	strike = 90.;
+	interest = 0.05;
+	maturity = 1.;
+	dividendYield = 0.0;
+	double volGuess{ 0.2 };
+	std::cout << "The price with vol " << volGuess << " is " << Options::Pricing::BSM::call(interest, volGuess, maturity, strike, spot, dividendYield) << "\n";
+
+	// with skew
+	double vol90{ 0.3 * std::exp(-2.*(strike/100.-1.))};
+	std::cout << "The strike of a vanilla Eurpoean put option is " << Options::Pricing::BSM::put(interest, vol90, maturity, strike, spot, dividendYield) << "\n";
+	std::cout << "The delta of the put is " << Options::Pricing::BSM::putDelta(interest, vol90, maturity, strike, spot, dividendYield) << "\n";
+
+	// we delta hedge the put by selling delta* the stock (so we're buying because delta is negative)
+	double putPortfolioVal{ Options::Pricing::BSM::put(interest, vol90, maturity, strike, spot, dividendYield)
+							- Options::Pricing::BSM::putDelta(interest, vol90, maturity, strike, spot, dividendYield)*spot };
+	// now the price drops and vol surface shifts up
+	double spotNew{ 95. };
+	double volNew{ vol90 * 1.1 };
+	double putportFolioValNew{ Options::Pricing::BSM::put(interest, volNew, maturity, strike, spotNew, dividendYield)
+							- Options::Pricing::BSM::putDelta(interest, vol90, maturity, strike, spot, dividendYield) * spotNew };
+	std::cout << "With the price drop and vol shift, we make " << putportFolioValNew - putPortfolioVal << " gains.\n";
+
+	// comparing price changes in put option
+	double priceFullChange{ Options::Pricing::BSM::put(interest, volNew, maturity, strike, spotNew, dividendYield)
+							- Options::Pricing::BSM::put(interest, vol90, maturity, strike, spot, dividendYield) };
+	double priceSpotChange{ Options::Pricing::BSM::put(interest, vol90, maturity, strike, spotNew, dividendYield)
+							- Options::Pricing::BSM::put(interest, vol90, maturity, strike, spot, dividendYield) };
+	double changeQuotient{ priceSpotChange / priceFullChange };
+	std::cout << "The percentage of put price change due to the stock price drop is " << changeQuotient * 100. << "\n";
 
 	return 0;
 }

@@ -146,14 +146,14 @@ auto main() -> int
 	std::cout << "Hedging this will cost " << digitalDelta * spot << "$.\n";
 	std::cout << "\n";
 
-	// digital portfolio
-	double digitalPortfolioValue{ -Options::Pricing::BSM::callStrikeDerivative(interest, vol185, maturity, strikeSold, spot, dividendYield) 
+	// digital portfolio without skew
+	double digitalPortfolioValue{ -Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strikeSold, spot, dividendYield) 
 						 + Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strike, spot, dividendYield)
 	};
 	std::cout << "The value of the digital portfolio is " << digitalPortfolioValue << "\n";
 
 	// digital portfolio with skew
-	double vega185{ Options::Pricing::BSM::callVega(interest, vol, maturity, strikeSold, spot, dividendYield) };
+	double vega185{ Options::Pricing::BSM::callVega(interest, vol185, maturity, strikeSold, spot, dividendYield) };
 	double digitalPortfolioValueSkew{ -Options::Pricing::BSM::callStrikeDerivative(interest, vol185, maturity, strikeSold, spot, dividendYield) - vega185 * (-18.0/185.0/185.0)
 						 + Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strike, spot, dividendYield) + vega * (-18.0/180.0/180.0)
 	};

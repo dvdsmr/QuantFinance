@@ -7,6 +7,7 @@
 #include "sdes.h"
 #include "saving.h"
 #include "xyvals.h"
+#include "out.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -82,6 +83,8 @@ auto main() -> int
 	PriceGrid callPriceGrid{ Options::Pricing::BinomialOneStep::callGrid(riskFreeReturn,upTick,strike,spot,length,dividendYield) };
 	std::cout << callPriceGrid.m_gridName << " " << callPriceGrid.m_xLabel << "\n";
 	std::cout << callPriceGrid.m_gridVals[0][0];
+
+	outputPriceGrid(callPriceGrid);
 
 
 	// advanced topics in derivative pricing

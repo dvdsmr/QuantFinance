@@ -68,5 +68,8 @@
     <ClInclude Include="volatility.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="out.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -99,6 +99,8 @@ namespace Options
 					}
 				}
 
+				std::reverse(std::begin(priceGrid.m_gridVals),std::end(priceGrid.m_gridVals));
+
 				return priceGrid;
 			}
 		}

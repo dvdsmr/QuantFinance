@@ -21,11 +21,9 @@ auto main() -> int
 
 	//Options::binomialPricingUnitTest();
 
-	/*
-
 	double vol{ 0.2 };
 	double maturity{ 1. };
-	double riskFreeReturn{ 0.05 };
+	double riskFreeReturn{ 1.05 };
 	double strike{ 120. };
 	double spot{ 100. };
 	double dividendYield{ 0.03 };
@@ -83,12 +81,12 @@ auto main() -> int
 
 	PriceGrid callPriceGrid{ Options::Pricing::BinomialOneStep::callGrid(riskFreeReturn,upTick,strike,spot,length,dividendYield) };
 	std::cout << callPriceGrid.m_gridName << " " << callPriceGrid.m_xLabel << "\n";
-	std::cout << callPriceGrid.m_gridVals[5][4];
+	std::cout << callPriceGrid.m_gridVals[0][0];
 
-	*/
 
 	// advanced topics in derivative pricing
 
+	/*
 	double spot = 171.01;
 	double strike = 180.0;
 	double maturity = 1.0;
@@ -191,6 +189,8 @@ auto main() -> int
 							- Options::Pricing::BSM::put(interest, vol90, maturity, strike, spot, dividendYield) };
 	double changeQuotient{ priceSpotChange / priceFullChange };
 	std::cout << "The percentage of put price change due to the stock price drop is " << changeQuotient * 100. << "\n";
+
+	*/
 
 	return 0;
 }

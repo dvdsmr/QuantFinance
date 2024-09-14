@@ -140,6 +140,7 @@
     <ClCompile Include="compounding.cpp" />
     <ClCompile Include="distributions.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="adam.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="sdes.cpp" />
     <ClCompile Include="securities.cpp" />
@@ -148,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="compounding.h" />
     <ClInclude Include="distributions.h" />
+    <ClInclude Include="adam.h" />
     <ClInclude Include="out.h" />
     <ClInclude Include="saving.h" />
     <ClInclude Include="securities.h" />

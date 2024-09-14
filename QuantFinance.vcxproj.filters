@@ -36,6 +36,9 @@
     <ClCompile Include="volatility.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="adam.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="options.h">
@@ -69,6 +72,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="out.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="adam.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

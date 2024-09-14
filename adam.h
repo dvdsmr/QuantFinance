@@ -28,7 +28,6 @@ public:
         {}
     };
 
-
     // updates the weight and bias of Adam in place
     constexpr void update(const auto& func, const auto& deriv);
 

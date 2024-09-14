@@ -68,5 +68,11 @@
     <ClInclude Include="volatility.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Program Files\CppLibs\NLopt.v2.6.1.x86_64-w64-mingw32\include\nlopt.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Program Files\CppLibs\NLopt.v2.6.1.x86_64-w64-mingw32\include\nlopt.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

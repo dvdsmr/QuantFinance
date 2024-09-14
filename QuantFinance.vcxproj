@@ -71,8 +71,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>C:\Program Files\CppLibs\NLopt.v2.6.1.x86_64-w64-mingw32\bin;C:\Program Files\CppLibs\NLopt.v2.6.1.x86_64-w64-mingw32\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Program Files\CppLibs\NLopt\nlopt;C:\Program Files\CppLibs\NLopt.v2.6.1.x86_64-w64-mingw32\bin;C:\Program Files\CppLibs\NLopt.v2.6.1.x86_64-w64-mingw32\lib;$(LibraryPath)</LibraryPath>
     <ExternalIncludePath>C:\Program Files\CppLibs\NLopt.v2.6.1.x86_64-w64-mingw32\include;$(ExternalIncludePath)</ExternalIncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LibraryPath>C:\Program Files\CppLibs\NLopt\nlopt;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath>C:\Program Files\CppLibs\NLopt\nlopt;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LibraryPath>C:\Program Files\CppLibs\NLopt\nlopt;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -80,10 +89,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files\CppLibs\NLopt\nlopt;C:\Program Files\CppLibs\NLopt\nlopt\src\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>nlopt.lib;"C:\Program Files\CppLibs\NLopt\nlopt\build\Debug\nlopt.lib";"C:\Program Files\CppLibs\NLopt\nlopt\build\Release\nlopt.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -94,12 +105,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files\CppLibs\NLopt\nlopt;C:\Program Files\CppLibs\NLopt\nlopt\src\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>nlopt.lib;"C:\Program Files\CppLibs\NLopt\nlopt\build\Debug\nlopt.lib";"C:\Program Files\CppLibs\NLopt\nlopt\build\Release\nlopt.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -112,11 +125,13 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
       <TreatWarningAsError>false</TreatWarningAsError>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Program Files\CppLibs\NLopt\nlopt;C:\Program Files\CppLibs\NLopt\nlopt\src\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Program Files\CppLibs\NLopt.v2.6.1.x86_64-w64-mingw32\lib;C:\Users\David\Source\Repos\QuantFinance\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nlopt.lib;"C:\Program Files\CppLibs\NLopt\nlopt\build\Debug\nlopt.lib";"C:\Program Files\CppLibs\NLopt\nlopt\build\Release\nlopt.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,6 +146,7 @@
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Program Files\CppLibs\NLopt\nlopt;C:\Program Files\CppLibs\NLopt\nlopt\src\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +154,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\David\Source\Repos\QuantFinance\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nlopt.lib;"C:\Program Files\CppLibs\NLopt\nlopt\build\Debug\nlopt.lib";"C:\Program Files\CppLibs\NLopt\nlopt\build\Release\nlopt.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

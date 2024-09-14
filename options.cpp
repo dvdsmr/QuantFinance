@@ -338,6 +338,116 @@ namespace Options
 		std::cout << "The payoff of your spread " << Options::Payoffs::callCreditSpread(strikeShortCall, strikeCall, spot) << ".\n";
 	}
 
+	const void testPricing()
+	{
+
+		// a long sequence of pricing evaluations
+
+		double spot = 171.01;
+		double strike = 180.0;
+		double maturity = 1.0;
+		double interest = 0.03;
+		double dividendYield = 0.0;
+		[[maybe_unused]] double drift = 0.05;
+		double vol = 0.1;
+
+
+		double price{ Options::Pricing::BSM::call(interest, vol, maturity, strike, spot, dividendYield) };
+		double delta{ Options::Pricing::BSM::callDelta(interest, vol, maturity, strike, spot, dividendYield) };
+		double gamma{ Options::Pricing::BSM::callGamma(interest, vol, maturity, strike, spot, dividendYield) };
+		double vega{ Options::Pricing::BSM::callVega(interest, vol, maturity, strike, spot, dividendYield) };
+		double theta{ Options::Pricing::BSM::callTheta(interest, vol, maturity, strike, spot, dividendYield) };
+
+		std::cout << "price: " << price << "\n";
+		std::cout << "delta: " << delta << "\n";
+		std::cout << "gamma: " << gamma << "\n";
+		std::cout << "vega: " << vega << "\n";
+		std::cout << "theta: " << theta << "\n";
+
+		// first delta hedge
+		double pricePaid = delta * spot - price;
+		std::cout << "Price paid for delta hedged portfolio: " << pricePaid << "\n";
+
+		// second delta hedge
+		double newSpot{ 180.2 };
+		double newMaturity{ 1. / 12. * 11. };
+		double newDelta{ Options::Pricing::BSM::callDelta(interest, vol, newMaturity, strike, newSpot, dividendYield) };
+		std::cout << "The new delta after one month is " << newDelta << "\n";
+		std::cout << "Hence, we have to buy an additional " << newDelta - delta << " shares.\n";
+		std::cout << "This will cost " << (newDelta - delta) * newSpot << "$.\n";
+		std::cout << "\n";
+
+		// vol surface part
+		double strikeSold{ 185. };
+		double portfolioValue{ Options::Pricing::BSM::call(interest, vol, maturity, strikeSold, spot, dividendYield) - price };
+		std::cout << "The value of the portfolio is " << portfolioValue << "\n";
+
+		// with vol skew
+		[[maybe_unused]]double vol180{ std::min(1.0,18.0 / 180.0) }; // not that this is equal to 0.1, which is the previous vol
+		double vol185{ std::min(1.0,18.0 / 185.0) };
+		double portfolioValueSkew{ Options::Pricing::BSM::call(interest, vol185, maturity, strikeSold, spot, dividendYield) - price };
+		std::cout << "The value of the portfolio with skew is " << portfolioValueSkew << "\n";
+		std::cout << "\n";
+
+		// digital option pricing
+		// note that without skew, the digital option price is fixed by the BSM model
+		double digitalPrice{ -Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strike, spot, dividendYield) };
+		std::cout << "The digital option price without skew is " << digitalPrice << "\n";
+
+		// the derivative of the callStrikeDerivative is
+		double digitalDelta{ -Options::Pricing::BSM::callStrikeSpotDerivativeApprox(interest, vol, maturity, strike, spot, dividendYield) };
+		std::cout << "The delta of the digital is approximately " << digitalDelta << "\n";
+		std::cout << "Hedging this will cost " << digitalDelta * spot << "$.\n";
+		std::cout << "\n";
+
+		// digital portfolio without skew
+		double digitalPortfolioValue{ -Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strikeSold, spot, dividendYield)
+							 + Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strike, spot, dividendYield)
+		};
+		std::cout << "The value of the digital portfolio is " << digitalPortfolioValue << "\n";
+
+		// digital portfolio with skew
+		double vega185{ Options::Pricing::BSM::callVega(interest, vol185, maturity, strikeSold, spot, dividendYield) };
+		double digitalPortfolioValueSkew{ -Options::Pricing::BSM::callStrikeDerivative(interest, vol185, maturity, strikeSold, spot, dividendYield) - vega185 * (-18.0/185.0/185.0)
+							 + Options::Pricing::BSM::callStrikeDerivative(interest, vol, maturity, strike, spot, dividendYield) + vega * (-18.0/180.0/180.0)
+		};
+		std::cout << "The value of the digital portfolio with skew is " << digitalPortfolioValueSkew << "\n";
+
+		std::cout << "\n";
+		// Continuing assignment
+		spot = 100.;
+		strike = 90.;
+		interest = 0.05;
+		maturity = 1.;
+		dividendYield = 0.0;
+		double volGuess{ 0.2 };
+		std::cout << "The price with vol " << volGuess << " is " << Options::Pricing::BSM::call(interest, volGuess, maturity, strike, spot, dividendYield) << "\n";
+
+		// with skew
+		double vol90{ 0.3 * std::exp(-2.*(strike/100.-1.))};
+		std::cout << "The strike of a vanilla Eurpoean put option is " << Options::Pricing::BSM::put(interest, vol90, maturity, strike, spot, dividendYield) << "\n";
+		std::cout << "The delta of the put is " << Options::Pricing::BSM::putDelta(interest, vol90, maturity, strike, spot, dividendYield) << "\n";
+
+		// we delta hedge the put by selling delta* the stock (so we're buying because delta is negative)
+		double putPortfolioVal{ Options::Pricing::BSM::put(interest, vol90, maturity, strike, spot, dividendYield)
+								- Options::Pricing::BSM::putDelta(interest, vol90, maturity, strike, spot, dividendYield)*spot };
+		// now the price drops and vol surface shifts up
+		double spotNew{ 95. };
+		double volNew{ vol90 * 1.1 };
+		double putportFolioValNew{ Options::Pricing::BSM::put(interest, volNew, maturity, strike, spotNew, dividendYield)
+								- Options::Pricing::BSM::putDelta(interest, vol90, maturity, strike, spot, dividendYield) * spotNew };
+		std::cout << "With the price drop and vol shift, we make " << putportFolioValNew - putPortfolioVal << " gains.\n";
+
+		// comparing price changes in put option
+		double priceFullChange{ Options::Pricing::BSM::put(interest, volNew, maturity, strike, spotNew, dividendYield)
+								- Options::Pricing::BSM::put(interest, vol90, maturity, strike, spot, dividendYield) };
+		double priceSpotChange{ Options::Pricing::BSM::put(interest, vol90, maturity, strike, spotNew, dividendYield)
+								- Options::Pricing::BSM::put(interest, vol90, maturity, strike, spot, dividendYield) };
+		double changeQuotient{ priceSpotChange / priceFullChange };
+		std::cout << "The percentage of put price change due to the stock price drop is " << changeQuotient * 100. << "\n";
+	
+	}
+
 }
 
 // currently only simple options with a single strike price considered

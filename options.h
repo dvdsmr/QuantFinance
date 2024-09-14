@@ -50,7 +50,10 @@ namespace Options
 				auto callPriceSurface(double riskFreeReturn, double vol, double spot, double dividendYield) -> LabeledTable;
 			}
 		}
+
 	}
+	
+	const void testPricing();
 	void strangleUnitTest();
 	void callCreditSpreadUnitTest();
 	void binomialPricingUnitTest();

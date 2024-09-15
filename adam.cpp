@@ -1,6 +1,8 @@
 #include "adam.h"
+#include "options.h"
 #include <cmath>
 #include <iostream>
+
 
 
 // based on a medium article: https://medium.com/the-ml-practitioner/how-to-implement-an-adam-optimizer-from-scratch-76e7b217f1cc
@@ -50,14 +52,31 @@ constexpr double Adam::optimize(const auto& func, const auto& deriv)
 
 void testAdam()
 {
-    Adam adam{10.};
+    // we test Adam on calibrating vol to an options price
+    double spot = 171.01;
+    double strike = 180.0;
+    double maturity = 1.0;
+    double interest = 0.03;
+    double dividendYield = 0.0;
+    double trueVol{ 0.2 };
+
+    double truePrice{ Options::Pricing::BSM::call(interest, trueVol, maturity, strike, spot, dividendYield) };
+
     auto func
     {
-        [](double x) {return x * x; }
+        [&](double vol) {
+            double price{ Options::Pricing::BSM::call(interest, vol, maturity, strike, spot, dividendYield) };
+            return (price - truePrice)*(price-truePrice); 
+        }
     };
     auto deriv
     {
-        [](double x) {return 2. * x; }
+        [&](double vol) {
+            double price{ Options::Pricing::BSM::call(interest, vol, maturity, strike, spot, dividendYield) };
+            return 2 * (price - truePrice)* Options::Pricing::BSM::callVega(interest, vol, maturity, strike, spot, dividendYield);
+        }
     };
-    adam.optimize(func, deriv);
+    Adam adam{ 0.4 };
+    double optVol{ adam.optimize(func, deriv) };
+    std::cout << "Adam found vol of " << optVol << ". True vol is " << trueVol << ".\n";
 }

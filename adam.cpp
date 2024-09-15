@@ -1,9 +1,10 @@
 #include "adam.h"
 #include <cmath>
+#include <iostream>
 
 
 // based on a medium article: https://medium.com/the-ml-practitioner/how-to-implement-an-adam-optimizer-from-scratch-76e7b217f1cc
-constexpr void Adam::update(const auto& func, const auto& deriv)
+constexpr void Adam::update(const auto& deriv)
 {
     weightAndBias gradWeightBias{ deriv(m_state.m_weight), deriv(m_state.m_bias) };
     // momentum beta
@@ -27,5 +28,23 @@ constexpr void Adam::update(const auto& func, const auto& deriv)
     m_state.m_bias = m_state.m_bias - m_stepSize * (meanCorrection.m_bias / (std::sqrt(varianceCorrection.m_bias) + m_tol));
 
     return;
+}
+
+constexpr double Adam::optimize(const auto& func, const auto& deriv)
+{
+    bool converged{ false };
+    int numIt{ 0 };
+    double oldWeight{};
+    while (!converged)
+    {
+        oldWeight = m_state.m_weight;
+        update(deriv);
+        converged = (std::abs(m_state.m_weight - oldWeight) < m_tol);
+        ++numIt;
+    }
+    std::cout << "Adam optimization converged after " << numIt << " gradient steps.\n";
+    std::cout << "Parameter value is " << m_state.m_weight << "\n";
+    std::cout << "with a function value of " << func(m_state.m_weight) << ".\n";
+    return m_state.m_weight;
 }
 

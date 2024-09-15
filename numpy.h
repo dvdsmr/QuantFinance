@@ -9,7 +9,8 @@
 namespace np
 {
     template<typename T>
-    std::vector<T> linspace(double start, double end, int num) {
+    std::vector<T> linspace(double start, double end, int num) 
+    {
         std::vector<T> linspaced;
         double delta = static_cast<double>(end - start) / (num - 1);
         for (int i = 0; i < num; ++i) {

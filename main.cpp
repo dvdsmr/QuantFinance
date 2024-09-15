@@ -8,10 +8,12 @@
 #include "xyvals.h"
 #include "out.h"
 #include "adam.h"
+#include "numpy.h"
 #include <iostream>
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cassert>
 
 auto main() -> int
 {
@@ -91,6 +93,35 @@ auto main() -> int
 	*/
 
 	testAdam();
+
+	// we test the vol calibrations
+	std::vector<double> strikes{ np::linspace<double>(197.5,245.0,20) };
+	std::vector<double> mids{25.05,22.75,20.35,17.83,15.45,12.90,10.55,8.35,6.28,4.48,2.98,1.84,1.05,0.55,0.28,0.14,0.08,0.05,0.04,0.03};
+	assert(std::size(strikes) == std::size(mids));
+	double maturity{ 0.028 };
+	double interest{ 0.03 };
+	double spot{ 222.50 };
+	for (std::size_t i{ 0 }; i < std::size(strikes); ++i)
+	{
+		auto func
+		{
+			[&](double vol) {
+				double price{ Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, 0.0)};
+				return (price - mids[i]) * (price - mids[i]);
+			}
+		};
+		auto deriv
+		{
+			[&](double vol) {
+				double price{ Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, 0.0)};
+				return 2 * (price - mids[i]) * Options::Pricing::BSM::callVega(interest, vol, maturity, strikes[i], spot, 0.0);
+			}
+		};
+		Adam adam{ 0.4 };
+		double optVol{ adam.optimize(func, deriv) };
+		std::cout << "Adam found vol of " << optVol << " for the strike of " << strikes[i] <<  ".\n";
+	}
+
 
 	return 0;
 }

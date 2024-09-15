@@ -1,4 +1,3 @@
-#include <iostream>
 #include "options.h"
 #include "compounding.h"
 #include "Random.h"
@@ -8,6 +7,8 @@
 #include "saving.h"
 #include "xyvals.h"
 #include "out.h"
+#include "adam.h"
+#include <iostream>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -21,6 +22,8 @@ auto main() -> int
 	//std::cout << Distributions::MomentGeneratingFunctions::normal(1.0, 0.0, 1.0);
 
 	//Options::binomialPricingUnitTest();
+
+	/*
 
 	double vol{ 0.2 };
 	double maturity{ 1. };
@@ -85,9 +88,9 @@ auto main() -> int
 	std::cout << callPriceGrid.m_gridVals[0][0];
 
 	outputPriceGrid(callPriceGrid);
+	*/
 
-
-
+	testAdam();
 
 	return 0;
 }

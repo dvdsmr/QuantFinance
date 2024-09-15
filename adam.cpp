@@ -48,3 +48,16 @@ constexpr double Adam::optimize(const auto& func, const auto& deriv)
     return m_state.m_weight;
 }
 
+void testAdam()
+{
+    Adam adam{10.};
+    auto func
+    {
+        [](double x) {return x * x; }
+    };
+    auto deriv
+    {
+        [](double x) {return 2. * x; }
+    };
+    adam.optimize(func, deriv);
+}

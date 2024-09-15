@@ -6,12 +6,14 @@
 class Adam
 {
 public:
-    explicit Adam(double stepSize = 0.01,
+    explicit Adam(double initialVal=0.0,
+                            double stepSize = 0.01,
                             double firstOrderExpDecay = 0.9, 
                             double secondOrderExpDecay = 0.999, 
                             double eps = 1e-8,
-                            double tol = 1e-5)
-        : m_stepSize{ stepSize }
+                            double tol = 1e-8)
+        : m_state{ initialVal,0.0 }
+        , m_stepSize{ stepSize }
         , m_firstOrderExpDecay{ firstOrderExpDecay }
         , m_secondOrderExpDecay{ secondOrderExpDecay }
         , m_eps{ eps }
@@ -46,5 +48,7 @@ private:
     weightAndBias m_variances{};
 };
 
+
+void testAdam();
 
 #endif

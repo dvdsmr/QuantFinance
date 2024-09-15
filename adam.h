@@ -34,7 +34,7 @@ public:
 
     // updates the weight and bias of Adam in place
     constexpr void update(const auto& deriv);
-    constexpr double optimize(const auto& func, const auto& deriv);
+    constexpr double optimize(const auto& func, const auto& deriv, bool verbose=false);
 
 private:
     double m_stepSize{ 0.01 };

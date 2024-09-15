@@ -32,7 +32,7 @@ constexpr void Adam::update(const auto& deriv)
     return;
 }
 
-constexpr double Adam::optimize(const auto& func, const auto& deriv)
+constexpr double Adam::optimize(const auto& func, const auto& deriv, bool verbose)
 {
     bool converged{ false };
     int numIt{ 0 };
@@ -44,9 +44,12 @@ constexpr double Adam::optimize(const auto& func, const auto& deriv)
         converged = (std::abs(m_state.m_weight - oldWeight) < m_tol);
         ++numIt;
     }
-    std::cout << "Adam optimization converged after " << numIt << " gradient steps.\n";
-    std::cout << "Parameter value is " << m_state.m_weight << "\n";
-    std::cout << "with a function value of " << func(m_state.m_weight) << ".\n";
+    if (verbose)
+    {
+        std::cout << "Adam optimization converged after " << numIt << " gradient steps.\n";
+        std::cout << "Parameter value is " << m_state.m_weight << "\n";
+        std::cout << "with a function value of " << func(m_state.m_weight) << ".\n";
+    }
     return m_state.m_weight;
 }
 

@@ -92,14 +92,14 @@ auto main() -> int
 	outputPriceGrid(callPriceGrid);
 	*/
 
-	testAdam();
+	//testAdam();
 
-	// we test the vol calibrations
+	// we test the vol calibrations for AAPL call option on 09/13/24
 	std::vector<double> strikes{ np::linspace<double>(197.5,245.0,20) };
 	std::vector<double> mids{25.05,22.75,20.35,17.83,15.45,12.90,10.55,8.35,6.28,4.48,2.98,1.84,1.05,0.55,0.28,0.14,0.08,0.05,0.04,0.03};
 	assert(std::size(strikes) == std::size(mids));
 	double maturity{ 0.028 };
-	double interest{ 0.03 };
+	double interest{ 0.053 }; // short term US treasury yield on 09/13/2024
 	double spot{ 222.50 };
 	for (std::size_t i{ 0 }; i < std::size(strikes); ++i)
 	{
@@ -117,8 +117,8 @@ auto main() -> int
 				return 2 * (price - mids[i]) * Options::Pricing::BSM::callVega(interest, vol, maturity, strikes[i], spot, 0.0);
 			}
 		};
-		Adam adam{ 0.4 };
-		double optVol{ adam.optimize(func, deriv) };
+		Adam adam{ 0.2 };
+		double optVol{ adam.optimize(func, deriv, true) };
 		std::cout << "Adam found vol of " << optVol << " for the strike of " << strikes[i] <<  ".\n";
 	}
 

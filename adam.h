@@ -12,7 +12,7 @@ public:
                             double secondOrderExpDecay = 0.999, 
                             double eps = 1e-8,
                             double tol = 1e-8)
-        : m_state{ initialVal,0.0 }
+        : m_state{ initialVal,0.1 }
         , m_stepSize{ stepSize }
         , m_firstOrderExpDecay{ firstOrderExpDecay }
         , m_secondOrderExpDecay{ secondOrderExpDecay }
@@ -97,6 +97,7 @@ constexpr double Adam::optimize(const auto& func, const auto& deriv, bool verbos
         std::cout << "Adam optimization converged after " << numIt << " gradient steps.\n";
         std::cout << "Parameter value is " << m_state.m_weight << "\n";
         std::cout << "with a function value of " << func(m_state.m_weight) << ".\n";
+        std::cout << "bias is " << m_state.m_bias << "\n";
     }
     return m_state.m_weight;
 }

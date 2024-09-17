@@ -94,31 +94,32 @@ auto main() -> int
 
 	//testAdam();
 
-	// we test the vol calibrations for AAPL call option on 09/13/24
+	// we test the vol calibrations for AAPL call option on 09/13/24 for expiry on 09/20/24
 	std::vector<double> strikes{ np::linspace<double>(197.5,245.0,20) };
 	std::vector<double> mids{25.05,22.75,20.35,17.83,15.45,12.90,10.55,8.35,6.28,4.48,2.98,1.84,1.05,0.55,0.28,0.14,0.08,0.05,0.04,0.03};
 	assert(std::size(strikes) == std::size(mids));
 	double maturity{ 0.028 };
 	double interest{ 0.053 }; // short term US treasury yield on 09/13/2024
+	double dividendYield{ 0.0045 };
 	double spot{ 222.50 };
 	for (std::size_t i{ 0 }; i < std::size(strikes); ++i)
 	{
 		auto func
 		{
 			[&](double vol) {
-				double price{ Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, 0.0)};
+				double price{ Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, dividendYield)};
 				return (price - mids[i]) * (price - mids[i]);
 			}
 		};
 		auto deriv
 		{
 			[&](double vol) {
-				double price{ Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, 0.0)};
-				return 2 * (price - mids[i]) * Options::Pricing::BSM::callVega(interest, vol, maturity, strikes[i], spot, 0.0);
+				double price{ Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, dividendYield)};
+				return 2 * (price - mids[i]) * Options::Pricing::BSM::callVega(interest, vol, maturity, strikes[i], spot, dividendYield);
 			}
 		};
-		Adam adam{ 0.2 };
-		double optVol{ adam.optimize(func, deriv, true) };
+		Adam adam{ 0.7 };
+		double optVol{ adam.optimize(func, deriv, false) };
 		std::cout << "Adam found vol of " << optVol << " for the strike of " << strikes[i] <<  ".\n";
 	}
 

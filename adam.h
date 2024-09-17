@@ -76,8 +76,8 @@ constexpr void Adam::update(int t, const auto& deriv)
                                       m_variances.m_bias / (1 - std::pow(m_secondOrderExpDecay,t)) };
 
     // update weights and biases
-    m_state.m_weight = m_state.m_weight - m_stepSize * (meanCorrection.m_weight / (std::sqrt(varianceCorrection.m_weight) + m_tol));
-    m_state.m_bias = m_state.m_bias - m_stepSize * (meanCorrection.m_bias / (std::sqrt(varianceCorrection.m_bias) + m_tol));
+    m_state.m_weight = m_state.m_weight - m_stepSize * (meanCorrection.m_weight / (std::sqrt(varianceCorrection.m_weight) + m_eps));
+    m_state.m_bias = m_state.m_bias - m_stepSize * (meanCorrection.m_bias / (std::sqrt(varianceCorrection.m_bias) + m_eps));
 
     return;
 }
@@ -87,12 +87,16 @@ constexpr double Adam::optimize(const auto& func, const auto& deriv, bool verbos
 {
     bool converged{ false };
     double oldWeight{};
+    double oldBias{};
     int t{ 1 };
     while (!converged)
     {
         oldWeight = m_state.m_weight;
+        oldBias = m_state.m_bias;
         update(t,deriv);
-        converged = (std::abs(m_state.m_weight - oldWeight) < m_tol);
+        // Check for convergence on both weight and bias
+        converged = (std::abs(m_state.m_weight - oldWeight) < m_tol) &&
+            (std::abs(m_state.m_bias - oldBias) < m_tol);
         ++t;
     }
     if (verbose)

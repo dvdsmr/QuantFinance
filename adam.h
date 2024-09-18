@@ -70,10 +70,11 @@ constexpr void Adam::update(int t, const auto& deriv)
     m_variances.m_bias = m_secondOrderExpDecay * m_variances.m_bias + (1 - m_secondOrderExpDecay) * (gradWeightBias.m_bias * gradWeightBias.m_bias);
 
     // bias correction
-    weightAndBias meanCorrection{ m_means.m_weight / (1 - std::pow(m_firstOrderExpDecay,t)),
-                                  m_means.m_bias / (1 - std::pow(m_firstOrderExpDecay,t)) };
-    weightAndBias varianceCorrection{ m_variances.m_weight / (1 - std::pow(m_secondOrderExpDecay,t)), 
-                                      m_variances.m_bias / (1 - std::pow(m_secondOrderExpDecay,t)) };
+    weightAndBias meanCorrection{ m_means.m_weight / std::max(1e-8, (1 - std::pow(m_firstOrderExpDecay, t))),
+                                  m_means.m_bias / std::max(1e-8, (1 - std::pow(m_firstOrderExpDecay, t))) };
+    weightAndBias varianceCorrection{ m_variances.m_weight / std::max(1e-8, (1 - std::pow(m_secondOrderExpDecay, t))),
+                                      m_variances.m_bias / std::max(1e-8, (1 - std::pow(m_secondOrderExpDecay, t))) };
+
 
     // update weights and biases
     m_state.m_weight = m_state.m_weight - m_stepSize * (meanCorrection.m_weight / (std::sqrt(varianceCorrection.m_weight) + m_eps));

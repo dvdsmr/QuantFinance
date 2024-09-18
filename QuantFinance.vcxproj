@@ -138,6 +138,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="compounding.cpp" />
+    <ClCompile Include="copola.cpp" />
     <ClCompile Include="distributions.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="adam.cpp" />
@@ -148,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="compounding.h" />
+    <ClInclude Include="copola.h" />
     <ClInclude Include="distributions.h" />
     <ClInclude Include="adam.h" />
     <ClInclude Include="out.h" />

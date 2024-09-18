@@ -9,6 +9,7 @@
 #include "out.h"
 #include "adam.h"
 #include "numpy.h"
+#include "copola.h"
 #include <iostream>
 #include <iostream>
 #include <vector>
@@ -123,6 +124,19 @@ auto main() -> int
 		std::cout << "Adam found vol of " << optVol << " for the strike of " << strikes[i] <<  ".\n";
 	}
 
+	// test Gaussian copola default probs
+	std::vector<double> defaultProbs{0.2, 0.2, 0.06, 0.3, 0.4, 0.65, 0.3, 0.23, 0.02, 0.12, 0.134, 0.21,
+		0.08, 0.1, 0.1, 0.02, 0.3, 0.015, 0.2, 0.03};
+
+	std::vector<double> probOfNDefaults{ Copola::Gaussian::probOfNDefaultsUncorrolated(defaultProbs) };
+	
+	double sum{0.0};
+	for (std::size_t i{ 0 }; i < std::size(probOfNDefaults); ++i)
+	{
+		sum += probOfNDefaults[i];
+		std::cout << "The probability of exactly " << i << " defaults is " << probOfNDefaults[i] << ".\n";
+	}
+	std::cout << "The sum of all probs is " << sum << ".\n";
 
 	return 0;
 }

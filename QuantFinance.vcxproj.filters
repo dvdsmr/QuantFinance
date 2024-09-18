@@ -39,6 +39,9 @@
     <ClCompile Include="adam.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="copola.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="options.h">
@@ -75,6 +78,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="adam.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="copola.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

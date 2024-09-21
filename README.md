@@ -1,5 +1,5 @@
 # Quantitative Finance with C++
-This repo contains a code basis for quantitative methods in finance, coded C++ and visualized using Python. 
+This repo contains a code basis for quantitative methods in finance, coded in C++ and visualized using Python. 
 
 We can showcase the price surfaces in the Black-Scholes-Merton model for european call and put options.
 

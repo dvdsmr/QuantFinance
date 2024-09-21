@@ -8,7 +8,7 @@ European call             |  European put
 ![Call](Plots/priceSurface.png) |  ![Put](Plots/priceSurfacePut.png)
 
 
-The repository contains tools to simulate modern stochastic models for stock movements. The example plot below shows three paths of a Heston model, used to to model stock prices with a stochastic volatility process.
+The repository contains tools to simulate stochastic processes modelling stock prices. The example plot below shows three paths of a Heston model, used to to model stock prices with a stochastic volatility process.
 
 
 ![Heston model paths.](Plots/stockPath.png)

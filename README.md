@@ -1,7 +1,7 @@
 # Quantitative Finance with C++
 This repo contains a code basis for quantitative methods in finance, coded in C++ and visualized using Python. 
 
-We can showcase the price surfaces in the Black-Scholes-Merton model for european call and put options.
+As an example application, the below plot showcases the price surfaces in the Black-Scholes-Merton model for european call and put options.
 
 European call             |  European put
 :-------------------------:|:-------------------------:

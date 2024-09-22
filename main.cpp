@@ -127,6 +127,7 @@ auto main() -> int
 	// test Gaussian copola default probs
 	std::vector<double> defaultProbs{0.2, 0.2, 0.06, 0.3, 0.4, 0.65, 0.3, 0.23, 0.02, 0.12, 0.134, 0.21,
 		0.08, 0.1, 0.1, 0.02, 0.3, 0.015, 0.2, 0.03};
+	//std::vector<double> defaultProbs{ 0.5,0.5,0.5 };
 
 	std::vector<double> probOfNDefaults{ Copola::Gaussian::probOfNDefaultsUncorrolated(defaultProbs) };
 	

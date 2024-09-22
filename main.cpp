@@ -10,6 +10,7 @@
 #include "adam.h"
 #include "numpy.h"
 #include "copola.h"
+#include "volatility.h"
 #include <iostream>
 #include <iostream>
 #include <vector>
@@ -138,6 +139,8 @@ auto main() -> int
 		std::cout << "The probability of exactly " << i << " defaults is " << probOfNDefaults[i] << ".\n";
 	}
 	std::cout << "The sum of all probs is " << sum << ".\n";
+
+	LabeledTable volSurface{ Volatility::Surface::testCalibration() };
 
 	return 0;
 }

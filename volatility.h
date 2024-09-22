@@ -7,6 +7,7 @@ namespace Volatility
 	namespace Surface
 	{
 		auto call(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> LabeledTable;
+		LabeledTable testCalibration();
 	}
 }
 

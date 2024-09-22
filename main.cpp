@@ -132,6 +132,8 @@ auto main() -> int
 
 	std::vector<double> probOfNDefaults{ Copola::Gaussian::probOfNDefaultsUncorrolated(defaultProbs) };
 	
+
+	// default probs
 	double sum{0.0};
 	for (std::size_t i{ 0 }; i < std::size(probOfNDefaults); ++i)
 	{
@@ -140,8 +142,58 @@ auto main() -> int
 	}
 	std::cout << "The sum of all probs is " << sum << ".\n";
 
-	LabeledTable volSurface{ Volatility::Surface::testCalibration() };
-	Saving::write_labeledTable_to_csv("Data/ArtificalVolSurface.csv", volSurface);
+	// expected number of defaults
+	double expNum{ 0.0 };
+	for (std::size_t i{ 0 }; i < std::size(probOfNDefaults); ++i)
+	{
+		expNum += probOfNDefaults[i] * static_cast<double>(i);
+	}
+	std::cout << "The expected number of defaults is " << expNum << ".\n";
+
+	// variance of number of defaults
+	double varNum{ 0.0 };
+	for (std::size_t i{ 0 }; i < std::size(probOfNDefaults); ++i)
+	{
+		varNum += probOfNDefaults[i] * (static_cast<double>(i) - expNum) * (static_cast<double>(i) - expNum);
+	}
+	std::cout << "The variance of the number of defaults is " << varNum << ".\n";
+
+	// zero tranche
+	double expLossZeroTranche{ 0.0 };
+	expLossZeroTranche += probOfNDefaults[1] * 1. / 2.;
+	expLossZeroTranche += probOfNDefaults[2] * 1.;
+	for (std::size_t i{ 3 }; i < std::size(probOfNDefaults); ++i)
+	{
+		expLossZeroTranche += probOfNDefaults[i];
+	}
+	std::cout << "The expected loss is " << expLossZeroTranche * 2. << ".\n";
+
+	// this means that the expected loss in tranche 2 to 4 is
+	// expected number of more defaults than two
+	double expLossFirstTranche{ 0.0 };
+	//expLossFirstTranche += probOfNDefaults[2] * 1./3.;
+	expLossFirstTranche += probOfNDefaults[3] * 1. / 2.;
+	expLossFirstTranche += probOfNDefaults[4] * 1.;
+	for (std::size_t i{ 5 }; i < std::size(probOfNDefaults); ++i)
+	{
+		expLossFirstTranche += probOfNDefaults[i];
+	}
+	std::cout << "The expected loss is " << expLossFirstTranche*2.<< ".\n";
+
+	// this means that the expected loss in tranche 4 to 20 is
+	// expected number of more defaults than two
+	double expLossLastTranche{ 0.0 };
+	//expLossFirstTranche += probOfNDefaults[2] * 1./3.;
+	for (std::size_t i{ 5 }; i < std::size(probOfNDefaults); ++i)
+	{
+		expLossLastTranche += probOfNDefaults[i] * static_cast<double>(i-4)/16.;
+	}
+	std::cout << "The expected loss is " << expLossLastTranche * 16. << ".\n";
+
+	std::cout << "sum of all expected losses is " << expLossLastTranche * 16. + expLossFirstTranche * 2. + expLossZeroTranche * 2. << ".\n";
+
+	//LabeledTable volSurface{ Volatility::Surface::testCalibration() };
+	//Saving::write_labeledTable_to_csv("Data/ArtificalVolSurface.csv", volSurface);
 
 	return 0;
 }

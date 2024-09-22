@@ -16,7 +16,7 @@ namespace Volatility
 
 			// initialize the price table
 			using namespace std::string_view_literals;
-			LabeledTable volSurface(priceSurface.m_tableName,
+			LabeledTable volSurface("BSM volatility surface",
 				priceSurface.m_rowLabel,
 				priceSurface.m_numRows,
 				priceSurface.m_colLabel,
@@ -29,7 +29,7 @@ namespace Volatility
 			volSurface.m_colVals = priceSurface.m_colVals; // strike
 
 			// calibrate the vol surface. 
-			double volGuess{ 0.1 };
+			double volGuess{ 0.7 };
 			Adam adam{}; 
 			for (std::size_t row{ 0 }; row < std::size(volSurface.m_rowVals); ++row)
 			{
@@ -56,7 +56,7 @@ namespace Volatility
 
 					// Note that adam keeps the optimized vol as its state, so each iteration
 					// starts with the previously calibrated vol
-					volSurface.m_table[row][col] = adam.optimize(func, deriv);
+					volSurface.m_table[row][col] = adam.optimize(func, deriv, true);
 
 					// once we have iterated through all strikes for one maturity, we want
 					// to start the optimizer with the vol previously calibrated for the lowest strike

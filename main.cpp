@@ -141,6 +141,7 @@ auto main() -> int
 	std::cout << "The sum of all probs is " << sum << ".\n";
 
 	LabeledTable volSurface{ Volatility::Surface::testCalibration() };
+	Saving::write_labeledTable_to_csv("Data/ArtificalVolSurface.csv", volSurface);
 
 	return 0;
 }

@@ -10,9 +10,9 @@ European call             |  European put
 
 The repository contains tools to simulate stochastic processes modelling stock prices. The example plot below shows three paths of a Heston model, used to to model stock prices with a stochastic volatility process.
 
-<div style="text-align: center;">
+<center>
   <img src="Plots/stockPath.png" alt="Heston model paths" width="50%">
-</div>
+</center>
 
 Canonical models for derivative pricing are included. The below plot shows the development of the price, Delta and Gamma of a european call option in the Black-Scholes-Merton model as time to maturity increases.
 

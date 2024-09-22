@@ -26,7 +26,7 @@ namespace Volatility
 
 			// define strikes and maturities
 			volSurface.m_rowVals = priceSurface.m_rowVals; // time to maturity
-			volSurface.m_colVals = priceSurface.m_rowVals; // strike
+			volSurface.m_colVals = priceSurface.m_colVals; // strike
 
 			// calibrate the vol surface. 
 			double volGuess{ 0.1 };
@@ -77,7 +77,7 @@ namespace Volatility
 			using namespace std::string_view_literals;
 			LabeledTable priceSurface("Price surface"sv,
 				"Strikes"sv,
-				20,
+				21,
 				"Time to maturity"sv,
 				10,
 				"European call price"sv

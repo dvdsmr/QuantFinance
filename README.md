@@ -14,7 +14,7 @@ The repository contains tools to simulate stochastic processes modelling stock p
   <img src="Plots/stockPath.png" alt="Heston model paths" width="50%">
 </p>
 
-Canonical models for derivative pricing are included. The below plot shows the development of the price, Delta and Gamma of a european call option with strike $100 in the Black-Scholes-Merton model as time to maturity increases.
+Canonical models for derivative pricing are included. The below plot shows the development of the fair price, Delta and Gamma of a european call option with strike $100 in the Black-Scholes-Merton model as time to maturity increases.
 
 <p align="center">
   <img src="Plots/optionPrice.gif" alt="European call option in BSM model" width="50%">

@@ -29,7 +29,7 @@ namespace Volatility
 			volSurface.m_colVals = priceSurface.m_colVals; // strike
 
 			// calibrate the vol surface. 
-			double volGuess{ 0.7 };
+			double volGuess{ 0.9 };
 			Adam adam{}; 
 			for (std::size_t row{ 0 }; row < std::size(volSurface.m_rowVals); ++row)
 			{
@@ -42,15 +42,15 @@ namespace Volatility
 					auto func
 					{
 						[&](double vol) {
-							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
+							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_colVals[col], priceSurface.m_rowVals[row], spot, dividendYield) };
 							return (price - truePrice) * (price - truePrice);
 						}
 					};
 					auto deriv
 					{
 						[&](double vol) {
-							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
-							return 2 * (price - truePrice) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield);
+							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_colVals[col], priceSurface.m_rowVals[row], spot, dividendYield) };
+							return 2 * (price - truePrice) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, priceSurface.m_colVals[col], priceSurface.m_rowVals[row], spot, dividendYield);
 						}
 					};
 

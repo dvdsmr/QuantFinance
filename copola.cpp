@@ -95,7 +95,7 @@ namespace Copola
 			}
 			std::cout << "The expected loss is " << expLossLastTranche * 16. << ".\n";
 
-			std::cout << "sum of all expected losses is " << expLossLastTranche * 16. + expLossFirstTranche * 2. + expLossZeroTranche * 2. << ".\n";
+			std::cout << "sum of all expected losses is " << expLossLastTranche * 16. + expLossSecondTranche * 2. + expLossFirstTranche * 2. << ".\n";
 
         }
 

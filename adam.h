@@ -13,7 +13,7 @@ public:
                             double secondOrderExpDecay = 0.999, 
                             double eps = 1e-8,
                             double tol = 1e-8)
-        : m_state{ initialVal,0.1 }
+        : m_state{ initialVal,0.01 }
         , m_stepSize{ stepSize }
         , m_firstOrderExpDecay{ firstOrderExpDecay }
         , m_secondOrderExpDecay{ secondOrderExpDecay }

@@ -12,7 +12,7 @@ void testAdam()
     double maturity = 1.0;
     double interest = 0.03;
     double dividendYield = 0.0;
-    double trueVol{ 0.2 };
+    double trueVol{ 0.3 };
 
     double truePrice{ Options::Pricing::BSM::call(interest, trueVol, maturity, strike, spot, dividendYield) };
 
@@ -30,7 +30,7 @@ void testAdam()
             return 2 * (price - truePrice)* Options::Pricing::BSM::callVega(interest, vol, maturity, strike, spot, dividendYield);
         }
     };
-    Adam adam{ 0.4 };
+    Adam adam{ 0.2 };
     double optVol{ adam.optimize(func, deriv) };
     std::cout << "Adam found vol of " << optVol << ". True vol is " << trueVol << ".\n";
 }

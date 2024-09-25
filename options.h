@@ -3,7 +3,6 @@
 
 #include "securities.h"
 #include "xyvals.h"
-#include <complex>
 
 namespace Options
 {
@@ -51,10 +50,6 @@ namespace Options
 				auto callPriceSurface(double riskFreeReturn, double vol, double spot, double dividendYield) -> LabeledTable;
 			}
 
-			namespace CharacteristicFunctions
-			{
-				auto BSM(double argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> std::complex<double>;
-			}
 		}
 
 	}

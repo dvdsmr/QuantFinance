@@ -7,10 +7,6 @@
 #include <cmath>
 #include <string>
 #include <string_view>
-#include <complex>
-
-
-constexpr std::complex<double> IMNUM(0.0, 1.0);
 
 
 // ToDo: Exception handling for invalid prices!
@@ -294,15 +290,6 @@ namespace Options
 				}
 			}
 
-		}
-
-		namespace CharacteristicFunctions
-		{
-			auto BSM(double argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> std::complex<double>
-			{
-				return std::exp(IMNUM*(std::log(spot) + (riskFreeReturn - dividendYield - vol * vol / 2.0) *maturity)* argument
-								- vol * vol * argument * argument * maturity / 2.0) ;
-			}
 		}
 
 	}

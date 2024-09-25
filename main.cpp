@@ -110,14 +110,14 @@ auto main() -> int
 		{
 			[&](double vol) {
 				double price{ Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, dividendYield)};
-				return (price - mids[i]) * (price - mids[i]) + 1e1 * (vol - 0.4)*(vol - 0.4);
+				return (price - mids[i]) * (price - mids[i]) + 1e-1 * (vol - 0.4)*(vol - 0.4);
 			}
 		};
 		auto deriv
 		{
 			[&](double vol) {
 				double price{ Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, dividendYield)};
-				return 2 * (price - mids[i]) * Options::Pricing::BSM::callVega(interest, vol, maturity, strikes[i], spot, dividendYield) + 2 * 1e1 * (vol - 0.4);
+				return 2 * (price - mids[i]) * Options::Pricing::BSM::callVega(interest, vol, maturity, strikes[i], spot, dividendYield) + 2 * 1e-1 * (vol - 0.4);
 			}
 		};
 		Adam adam{ 0.3 };
@@ -127,8 +127,8 @@ auto main() -> int
 
 	//testAdam();
 
-	LabeledTable volSurface{ Volatility::Surface::testCalibration() };
-	Saving::write_labeledTable_to_csv("Data/ArtificalVolSurface.csv", volSurface);
+	//LabeledTable volSurface{ Volatility::Surface::testCalibration() };
+	//Saving::write_labeledTable_to_csv("Data/ArtificalVolSurface.csv", volSurface);
 
 	return 0;
 }

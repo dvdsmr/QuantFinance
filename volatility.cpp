@@ -43,14 +43,14 @@ namespace Volatility
 					{
 						[&](double vol) {
 							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
-							return (price - truePrice) * (price - truePrice) + 1e4 * (vol - volGuess) * (vol-volGuess);
+							return (price - truePrice) * (price - truePrice);
 						}
 					};
 					auto deriv
 					{
 						[&](double vol) {
 							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
-							return 2 * (price - truePrice) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) + 2 * 1e4 * (vol - volGuess);
+							return 2 * (price - truePrice) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield);
 						}
 					};
 

@@ -11,6 +11,7 @@ namespace Distributions
 		}
 	}
 
+
 	namespace CDFs
 	{
 		auto standardNormal(double x) -> double

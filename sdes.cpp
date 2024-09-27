@@ -97,6 +97,20 @@ namespace SDE
 			return std::exp(IMNUM * (std::log(spot) + (riskFreeReturn - dividendYield - vol * vol / 2.0) * maturity) * argument
 				- vol * vol * argument * argument * maturity / 2.0);
 		}
+
+		auto Heston(double argument, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot) -> std::complex<double>
+		{
+
+			std::complex<double> tmp{ (reversionRate - IMNUM * correlation * volVol * argument) };
+			std::complex<double> g{ std::sqrt((volVol * volVol) * (argument * argument + IMNUM * argument) + tmp * tmp) };
+			double pow1{ 2 * reversionRate * longVariance / (volVol * volVol) };
+			std::complex<double> numer1{ (reversionRate * longVariance * maturity * tmp) / (volVol * volVol) + IMNUM * argument * maturity * drift + IMNUM * argument * std::log(spot) };
+			std::complex<double> log_denum1{ pow1 * std::log(std::cosh(g * maturity / 2.0) + (tmp / g) * std::sinh(g * maturity / 2.0)) };
+			std::complex<double> tmp2{ ((argument * argument + IMNUM * argument) * initialVariance) / (g / std::tanh(g * maturity / 2.0) + tmp) };
+			std::complex<double> log_phi{ numer1 - log_denum1 - tmp2 };
+			std::complex<double> phi{ std::exp(log_phi) };
+			return phi;
+		}
 	}
 
 }

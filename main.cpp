@@ -110,19 +110,41 @@ auto main() -> int
 		{
 			[&](double vol) {
 				double price{ Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, dividendYield)};
-				return (price - mids[i]) * (price - mids[i]) + 1e-1 * (vol - 0.4)*(vol - 0.4);
+				return (price - mids[i]) * (price - mids[i]); //+ 1e-1 * (vol - 0.4)*(vol - 0.4);
 			}
 		};
 		auto deriv
 		{
 			[&](double vol) {
 				double price{ Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, dividendYield)};
-				return 2 * (price - mids[i]) * Options::Pricing::BSM::callVega(interest, vol, maturity, strikes[i], spot, dividendYield) + 2 * 1e-1 * (vol - 0.4);
+				return 2 * (price - mids[i]) * Options::Pricing::BSM::callVega(interest, vol, maturity, strikes[i], spot, dividendYield); //+ 2 * 1e-1 * (vol - 0.4);
 			}
 		};
 		Adam adam{ 0.3 };
 		double optVol{ adam.optimize(func, deriv, true) };
 		std::cout << "Adam found vol of " << optVol << " for the strike of " << strikes[i] <<  ".\n";
+	
+		// brute force approach
+		std::vector<double> vols{ np::linspace<double>(0.05,0.7,5000) };
+		double error{};
+		double newError{};
+		double volBrute{0.1};
+		double price{ Options::Pricing::BSM::call(interest, 0.1, maturity, strikes[i], spot, dividendYield) };
+		error = (price - mids[i]) * (price - mids[i]);
+		for (const auto& vol : vols)
+		{
+			price = Options::Pricing::BSM::call(interest, vol, maturity, strikes[i], spot, dividendYield);
+			newError = (price - mids[i]) * (price - mids[i]);
+			if (newError < error)
+			{
+				error = newError;
+				volBrute = vol;
+			}
+		}
+		std::cout << "Brute force approach found vol of " << volBrute << " for the strike of " << strikes[i] << ".\n";
+
+
+	
 	}
 
 	//testAdam();

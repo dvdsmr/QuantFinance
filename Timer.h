@@ -5,6 +5,17 @@
 
 class Timer
 {
+/* Use:
+	Timer t;
+
+	// Your own code here //
+
+	std::cout << "Time taken: " << t.elapsed() << " seconds\n";
+
+	t.reset() // start again from here
+
+	// more code to measure //
+*/
 private:
 	// Type aliases to make accessing nested type easier
 	using Clock = std::chrono::steady_clock;

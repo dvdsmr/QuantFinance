@@ -97,7 +97,7 @@ auto main() -> int
 	//testAdam();
 
 	// we test the vol calibrations for AAPL call option on 09/13/24 for expiry on 09/20/24
-	std::vector<double> strikes{ np::linspace<double>(197.5,245.0,20) };
+	std::vector<double> strikes{ np::linspace<double>(200.,245.0,20) };
 	std::vector<double> mids{25.05,22.55,20.35,17.83,15.45,12.90,10.55,8.35,6.28,4.48,2.98,1.84,1.05,0.55,0.28,0.14,0.08,0.05,0.04,0.03};
 	assert(std::size(strikes) == std::size(mids));
 	double maturity{ 0.028 };
@@ -125,7 +125,7 @@ auto main() -> int
 		std::cout << "Adam found vol of " << optVol << " for the strike of " << strikes[i] <<  ".\n";
 	
 		// brute force approach
-		std::vector<double> vols{ np::linspace<double>(0.05,0.7,5000) };
+		std::vector<double> vols{ np::linspace<double>(0.05,0.7,25000) };
 		double error{};
 		double newError{};
 		double volBrute{0.1};

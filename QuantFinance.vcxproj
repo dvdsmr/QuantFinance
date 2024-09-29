@@ -159,6 +159,7 @@
     <ClInclude Include="Random.h" />
     <ClInclude Include="sdes.h" />
     <ClInclude Include="numpy.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="volatility.h" />
     <ClInclude Include="xyvals.h" />
   </ItemGroup>

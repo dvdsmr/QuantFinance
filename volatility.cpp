@@ -11,8 +11,37 @@ namespace Volatility
 	namespace Surface
 	{
 		//	UNDER CONSTRUCTION
-		auto call(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view optimizer = "adam") -> LabeledTable
+		auto bsm(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view type = "call", std::string_view optimizer = "adam") -> LabeledTable
 		{
+			// get price function type call/put
+			auto bsmPrice
+			{
+				[&](double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) {
+					if (type == "call")
+					{
+						return Options::Pricing::BSM::call(riskFreeReturn, vol, maturity, strike, spot, dividendYield);
+					}
+					else
+					{
+						return Options::Pricing::BSM::put(riskFreeReturn, vol, maturity, strike, spot, dividendYield);
+					}
+				}
+			};
+
+			// get Vega of price option type. Note that this is the same in BSM model.
+			auto bsmVega
+			{
+				[&](double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) {
+					if (type == "call")
+					{
+						return Options::Pricing::BSM::callVega(riskFreeReturn, vol, maturity, strike, spot, dividendYield);
+					}
+					else
+					{
+						return Options::Pricing::BSM::putVega(riskFreeReturn, vol, maturity, strike, spot, dividendYield);
+					}
+				}
+			};
 
 			// initialize the price table
 			using namespace std::string_view_literals;
@@ -44,15 +73,15 @@ namespace Volatility
 						auto func
 						{
 							[&](double vol) {
-								double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
+								double price{ bsmPrice(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
 								return (price - truePrice) * (price - truePrice);
 							}
 						};
 						auto deriv
 						{
 							[&](double vol) {
-								double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
-								return 2 * (price - truePrice) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield);
+								double price{ bsmPrice(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
+								return 2 * (price - truePrice) * bsmVega(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield);
 							}
 						};
 
@@ -82,12 +111,12 @@ namespace Volatility
 						double newError{};
 						double volBrute{ vols[static_cast<std::size_t>(0)] };
 						double truePrice{ priceSurface.m_table[row][col] };
-						double price{ Options::Pricing::BSM::call(riskFreeReturn, volBrute, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
+						double price{ bsmPrice(riskFreeReturn, volBrute, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
 						error = (truePrice - price) * (truePrice - price);
 
 						for (const auto& vol : vols)
 						{
-							price = Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield);
+							price = bsmPrice(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield);
 							newError = (truePrice - price) * (truePrice - price);
 							if (newError < error)
 							{
@@ -158,7 +187,7 @@ namespace Volatility
 			const double dividendYield = 0.007;
 			const double spot{ 175.0 };
 			const double riskFreeReturn{ 0.045 };
-			LabeledTable volSurface{ call(priceSurface, riskFreeReturn, spot, dividendYield, "bruteForce")};
+			LabeledTable volSurface{ bsm(priceSurface, riskFreeReturn, spot, dividendYield, "call", "bruteForce")};
 
 			return volSurface;
 		

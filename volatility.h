@@ -8,7 +8,8 @@ namespace Volatility
 	namespace Surface
 	{
 		auto bsm(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view type = "call", std::string_view optimizer = "adam") -> LabeledTable;
-		LabeledTable testCalibration();
+		auto testCalibration() -> LabeledTable;
+		auto sanityCheck() -> void;
 	}
 }
 

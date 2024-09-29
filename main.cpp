@@ -153,5 +153,7 @@ auto main() -> int
 	LabeledTable volSurface{ Volatility::Surface::testCalibration() };
 	Saving::write_labeledTable_to_csv("Data/ArtificalVolSurface.csv", volSurface);
 
+	Volatility::Surface::sanityCheck();
+
 	return 0;
 }

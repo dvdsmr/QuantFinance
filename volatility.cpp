@@ -135,7 +135,7 @@ namespace Volatility
 			return volSurface;
 		}
 
-		LabeledTable testCalibration()
+		auto testCalibration() -> LabeledTable
 		{
 			// initialize the price table
 			using namespace std::string_view_literals;
@@ -192,5 +192,62 @@ namespace Volatility
 			return volSurface;
 		
 		}
+
+		// needs cleanup
+		auto sanityCheck() -> void
+		{
+			double strike{ 190. };
+			double maturity{ 1. * 151 / 365 };
+			double dividendYield{ 0.005 };
+			double riskFreeReturn{ 0.0245 };
+			double spot{ 190.3 };
+			double truePriceCall{ 10.875 };
+			double truePricePut{ 9.625 };
+
+			// define adam target function and derivative
+			auto func
+			{
+				[&](double vol) {
+					double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+					return (price - truePriceCall) * (price - truePriceCall);
+				}
+			};
+			auto deriv
+			{
+				[&](double vol) {
+					double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+					return 2 * (price - truePriceCall) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, maturity, strike, spot, dividendYield);
+				}
+			};
+			Adam adam{};
+			adam.set_state(0.1);
+			double volOpt{ adam.optimize(func, deriv, true) };
+
+			std::cout << "Found vol of " << volOpt << " for the call option.\n";
+			std::cout << "the true BSM implied vol is " << 0.205054798 << ".\n";
+
+			// define adam target function and derivative
+			auto funcPut
+			{
+				[&](double vol) {
+					double price{ Options::Pricing::BSM::put(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+					return (price - truePricePut) * (price - truePricePut);
+				}
+			};
+			auto derivPut
+			{
+				[&](double vol) {
+					double price{ Options::Pricing::BSM::put(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+					return 2 * (price - truePricePut) * Options::Pricing::BSM::putVega(riskFreeReturn, vol, maturity, strike, spot, dividendYield);
+				}
+			};
+
+			adam.set_state(0.1);
+			volOpt = adam.optimize(funcPut, derivPut, false);
+
+			std::cout << "Found vol of " << volOpt << " for the put option.\n";
+			std::cout << "the true BSM implied vol is " << 0.216923754 << ".\n";
+		}
+
 	}
 }

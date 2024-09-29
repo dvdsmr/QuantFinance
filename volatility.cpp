@@ -11,7 +11,7 @@ namespace Volatility
 	namespace Surface
 	{
 		//	UNDER CONSTRUCTION
-		auto call(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> LabeledTable
+		auto call(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view optimizer = "adam") -> LabeledTable
 		{
 
 			// initialize the price table
@@ -29,42 +29,77 @@ namespace Volatility
 			volSurface.m_colVals = priceSurface.m_colVals; // strike
 
 			// calibrate the vol surface. 
-			double volGuess{ 0.4 };
-			Adam adam{}; 
-			for (std::size_t row{ 0 }; row < std::size(volSurface.m_rowVals); ++row)
+			if (optimizer == "adam")
 			{
-				adam.set_state(volGuess); // initialize Adam with a guess of the volatility
-				for (std::size_t col{ 0 }; col < std::size(volSurface.m_colVals); ++col)
+				double volGuess{ 0.4 };
+				Adam adam{}; 
+				for (std::size_t row{ 0 }; row < std::size(volSurface.m_rowVals); ++row)
 				{
-					double truePrice{ priceSurface.m_table[row][col] };
-
-					// define adam target function and derivative
-					auto func
+					adam.set_state(volGuess); // initialize Adam with a guess of the volatility
+					for (std::size_t col{ 0 }; col < std::size(volSurface.m_colVals); ++col)
 					{
-						[&](double vol) {
-							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
-							return (price - truePrice) * (price - truePrice);
-						}
-					};
-					auto deriv
+						double truePrice{ priceSurface.m_table[row][col] };
+
+						// define adam target function and derivative
+						auto func
+						{
+							[&](double vol) {
+								double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
+								return (price - truePrice) * (price - truePrice);
+							}
+						};
+						auto deriv
+						{
+							[&](double vol) {
+								double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
+								return 2 * (price - truePrice) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield);
+							}
+						};
+
+						// Note that adam keeps the optimized vol as its state, so each iteration
+						// starts with the previously calibrated vol
+						volSurface.m_table[row][col] = adam.optimize(func, deriv, true);
+
+						// once we have iterated through all strikes for one maturity, we want
+						// to start the optimizer with the vol previously calibrated for the lowest strike
+						//if (col == static_cast<std::size_t>(0))
+						//{
+						//	volGuess = volSurface.m_table[row][col];
+						//}
+
+					}
+				}
+			}
+
+			if (optimizer == "bruteForce")
+			{
+				std::vector<double> vols{ np::linspace<double>(0.05,5.0,100000)};
+				for (std::size_t row{ 0 }; row < std::size(volSurface.m_rowVals); ++row)
+				{
+					for (std::size_t col{ 0 }; col < std::size(volSurface.m_colVals); ++col)
 					{
-						[&](double vol) {
-							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
-							return 2 * (price - truePrice) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield);
+						double error{};
+						double newError{};
+						double volBrute{ vols[static_cast<std::size_t>(0)] };
+						double truePrice{ priceSurface.m_table[row][col] };
+						double price{ Options::Pricing::BSM::call(riskFreeReturn, volBrute, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield) };
+						error = (truePrice - price) * (truePrice - price);
+
+						for (const auto& vol : vols)
+						{
+							price = Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[col], spot, dividendYield);
+							newError = (truePrice - price) * (truePrice - price);
+							if (newError < error)
+							{
+								error = newError;
+								volBrute = vol;
+							}
 						}
-					};
+						std::cout << "Brute force approach found vol " << volBrute << " with error " << error << ".\n";
 
-					// Note that adam keeps the optimized vol as its state, so each iteration
-					// starts with the previously calibrated vol
-					volSurface.m_table[row][col] = adam.optimize(func, deriv, true);
+						volSurface.m_table[row][col] = volBrute;
 
-					// once we have iterated through all strikes for one maturity, we want
-					// to start the optimizer with the vol previously calibrated for the lowest strike
-					//if (col == static_cast<std::size_t>(0))
-					//{
-					//	volGuess = volSurface.m_table[row][col];
-					//}
-
+					}
 				}
 			}
 
@@ -123,7 +158,7 @@ namespace Volatility
 			const double dividendYield = 0.007;
 			const double spot{ 175.0 };
 			const double riskFreeReturn{ 0.045 };
-			LabeledTable volSurface{ call(priceSurface, riskFreeReturn, spot, dividendYield) };
+			LabeledTable volSurface{ call(priceSurface, riskFreeReturn, spot, dividendYield, "bruteForce")};
 
 			return volSurface;
 		

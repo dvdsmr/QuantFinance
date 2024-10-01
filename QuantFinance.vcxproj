@@ -140,6 +140,7 @@
     <ClCompile Include="compounding.cpp" />
     <ClCompile Include="copola.cpp" />
     <ClCompile Include="distributions.cpp" />
+    <ClCompile Include="fft.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="adam.cpp" />
     <ClCompile Include="options.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="copola.h" />
     <ClInclude Include="distributions.h" />
     <ClInclude Include="adam.h" />
+    <ClInclude Include="fft.h" />
     <ClInclude Include="out.h" />
     <ClInclude Include="saving.h" />
     <ClInclude Include="securities.h" />

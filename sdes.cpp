@@ -98,18 +98,48 @@ namespace SDE
 				- vol * vol * argument * argument * maturity / 2.0);
 		}
 
-		auto Heston(double argument, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot) -> std::complex<double>
+		auto Heston(double argument, double riskFreeReturn, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot, double dividendYield) -> std::complex<double>
 		{
 
 			std::complex<double> tmp{ (reversionRate - IMNUM * correlation * volVol * argument) };
 			std::complex<double> g{ std::sqrt((volVol * volVol) * (argument * argument + IMNUM * argument) + tmp * tmp) };
 			double pow1{ 2 * reversionRate * longVariance / (volVol * volVol) };
-			std::complex<double> numer1{ (reversionRate * longVariance * maturity * tmp) / (volVol * volVol) + IMNUM * argument * maturity * drift + IMNUM * argument * std::log(spot) };
+			std::complex<double> numer1{ (reversionRate * longVariance * maturity * tmp) / (volVol * volVol) + IMNUM * argument * maturity * (riskFreeReturn - dividendYield) + IMNUM * argument * std::log(spot) };
 			std::complex<double> log_denum1{ pow1 * std::log(std::cosh(g * maturity / 2.0) + (tmp / g) * std::sinh(g * maturity / 2.0)) };
 			std::complex<double> tmp2{ ((argument * argument + IMNUM * argument) * initialVariance) / (g / std::tanh(g * maturity / 2.0) + tmp) };
 			std::complex<double> log_phi{ numer1 - log_denum1 - tmp2 };
 			std::complex<double> phi{ std::exp(log_phi) };
 			return phi;
+		}
+
+		auto generalCF(double argument, std::string_view model, std::vector<double> modelParams, std::vector<double> marketParams) -> std::complex<double>
+		{
+
+			double maturity{ marketParams[static_cast<std::size_t>(0)] };
+			double spot{ marketParams[static_cast<std::size_t>(1)] };
+			double riskFreeReturn{ marketParams[static_cast<std::size_t>(2)] };
+			double dividendYield{ marketParams[static_cast<std::size_t>(3)] };
+
+			if (model == "heston")
+			{
+				assert(std::size(modelParams) == 5);
+				double reversionRate{ modelParams[static_cast<std::size_t>(0)] };
+				double longVariance{ modelParams[static_cast<std::size_t>(1)] };
+				double volVol{ modelParams[static_cast<std::size_t>(2)] };
+				double correlation{ modelParams[static_cast<std::size_t>(3)] };
+				double initialVariance{ modelParams[static_cast<std::size_t>(4)] };
+
+				return Heston(argument, riskFreeReturn, initialVariance, longVariance, correlation, reversionRate, volVol, maturity, spot, dividendYield);
+
+			}
+
+			else // the default is black-scholes-merton
+			{
+				assert(std::size(modelParams) == 1);
+				double vol{ modelParams[static_cast<std::size_t>(0)] };
+
+				return BSM(argument, riskFreeReturn, vol, maturity, spot, dividendYield);
+			}
 		}
 	}
 

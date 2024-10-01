@@ -42,6 +42,9 @@
     <ClCompile Include="copola.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="fft.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="options.h">
@@ -84,6 +87,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="fft.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

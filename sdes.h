@@ -4,6 +4,32 @@
 #include <vector>
 #include <complex>
 
+
+constexpr std::complex<double> IMNUM(0.0, 1.0);
+
+
+struct BSMParams
+{
+	double vol{ 0.1 };
+};
+
+struct HestonParams
+{
+	double reversionRate{ 0.1 };
+	double longVariance{ 0.1 };
+	double volVol{ 0.1 };
+	double correlation{ 0.1 };
+	double initialVariance{ 0.1 };
+};
+
+struct MarketParams
+{
+	double maturity{ 1.0 };
+	double spot{ 100.0 };
+	double riskFreeReturn{ 0.05 };
+	double dividendYield{ 0.007 };
+};
+
 namespace SDE
 {
 	auto OrnsteinUhlenbeckStep(double state, double stepSize, double drift, double diffusion) -> double;
@@ -17,7 +43,8 @@ namespace SDE
 	namespace CharacteristicFunctions
 	{
 		auto BSM(double argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> std::complex<double>;
-		auto Heston(double argument, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot) -> std::complex<double>;
+		auto Heston(double argument, double riskFreeReturn, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot, double dividendYield) -> std::complex<double>;
+		auto generalCF(double argument, std::string_view model, const auto& modelParams, const MarketParams& marketParams) -> std::complex<double>;
 	}
 
 }

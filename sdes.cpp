@@ -1,13 +1,10 @@
 #include "Random.h"
 #include "xyvals.h"
+#include "sdes.h"
 #include <cmath>
 #include <vector>
 #include <cassert>
 #include <complex>
-
-
-constexpr std::complex<double> IMNUM(0.0, 1.0);
-
 
 
 namespace SDE
@@ -112,22 +109,21 @@ namespace SDE
 			return phi;
 		}
 
-		auto generalCF(double argument, std::string_view model, std::vector<double> modelParams, std::vector<double> marketParams) -> std::complex<double>
+		auto generalCF(double argument, std::string_view model, const auto& modelParams, const MarketParams& marketParams) -> std::complex<double>
 		{
 
-			double maturity{ marketParams[static_cast<std::size_t>(0)] };
-			double spot{ marketParams[static_cast<std::size_t>(1)] };
-			double riskFreeReturn{ marketParams[static_cast<std::size_t>(2)] };
-			double dividendYield{ marketParams[static_cast<std::size_t>(3)] };
+			double maturity{ marketParams.maturity };
+			double spot{ marketParams.spot };
+			double riskFreeReturn{ marketParams.riskFreeReturn };
+			double dividendYield{ marketParams.dividendYield };
 
 			if (model == "heston")
 			{
-				assert(std::size(modelParams) == 5);
-				double reversionRate{ modelParams[static_cast<std::size_t>(0)] };
-				double longVariance{ modelParams[static_cast<std::size_t>(1)] };
-				double volVol{ modelParams[static_cast<std::size_t>(2)] };
-				double correlation{ modelParams[static_cast<std::size_t>(3)] };
-				double initialVariance{ modelParams[static_cast<std::size_t>(4)] };
+				double reversionRate{ modelParams.reversionRate };
+				double longVariance{ modelParams.longVariance };
+				double volVol{ modelParams.volVol };
+				double correlation{ modelParams.correlation };
+				double initialVariance{ modelParams.initialVariance };
 
 				return Heston(argument, riskFreeReturn, initialVariance, longVariance, correlation, reversionRate, volVol, maturity, spot, dividendYield);
 
@@ -135,9 +131,7 @@ namespace SDE
 
 			else // the default is black-scholes-merton
 			{
-				assert(std::size(modelParams) == 1);
-				double vol{ modelParams[static_cast<std::size_t>(0)] };
-
+				double vol{ modelParams.vol };
 				return BSM(argument, riskFreeReturn, vol, maturity, spot, dividendYield);
 			}
 		}

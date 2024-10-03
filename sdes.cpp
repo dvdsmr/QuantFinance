@@ -6,6 +6,8 @@
 #include <cassert>
 #include <complex>
 
+constexpr std::complex<double> IMNUM(0.0, 1.0);
+
 
 namespace SDE
 {

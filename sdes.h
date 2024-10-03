@@ -4,10 +4,6 @@
 #include <vector>
 #include <complex>
 
-
-constexpr std::complex<double> IMNUM(0.0, 1.0);
-
-
 struct BSMParams
 {
 	double vol{ 0.1 };

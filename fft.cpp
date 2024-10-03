@@ -3,7 +3,9 @@
 #include <vector>
 #include <string_view>
 #include <cmath>
+#include <complex>
 
+constexpr std::complex<double> IMNUM(0.0, 1.0);
 constexpr double PI = 3.14159265358979323846;
 
 namespace FFT

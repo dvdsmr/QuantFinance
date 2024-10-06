@@ -1,6 +1,13 @@
 # Quantitative Finance with C++
 This repository contains a code basis for quantitative methods in finance, coded in C++ and visualized using Python. 
 
+As a first example of the methods in the repo, we can calibrate the Black-Scholes-Merton implied volatility to an option price surface. In this case, we are considering a Eurpoean call option on an underlying with spot price $175, strikes ranging from $150 to $200 and maturities ranging from 1 to 10 weeks. The risk free rate and dividend yield are assumed to be 4.5% and 0.7% respecitevly. we use the Adam optimizer (a variant of a gradient descent algorithm) for calibration of the model. Below, the price surface and corresponding volatility surface are plotted.
+
+European call price surface            |  European call BSM impled Vol
+:-------------------------:|:-------------------------:
+![Price](Plots/ArtificialPriceSurface.png) |  ![Vol](Plots/ArtificialVolsurface.png)
+
+
 As an example application, the below plot showcases the price surfaces in the Black-Scholes-Merton model for european call and put options.
 
 European call             |  European put

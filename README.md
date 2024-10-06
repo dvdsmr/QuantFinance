@@ -8,7 +8,7 @@ European call price surface            |  European call BSM impled Vol
 ![Price](Plots/priceSurfacePlot.png) |  ![Vol](Plots/volSurfacePlot.png)
 
 
-As an example application, the below plot showcases the price surfaces in the Black-Scholes-Merton model for european call and put options.
+As another example application, the below plot showcases the price surfaces in the Black-Scholes-Merton model for european call and put options.
 
 European call             |  European put
 :-------------------------:|:-------------------------:

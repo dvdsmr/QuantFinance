@@ -2,6 +2,7 @@
 #include "xyvals.h"
 #include "options.h"
 #include "adam.h"
+#include "volatility.h"
 #include <string>
 #include <string_view>
 
@@ -11,7 +12,7 @@ namespace Volatility
 	namespace Surface
 	{
 		//	UNDER CONSTRUCTION
-		auto bsm(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view type = "call", std::string_view optimizer = "adam") -> LabeledTable
+		auto bsm(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view type, std::string_view optimizer) -> LabeledTable
 		{
 			// get price function type call/put
 			auto bsmPrice
@@ -175,6 +176,8 @@ namespace Volatility
 					{ 25.00, 24.70, 24.50, 24.20, 23.90, 23.60, 23.30, 23.00, 22.70, 22.40, 22.05, 21.70, 21.35, 21.00, 20.65, 20.30, 19.95, 19.60, 19.25, 18.90, 18.55 }   // 10 weeks
 				}
 			};
+
+			Saving::write_labeledTable_to_csv("Data/ArtificalPriceSurface.csv", priceSurface);
 
 			/*
 			priceSurface.m_table = {

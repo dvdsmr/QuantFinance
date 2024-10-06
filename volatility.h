@@ -1,6 +1,8 @@
 #ifndef VOLATILITY_H
 #define VOLATILITY_H
+
 #include "xyvals.h"
+#include "saving.h"
 #include <string_view>
 
 namespace Volatility

@@ -5,7 +5,7 @@ As a first example of the methods in the repo, we can calibrate the Black-Schole
 
 European call price surface            |  European call BSM impled Vol
 :-------------------------:|:-------------------------:
-![Price](Plots/ArtificialPriceSurface.png) |  ![Vol](Plots/ArtificialVolsurface.png)
+![Price](Plots/priceSurfacePlot.png) |  ![Vol](Plots/volsurfacePlot.png)
 
 
 As an example application, the below plot showcases the price surfaces in the Black-Scholes-Merton model for european call and put options.

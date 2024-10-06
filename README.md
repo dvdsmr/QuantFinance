@@ -8,13 +8,6 @@ European call price surface            |  European call BSM impled Vol
 ![Price](Plots/priceSurfacePlot.png) |  ![Vol](Plots/volSurfacePlot.png)
 
 
-As another example application, the below plot showcases the price surfaces in the Black-Scholes-Merton model for european call and put options.
-
-European call             |  European put
-:-------------------------:|:-------------------------:
-![Call](Plots/priceSurface.png) |  ![Put](Plots/priceSurfacePut.png)
-
-
 The repository contains tools to simulate stochastic processes modelling stock prices. The example plot below shows three paths of a Heston model, used to to model stock prices with a stochastic volatility process.
 
 <p align="center">

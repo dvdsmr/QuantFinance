@@ -1,6 +1,7 @@
 #ifndef SDES_H
 #define SDES_H
 #include "xyvals.h"
+#include "saving.h"
 #include <vector>
 #include <complex>
 
@@ -43,6 +44,10 @@ namespace SDE
 		auto generalCF(double argument, std::string_view model, const auto& modelParams, const MarketParams& marketParams) -> std::complex<double>;
 	}
 
+	namespace Testing
+	{
+		auto saveHestonPaths() -> void;
+	}
 }
 
 #endif

@@ -139,4 +139,16 @@ namespace SDE
 		}
 	}
 
+	namespace Testing
+	{
+		auto saveHestonPaths() -> void
+		{
+			XYVals spath2{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+			Saving::write_xyvals_to_csv("Data/stockPath1.csv", spath2);
+			XYVals spath3{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+			Saving::write_xyvals_to_csv("Data/stockPath2.csv", spath3);
+			XYVals spath4{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+			Saving::write_xyvals_to_csv("Data/stockPath3.csv", spath4);
+		}
+	}
 }

@@ -1,8 +1,9 @@
 #ifndef OPTION_RETURNS_H
 #define OPTION_RETURNS_H
-
+#include "out.h"
 #include "securities.h"
 #include "xyvals.h"
+#include "saving.h"
 
 namespace Options
 {
@@ -54,6 +55,8 @@ namespace Options
 
 	}
 	
+	const void testCallGrid();
+	const void savePriceSurface();
 	const void testPricing();
 	void strangleUnitTest();
 	void callCreditSpreadUnitTest();

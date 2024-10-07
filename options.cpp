@@ -339,6 +339,30 @@ namespace Options
 		std::cout << "The payoff of your spread " << Options::Payoffs::callCreditSpread(strikeShortCall, strikeCall, spot) << ".\n";
 	}
 
+	const void testCallGrid()
+	{
+		double riskFreeReturn{ 1.05 };
+		double strike{ 120. };
+		double spot{ 100. };
+		double dividendYield{ 0.03 };
+		int length{ 10 };
+		double upTick{ 1.05 };
+
+		PriceGrid callPriceGrid{ Options::Pricing::BinomialOneStep::callGrid(riskFreeReturn,upTick,strike,spot,length,dividendYield) };
+		std::cout << callPriceGrid.m_gridName << " " << callPriceGrid.m_xLabel << "\n";
+		std::cout << callPriceGrid.m_gridVals[0][0];
+
+		Output::priceGrid(callPriceGrid);
+	}
+
+	const void savePriceSurface()
+	{
+		LabeledTable priceSurface{ Options::Pricing::BSM::DataGeneration::callPriceSurface(0.05, 0.1, 100., 0.02) };
+		std::cout << priceSurface.m_rowLabel << " " << priceSurface.m_colLabel << " " << priceSurface.m_tableLabel << "\n";
+
+		Saving::write_labeledTable_to_csv("Data/PriceSurface.csv", priceSurface);
+	}
+
 	const void testPricing()
 	{
 

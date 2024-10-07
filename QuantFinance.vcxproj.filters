@@ -48,6 +48,9 @@
     <ClCompile Include="saving.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="out.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="options.h">

@@ -24,7 +24,7 @@ namespace FFT
 
 	};
 
-	auto separateModes(std::vector<std::complex<double>> vec) -> ModePair
+	auto separateModes(const std::vector<std::complex<double>>& vec) -> ModePair
 	{
 		assert(!vec.empty());
 		std::size_t length{ std::size(vec) };
@@ -52,7 +52,7 @@ namespace FFT
 		return result;
 	}
 
-	auto dft(std::vector<std::complex<double>> vec) -> std::vector<std::complex<double>>
+	auto dft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>
 	{
 		// discrete ft, inefficient for larger vectors and only to be used in "leaves" of fft
 		std::size_t length{ std::size(vec) };
@@ -68,7 +68,7 @@ namespace FFT
 	}
 
 	// TODO: replace with actual fft
-	auto fft(std::vector<std::complex<double>> vec) -> std::vector<std::complex<double>>
+	auto fft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>
 	{
 		
 		std::size_t length{ std::size(vec) };
@@ -105,7 +105,7 @@ namespace FFT
 										X_even + terms[int(N / 2) : ] * X_odd])
 
 		*/
-		return fourier;
+		return fourierTrafo;
 	}
 
 	auto pricingfft(std::string_view model, const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair

@@ -11,6 +11,7 @@
 #include "numpy.h"
 #include "copola.h"
 #include "volatility.h"
+#include "fft.h"
 #include <iostream>
 #include <iostream>
 #include <vector>

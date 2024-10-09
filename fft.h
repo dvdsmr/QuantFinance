@@ -7,6 +7,18 @@
 
 namespace FFT
 {
+	struct ModePair
+	{
+		std::vector<std::complex<double>> evens{};
+		std::vector<std::complex<double>> odds{};
+
+		ModePair(std::size_t length)
+			: evens{ std::vector<std::complex<double>>((length + 1) / 2) }
+			, odds{ std::vector<std::complex<double>>(length / 2) }
+		{}
+
+	};
+
 	struct fttParams
 	{
 		double decayParam{ 1.5 };
@@ -20,8 +32,10 @@ namespace FFT
 		std::vector<double> prices{};
 	};
 
+	auto separateModes(const std::vector<std::complex<double>>& vec) -> ModePair;
 	auto intPow(int base, int exponent) -> int;
-	auto fft(std::vector<std::complex<double>> vec) -> std::vector<std::complex<double>>;
+	auto dft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
+	auto fft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto pricingfft(std::string_view model, const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair;
 }
 

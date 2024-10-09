@@ -12,18 +12,6 @@ constexpr double PI = 3.14159265358979323846;
 namespace FFT
 {
 
-	struct ModePair
-	{
-		std::vector<std::complex<double>> evens{};
-		std::vector<std::complex<double>> odds{};
-
-		ModePair(std::size_t length)
-			: evens{ std::vector<std::complex<double>>((length + 1) / 2) }
-			, odds{ std::vector<std::complex<double>>(length / 2) }
-		{}
-
-	};
-
 	auto separateModes(const std::vector<std::complex<double>>& vec) -> ModePair
 	{
 		assert(!vec.empty());
@@ -74,12 +62,20 @@ namespace FFT
 		std::size_t length{ std::size(vec) };
 		assert(length % 2 == 0); // fft only works for arrays with length which is a power of 2
 
+		// build vector of factors for current length
+		std::vector<std::complex<double>> terms(length);
+		for (std::size_t i{ 0 }; i < length; ++i)
+		{
+			terms[i] = std::exp(-2.0 * IMNUM * PI * static_cast<double>(i) / static_cast<double>(length));
+		}
+
 		if (length <= static_cast<std::size_t>(2))
 		{
 			return dft(vec);
 		}
 		else
 		{
+			ModePair modePair{ separateModes(vec) };
 
 		}
 

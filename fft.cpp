@@ -20,10 +20,53 @@ namespace FFT
 		return result;
 	}
 
+	auto dft(std::vector<std::complex<double>> vec) -> std::vector<std::complex<double>>
+	{
+		// discrete ft, inefficient for larger vectors and only to be used in "leaves" of fft
+		std::size_t length{ std::size(vec) };
+		std::vector<std::complex<double>> fourierTrafo(length);
+		for (std::size_t k{ 0 }; k < length; ++k)
+		{
+			for (std::size_t n{ 0 }; k < length; ++n)
+			{
+				fourierTrafo[k] += vec[n] * std::exp(-2.0 * IMNUM * PI * static_cast<double>(k * n) / static_cast<double>(length));
+			}
+		}
+		return fourierTrafo;
+	}
+
 	// TODO: replace with actual fft
 	auto fft(std::vector<std::complex<double>> vec) -> std::vector<std::complex<double>>
 	{
 		std::vector<std::complex<double>> fourier(std::size(vec));
+
+		/* Python code
+		import numpy as np
+
+		def fft(x) :
+			x = np.asarray(x, dtype = float)
+			N = x.shape[0]
+			if N % 2 > 0:
+				raise ValueError("must be a power of 2")
+			elif N <= 2 :
+				return dft(x)
+			else:
+				X_even = fft(x[::2])
+				X_odd = fft(x[1::2])
+				terms = np.exp(-2j * np.pi * np.arange(N) / N)
+				return np.concatenate([X_even + terms[:int(N / 2)] * X_odd, \
+										X_even + terms[int(N / 2) : ] * X_odd])
+
+		def dft(x) :
+
+			N = x.shape[0]
+			X = np.zeros(N, dtype = complex)
+			for k in range(N) :
+				for n in range(N) :
+					X[k] += x[n] * np.exp(-2j * np.pi * k * n / N)
+			return X
+
+		*/
 		return fourier;
 	}
 

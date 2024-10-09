@@ -4,12 +4,44 @@
 #include <string_view>
 #include <cmath>
 #include <complex>
+#include <cassert>
 
 constexpr std::complex<double> IMNUM(0.0, 1.0);
 constexpr double PI = 3.14159265358979323846;
 
 namespace FFT
 {
+
+	struct ModePair
+	{
+		std::vector<std::complex<double>> evens{};
+		std::vector<std::complex<double>> odds{};
+
+		ModePair(std::size_t length)
+			: evens{ std::vector<std::complex<double>>((length + 1) / 2) }
+			, odds{ std::vector<std::complex<double>>(length / 2) }
+		{}
+
+	};
+
+	auto separateModes(std::vector<std::complex<double>> vec) -> ModePair
+	{
+		assert(!vec.empty());
+		std::size_t length{ std::size(vec) };
+		ModePair pair(length);
+
+
+		for (std::size_t i{ 0 }, j{ 0 }; i < (length - 1); i += 2, ++j) {
+			pair.evens[j] = (vec[i]);
+			pair.odds[j] = (vec[i + 1]);
+		}
+
+		if (vec.size() % 2)
+		{
+			pair.evens.push_back(vec.back());
+		}
+		return pair;
+	}
 
 	auto intPow(int base, int exponent) -> int 
 	{
@@ -38,7 +70,22 @@ namespace FFT
 	// TODO: replace with actual fft
 	auto fft(std::vector<std::complex<double>> vec) -> std::vector<std::complex<double>>
 	{
-		std::vector<std::complex<double>> fourier(std::size(vec));
+		
+		std::size_t length{ std::size(vec) };
+		assert(length % 2 == 0); // fft only works for arrays with length which is a power of 2
+
+		if (length <= static_cast<std::size_t>(2))
+		{
+			return dft(vec);
+		}
+		else
+		{
+
+		}
+
+		std::vector<std::complex<double>> fourierTrafo(std::size(vec));
+
+
 
 		/* Python code
 		import numpy as np
@@ -56,15 +103,6 @@ namespace FFT
 				terms = np.exp(-2j * np.pi * np.arange(N) / N)
 				return np.concatenate([X_even + terms[:int(N / 2)] * X_odd, \
 										X_even + terms[int(N / 2) : ] * X_odd])
-
-		def dft(x) :
-
-			N = x.shape[0]
-			X = np.zeros(N, dtype = complex)
-			for k in range(N) :
-				for n in range(N) :
-					X[k] += x[n] * np.exp(-2j * np.pi * k * n / N)
-			return X
 
 		*/
 		return fourier;

@@ -21,9 +21,10 @@
 auto main() -> int
 {
 
-	LabeledTable volSurface{ Volatility::Surface::testCalibration() };
-	Saving::write_labeledTable_to_csv("Data/ArtificalVolSurface.csv", volSurface);
+	//LabeledTable volSurface{ Volatility::Surface::testCalibration() };
+	//Saving::write_labeledTable_to_csv("Data/ArtificalVolSurface.csv", volSurface);
 
+	//FFT::testPricingfft();
 
 	return 0;
 }

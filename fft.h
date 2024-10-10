@@ -38,7 +38,8 @@ namespace FFT
 	auto concatenate(std::vector<T>& vec1, const std::vector<T>& vec2) -> std::vector<T>;
 	auto dft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto fft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
-	auto pricingfft(std::string_view model, const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair;
+	template <typename T>
+	auto pricingfft(std::string_view model, const T& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair;
 	auto testPricingfft() -> LogStrikePricePair;
 }
 

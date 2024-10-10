@@ -39,9 +39,10 @@ namespace SDE
 
 	namespace CharacteristicFunctions
 	{
-		auto BSM(double argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> std::complex<double>;
-		auto Heston(double argument, double riskFreeReturn, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot, double dividendYield) -> std::complex<double>;
-		auto generalCF(double argument, std::string_view model, const auto& modelParams, const MarketParams& marketParams) -> std::complex<double>;
+		auto BSM(std::complex<double> argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> std::complex<double>;
+		auto Heston(std::complex<double> argument, double riskFreeReturn, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot, double dividendYield) -> std::complex<double>;
+		template <typename T>
+		auto generalCF(std::complex<double> argument, std::string_view model, const T& modelParams, const MarketParams& marketParams) -> std::complex<double>;
 	}
 
 	namespace Testing

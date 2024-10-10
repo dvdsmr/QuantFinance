@@ -101,7 +101,8 @@ namespace FFT
 
 	}
 
-	auto pricingfft(std::string_view model, const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
+	template <typename T>
+	auto pricingfft(std::string_view model, const T& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
 	{
 
 		// Parameters setting in fourier transform
@@ -114,7 +115,6 @@ namespace FFT
 		double maturity{ marketParams.maturity };
 		double spot{ marketParams.spot };
 		double riskFreeReturn{ marketParams.riskFreeReturn };
-		double dividendYield{ marketParams.dividendYield };
 
 		[[maybe_unused]] int gridNum{ intPow(2,gridExponent)};
 		// step - size in log strike space
@@ -122,9 +122,6 @@ namespace FFT
 		// smallest value in log strike space
 		[[maybe_unused]] double lowestLogStrike{ std::log(spot) - gridNum * gridWidthLogStrikeSpace / 2. };
 
-
-		// under construction
-		std::vector<double> prices{};
 
 		// forming vector x and strikes km for m = 1, ..., N
 		std::vector<double> logStrikes{};
@@ -140,7 +137,7 @@ namespace FFT
 			logStrikes.push_back(lowestLogStrike + j * gridWidthLogStrikeSpace);
 
 			// generalCF(double argument, std::string_view model, const auto & modelParams, const MarketParams & marketParams)
-			std::complex<double> psi_nuJ{ discount * SDE::CharacteristicFunctions::generalCF(nuJ - (decayParam + 1) * IMNUM, model, modelParams, marketParams) / ((decayParam + IMNUM * nuJ) * (decayParam + 1. + IMNUM * nuJ)) };
+			std::complex<double> psi_nuJ{ discount * SDE::CharacteristicFunctions::generalCF<T>(nuJ - (decayParam + 1) * IMNUM, model, modelParams, marketParams) / ((decayParam + IMNUM * nuJ) * (decayParam + 1. + IMNUM * nuJ)) };
 			double weight{};
 			if (j == 0)
 			{
@@ -170,15 +167,15 @@ namespace FFT
 		return result;
 	}
 
-
+	
 	auto testPricingfft() -> LogStrikePricePair
 	{
 		HestonParams hestonParams{};
 		fttParams params{};
 		MarketParams marketParams{};
 
-		return pricingfft("heston", hestonParams, marketParams, params);
-
+		return pricingfft<HestonParams>("heston", hestonParams, marketParams, params);
 	}
+	
 
 }

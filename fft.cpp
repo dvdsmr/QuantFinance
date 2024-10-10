@@ -40,6 +40,14 @@ namespace FFT
 		return result;
 	}
 
+	template <typename T>
+	auto concatenate(std::vector<T>& vec1, const std::vector<T>& vec2) -> std::vector<T>
+	{
+		std::vector<T> result(std::begin(vec1), std::end(vec1));
+		result.insert(std::end(result), std::begin(vec2), std::end(vec2));
+		return result;
+	}
+
 	auto dft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>
 	{
 		// discrete ft, inefficient for larger vectors and only to be used in "leaves" of fft
@@ -76,32 +84,21 @@ namespace FFT
 		else
 		{
 			ModePair modePair{ separateModes(vec) };
+			std::vector<std::complex<double>> evens{ fft(modePair.evens) };
+			std::vector<std::complex<double>> odds{ fft(modePair.odds) };
 
+
+			std::vector<std::complex<double>> firstPart(length / 2);
+			std::vector<std::complex<double>> secondPart(length / 2);
+			for (std::size_t i{ 0 }; i < length / 2; ++i)
+			{
+				firstPart[i] = evens[i] + terms[i] * odds[i];
+				secondPart[i] = evens[i] + terms[i + length / 2] * odds[i];
+			}
+
+			return concatenate(firstPart, secondPart);
 		}
 
-		std::vector<std::complex<double>> fourierTrafo(std::size(vec));
-
-
-
-		/* Python code
-		import numpy as np
-
-		def fft(x) :
-			x = np.asarray(x, dtype = float)
-			N = x.shape[0]
-			if N % 2 > 0:
-				raise ValueError("must be a power of 2")
-			elif N <= 2 :
-				return dft(x)
-			else:
-				X_even = fft(x[::2])
-				X_odd = fft(x[1::2])
-				terms = np.exp(-2j * np.pi * np.arange(N) / N)
-				return np.concatenate([X_even + terms[:int(N / 2)] * X_odd, \
-										X_even + terms[int(N / 2) : ] * X_odd])
-
-		*/
-		return fourierTrafo;
 	}
 
 	auto pricingfft(std::string_view model, const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
@@ -125,9 +122,6 @@ namespace FFT
 		// smallest value in log strike space
 		[[maybe_unused]] double lowestLogStrike{ std::log(spot) - gridNum * gridWidthLogStrikeSpace / 2. };
 
-
-		// Choice of beta
-		//double lowestLogStrike{ std::log(S0) - gridNum * gridWidthLogStrikeSpace / 2 };
 
 		// under construction
 		std::vector<double> prices{};

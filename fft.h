@@ -34,6 +34,8 @@ namespace FFT
 
 	auto separateModes(const std::vector<std::complex<double>>& vec) -> ModePair;
 	auto intPow(int base, int exponent) -> int;
+	template <typename T>
+	auto concatenate(std::vector<T>& vec1, const std::vector<T>& vec2) -> std::vector<T>;
 	auto dft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto fft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto pricingfft(std::string_view model, const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair;

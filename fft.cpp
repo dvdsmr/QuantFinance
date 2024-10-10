@@ -170,4 +170,15 @@ namespace FFT
 		return result;
 	}
 
+
+	auto testPricingfft() -> LogStrikePricePair
+	{
+		HestonParams hestonParams{};
+		fttParams params{};
+		MarketParams marketParams{};
+
+		return pricingfft("heston", hestonParams, marketParams, params);
+
+	}
+
 }

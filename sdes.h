@@ -12,19 +12,19 @@ struct BSMParams
 
 struct HestonParams
 {
-	double reversionRate{ 0.1 };
-	double longVariance{ 0.1 };
-	double volVol{ 0.1 };
-	double correlation{ 0.1 };
-	double initialVariance{ 0.1 };
+	double reversionRate{ 0.3 };
+	double longVariance{ 15. };
+	double volVol{ 0.2 };
+	double correlation{ 0.2 };
+	double initialVariance{ 8. };
 };
 
 struct MarketParams
 {
 	double maturity{ 1.0 };
 	double spot{ 100.0 };
-	double riskFreeReturn{ 0.05 };
-	double dividendYield{ 0.007 };
+	double riskFreeReturn{ 0.095 };
+	double dividendYield{ 0.005 };
 };
 
 namespace SDE

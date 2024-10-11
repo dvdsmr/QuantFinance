@@ -111,6 +111,21 @@ namespace SDE
 			return phi;
 		}
 
+		auto generalCF(std::complex<double> argument, const HestonParams& modelParams, const MarketParams& marketParams) -> std::complex<double>
+		{
+
+			return Heston(argument, marketParams.riskFreeReturn, modelParams.initialVariance, modelParams.longVariance, 
+							modelParams.correlation, modelParams.reversionRate, modelParams.volVol, 
+							marketParams.maturity, marketParams.spot, marketParams.dividendYield);
+		}
+
+		auto generalCF(std::complex<double> argument, const BSMParams& modelParams, const MarketParams& marketParams) -> std::complex<double>
+		{
+			return BSM(argument, marketParams.riskFreeReturn, modelParams.vol, marketParams.maturity, 
+						marketParams.spot, marketParams.dividendYield);
+		}
+
+
 	}
 
 	namespace Testing

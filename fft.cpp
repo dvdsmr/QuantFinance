@@ -60,7 +60,6 @@ namespace FFT
 		return fourierTrafo;
 	}
 
-	// TODO: replace with actual fft
 	auto fft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>
 	{
 		
@@ -98,14 +97,79 @@ namespace FFT
 
 	}
 
+	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
+	{
+
+		// Parameters setting in fourier transform
+		double decayParam{ params.decayParam };
+		double gridWidth{ params.gridWidth };
+		int gridExponent{ params.gridExponent };
+
+		// get market parameters
+		double maturity{ marketParams.maturity };
+		double spot{ marketParams.spot };
+		double riskFreeReturn{ marketParams.riskFreeReturn };
+
+		int gridNum{ intPow(2,gridExponent) };
+		// step - size in log strike space
+		double gridWidthLogStrikeSpace{ (2. * PI / gridNum) / gridWidth };
+		// smallest value in log strike space
+		double lowestLogStrike{ std::log(spot) - gridNum * gridWidthLogStrikeSpace / 2. };
+
+
+		// forming vector x and strikes km for m = 1, ..., N
+		std::vector<double> logStrikes{};
+		std::vector<std::complex<double>> xX{};
+
+		// discount factor
+		double discount{ std::exp(-riskFreeReturn * maturity) };
+
+
+		for (std::size_t j{ 0 }; j < gridNum; ++j)
+		{
+			double nuJ{ j * gridWidth };
+			logStrikes.push_back(lowestLogStrike + j * gridWidthLogStrikeSpace);
+
+			// generalCF(double argument, std::string_view model, const auto & modelParams, const MarketParams & marketParams)
+			std::complex<double> psi_nuJ{ discount * SDE::CharacteristicFunctions::generalCF(nuJ - (decayParam + 1) * IMNUM, modelParams, marketParams) / ((decayParam + IMNUM * nuJ) * (decayParam + 1. + IMNUM * nuJ)) };
+			double weight{};
+			if (j == 0)
+			{
+				weight = (gridWidth / 2.0);
+			}
+			else
+			{
+				weight = gridWidth;
+			}
+
+			xX.push_back(std::exp(-IMNUM * lowestLogStrike * nuJ) * psi_nuJ * weight);
+		}
+
+		// compute fft TODO
+		std::vector<std::complex<double>> yY{ fft(xX) };
+		// ----------------
+
+		std::vector<double> prices{};
+		for (std::size_t j{ 0 }; j < gridNum; ++j)
+		{
+			double multiplier{ std::exp(-decayParam * logStrikes[j]) / PI };
+			prices.push_back(multiplier * std::real(yY[j]));
+		}
+
+		LogStrikePricePair result{ logStrikes,prices };
+
+		return result;
+	}
+
 	
 	auto testPricingfft() -> LogStrikePricePair
 	{
 		HestonParams hestonParams{};
+		BSMParams bsmParams{};
 		fttParams params{};
 		MarketParams marketParams{};
 
-		return pricingfft("heston", hestonParams, marketParams, params);
+		return pricingfft(bsmParams, marketParams, params);
 	}
 	
 

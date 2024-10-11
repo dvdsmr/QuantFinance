@@ -4,6 +4,16 @@
 #include "saving.h"
 #include <vector>
 #include <complex>
+#include <iostream>
+#include <type_traits>
+
+// Helper template to check if a type T has a member named 'vol'
+template<typename T, typename = void>
+struct has_vol : std::false_type {};
+
+template<typename T>
+struct has_vol<T, std::void_t<decltype(std::declval<T>().vol)>> : std::true_type {};
+
 
 struct BSMParams
 {
@@ -18,7 +28,7 @@ struct HestonParams
 	double correlation{ 0.2 };
 	double initialVariance{ 8. };
 	// should be deleted
-	double vol{ 0.8 };
+	// double vol{ 0.8 };
 };
 
 struct MarketParams
@@ -43,34 +53,8 @@ namespace SDE
 	{
 		auto BSM(std::complex<double> argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> std::complex<double>;
 		auto Heston(std::complex<double> argument, double riskFreeReturn, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot, double dividendYield) -> std::complex<double>;
-		
-		// defined in header because of template argument deduction
-		auto generalCF(std::complex<double> argument, std::string_view model, const auto& modelParams, const MarketParams& marketParams) -> std::complex<double>
-		{
-
-			double maturity{ marketParams.maturity };
-			double spot{ marketParams.spot };
-			double riskFreeReturn{ marketParams.riskFreeReturn };
-			double dividendYield{ marketParams.dividendYield };
-
-			if (model == "heston")
-			{
-				double reversionRate{ modelParams.reversionRate };
-				double longVariance{ modelParams.longVariance };
-				double volVol{ modelParams.volVol };
-				double correlation{ modelParams.correlation };
-				double initialVariance{ modelParams.initialVariance };
-
-				return Heston(argument, riskFreeReturn, initialVariance, longVariance, correlation, reversionRate, volVol, maturity, spot, dividendYield);
-
-			}
-
-			else // the default is black-scholes-merton
-			{
-				double vol{ modelParams.vol };
-				return BSM(argument, riskFreeReturn, vol, maturity, spot, dividendYield);
-			}
-		}
+		auto generalCF(std::complex<double> argument, const HestonParams& modelParams, const MarketParams& marketParams) -> std::complex<double>;
+		auto generalCF(std::complex<double> argument, const BSMParams& modelParams, const MarketParams& marketParams) -> std::complex<double>;
 	}
 
 	namespace Testing

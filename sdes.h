@@ -17,6 +17,8 @@ struct HestonParams
 	double volVol{ 0.2 };
 	double correlation{ 0.2 };
 	double initialVariance{ 8. };
+	// should be deleted
+	double vol{ 0.8 };
 };
 
 struct MarketParams
@@ -41,8 +43,34 @@ namespace SDE
 	{
 		auto BSM(std::complex<double> argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> std::complex<double>;
 		auto Heston(std::complex<double> argument, double riskFreeReturn, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot, double dividendYield) -> std::complex<double>;
-		template <typename T>
-		auto generalCF(std::complex<double> argument, std::string_view model, const T& modelParams, const MarketParams& marketParams) -> std::complex<double>;
+		
+		// defined in header because of template argument deduction
+		auto generalCF(std::complex<double> argument, std::string_view model, const auto& modelParams, const MarketParams& marketParams) -> std::complex<double>
+		{
+
+			double maturity{ marketParams.maturity };
+			double spot{ marketParams.spot };
+			double riskFreeReturn{ marketParams.riskFreeReturn };
+			double dividendYield{ marketParams.dividendYield };
+
+			if (model == "heston")
+			{
+				double reversionRate{ modelParams.reversionRate };
+				double longVariance{ modelParams.longVariance };
+				double volVol{ modelParams.volVol };
+				double correlation{ modelParams.correlation };
+				double initialVariance{ modelParams.initialVariance };
+
+				return Heston(argument, riskFreeReturn, initialVariance, longVariance, correlation, reversionRate, volVol, maturity, spot, dividendYield);
+
+			}
+
+			else // the default is black-scholes-merton
+			{
+				double vol{ modelParams.vol };
+				return BSM(argument, riskFreeReturn, vol, maturity, spot, dividendYield);
+			}
+		}
 	}
 
 	namespace Testing

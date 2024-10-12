@@ -41,9 +41,8 @@ namespace FFT
 	auto dft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto fft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto testPricingfft() -> LogStrikePricePair;
-	
-	// defined in header because of template argument deduction
 	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair;
+	void unitTests();
 }
 
 #endif

@@ -52,7 +52,7 @@ namespace FFT
 		std::vector<std::complex<double>> fourierTrafo(length);
 		for (std::size_t k{ 0 }; k < length; ++k)
 		{
-			for (std::size_t n{ 0 }; k < length; ++n)
+			for (std::size_t n{ 0 }; n < length; ++n)
 			{
 				fourierTrafo[k] += vec[n] * std::exp(-2.0 * IMNUM * PI * static_cast<double>(k * n) / static_cast<double>(length));
 			}
@@ -161,17 +161,6 @@ namespace FFT
 		return result;
 	}
 
-	
-	auto testPricingfft() -> LogStrikePricePair
-	{
-		HestonParams hestonParams{};
-		BSMParams bsmParams{};
-		fttParams params{};
-		MarketParams marketParams{};
-
-		return pricingfft(bsmParams, marketParams, params);
-	}
-
 	namespace UnitTests
 	{
 		void separateModes()
@@ -211,6 +200,57 @@ namespace FFT
 			std::cout << "\n";
 
 		}
+
+		void dft()
+		{
+			std::size_t length{ static_cast<std::size_t>(intPow(2,6)) };
+
+			std::vector<std::complex<double>> terms(length);
+			for (std::size_t i{ 0 }; i < length; ++i)
+			{
+				//terms[i] = std::exp(-1.0 * IMNUM * PI * static_cast<double>(i) / static_cast<double>(length));
+				terms[i] = 1.0;
+			}
+
+			std::vector<std::complex<double>> ft{ FFT::dft(terms) };
+
+			std::cout << "Vector elements are: \n";
+			for (const auto& el : terms)
+			{
+				std::cout << el << ",";
+			}
+			std::cout << "\n";
+			std::cout << "DFT elements are: \n";
+			for (const auto& el : ft)
+			{
+				std::cout << el << ",";
+			}
+			std::cout << "\n";
+		}
+
+		void pricingfft()
+		{
+			HestonParams hestonParams{};
+			BSMParams bsmParams{};
+			fttParams params{};
+			MarketParams marketParams{};
+
+			LogStrikePricePair pricePairs{ pricingfft(bsmParams, marketParams, params) };
+			std::cout << "Log strikes are: \n";
+			for (const auto& el : pricePairs.logStrikes)
+			{
+				std::cout << el << ",";
+			}
+			std::cout << "\n";
+
+			std::cout << "Prices are:\n ";
+			for (const auto& el : pricePairs.prices)
+			{
+				std::cout << el << ",";
+			}
+			std::cout << "\n";
+		}
+
 	}
 	
 

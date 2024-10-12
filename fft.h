@@ -40,12 +40,13 @@ namespace FFT
 	auto concatenate(std::vector<T>& vec1, const std::vector<T>& vec2) -> std::vector<T>;
 	auto dft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto fft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
-	auto testPricingfft() -> LogStrikePricePair;
 	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair;
 
 	namespace UnitTests
 	{
 		void separateModes();
+		void dft();
+		void pricingfft();
 	}
 }
 

@@ -42,7 +42,11 @@ namespace FFT
 	auto fft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto testPricingfft() -> LogStrikePricePair;
 	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair;
-	void unitTests();
+
+	namespace UnitTests
+	{
+		void separateModes();
+	}
 }
 
 #endif

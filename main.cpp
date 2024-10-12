@@ -24,7 +24,7 @@ auto main() -> int
 	//LabeledTable volSurface{ Volatility::Surface::testCalibration() };
 	//Saving::write_labeledTable_to_csv("Data/ArtificalVolSurface.csv", volSurface);
 
-	FFT::unitTests();
+	FFT::UnitTests::separateModes();
 	//FFT::testPricingfft();
 
 	return 0;

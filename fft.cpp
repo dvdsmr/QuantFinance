@@ -172,42 +172,45 @@ namespace FFT
 		return pricingfft(bsmParams, marketParams, params);
 	}
 
-	void unitTests()
+	namespace UnitTests
 	{
+		void separateModes()
+		{
 
-		// first we test the mode separation
-		std::size_t length{ static_cast<std::size_t>(intPow(2,3)) };
+			// first we test the mode separation
+			std::size_t length{ static_cast<std::size_t>(intPow(2,3)) };
 
-		std::vector<std::complex<double>> terms(length);
-		for (std::size_t i{ 0 }; i < length; ++i)
-		{
-			terms[i] = std::exp(-2.0 * IMNUM * PI * static_cast<double>(i) / static_cast<double>(length));
-		}
-		ModePair pair{ separateModes(terms) };
-		std::cout << "Lenght of total vector is " << std::size(terms) << "\n";
-		std::cout << "Lenght of first part is " << std::size(pair.evens) << "\n";
-		std::cout << "Lenght of second part is " << std::size(pair.odds) << "\n";
+			std::vector<std::complex<double>> terms(length);
+			for (std::size_t i{ 0 }; i < length; ++i)
+			{
+				terms[i] = std::exp(-2.0 * IMNUM * PI * static_cast<double>(i) / static_cast<double>(length));
+			}
+			ModePair pair{ FFT::separateModes(terms) };
+			std::cout << "Lenght of total vector is " << std::size(terms) << "\n";
+			std::cout << "Lenght of first part is " << std::size(pair.evens) << "\n";
+			std::cout << "Lenght of second part is " << std::size(pair.odds) << "\n";
 
-		// print full vector and the the parts
-		std::cout << "Elements of full vector are: \n";
-		for (const auto& el : terms)
-		{
-			std::cout << el << ",";
+			// print full vector and the the parts
+			std::cout << "Elements of full vector are: \n";
+			for (const auto& el : terms)
+			{
+				std::cout << el << ",";
+			}
+			std::cout << "\n";
+			std::cout << "Eeven elements are: \n";
+			for (const auto& el : pair.evens)
+			{
+				std::cout << el << ",";
+			}
+			std::cout << "\n";
+			std::cout << "Odd elements are: \n";
+			for (const auto& el : pair.odds)
+			{
+				std::cout << el << ",";
+			}
+			std::cout << "\n";
+
 		}
-		std::cout << "\n";
-		std::cout << "Eeven elements are: \n";
-		for (const auto& el : pair.evens)
-		{
-			std::cout << el << ",";
-		}
-		std::cout << "\n";
-		std::cout << "Odd elements are: \n";
-		for (const auto& el : pair.odds)
-		{
-			std::cout << el << ",";
-		}
-		std::cout << "\n";
-	
 	}
 	
 

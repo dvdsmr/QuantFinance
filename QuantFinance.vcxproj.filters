@@ -51,6 +51,9 @@
     <ClCompile Include="out.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="calibrate.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="options.h">
@@ -96,6 +99,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="fft.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="calibrate.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

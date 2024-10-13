@@ -41,6 +41,9 @@ namespace FFT
 	auto dft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto fft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair;
+	auto pricingfftHeston(const HestonParams& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair;
+	auto pricingfftBSM(const BSMParams& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair;
+
 
 	namespace UnitTests
 	{

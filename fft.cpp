@@ -161,6 +161,18 @@ namespace FFT
 		return result;
 	}
 
+	auto pricingfftHeston(const HestonParams& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
+	{
+		return pricingfft(modelParams, marketParams, params);
+	}
+
+	auto pricingfftBSM(const BSMParams& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
+	{
+		return pricingfft(modelParams, marketParams, params);
+	}
+
+
+
 	namespace UnitTests
 	{
 		void separateModes()

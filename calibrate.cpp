@@ -2,6 +2,14 @@
 
 namespace Calibrate
 {
+
+	auto interpolatePrices(const FFT::LogStrikePricePair& pair, const std::vector<double>& strikes) -> std::vector<double>
+	{
+		std::vector<double> prices{};
+
+		return prices;
+	}
+
 	auto hestonTest(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view, std::string_view optimizer) -> HestonParams
 	{
 

@@ -6,7 +6,8 @@ namespace Calibrate
 	auto interpolatePrices(const FFT::LogStrikePricePair& pair, const std::vector<double>& strikes) -> std::vector<double>
 	{
 		std::vector<double> prices{};
-
+		pair;
+		strikes;
 		return prices;
 	}
 

@@ -15,7 +15,7 @@ BSM calibrated price surface            |  Heston calibrated price surface
 :-------------------------:|:-------------------------:
 ![Price](Plots/bsmModelPriceSurfacePlot.png) |  ![Vol](Plots/hestonModelPriceSurfacePlot.png)
 
-Both models have a hard time fitting the exact curvature of the true surface, but the slope of the curve can be seen to be more accurate in the Heston model. The BSM surface is calibrated using the analytical pricinf formula. No analytical formula is available for the Heston model, but the prices can be approximated, e.g. via the characteristic function and Fast Fourier Transform, which is used in the calibration.
+Both models have a hard time fitting the exact curvature of the true surface, but the slope of the curve can be seen to be more accurate in the Heston model, particularly for large times to maturity. For this plot, the BSM surface is calibrated using the analytical pricing formula. No analytical formula is available for the Heston model, but the prices can be approximated, e.g. via the characteristic function and Fast Fourier Transform, which is used in the calibration.
 
 The repository also contains tools to simulate the stochastic processes modelling stock prices, which can be useful for Monte-Carlo based techniques. The example plot below shows three paths of a Heston model, used to to model stock prices with a stochastic volatility process.
 

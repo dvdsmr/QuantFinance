@@ -24,7 +24,7 @@ namespace FFT
 	struct fttParams
 	{
 		double decayParam{ 1.5 };
-		double gridWidth{ 0.2 };
+		double gridWidth{ 0.1 };
 		int gridExponent{ 12 };
 	};
 

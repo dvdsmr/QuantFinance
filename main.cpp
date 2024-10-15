@@ -12,6 +12,7 @@
 #include "copola.h"
 #include "volatility.h"
 #include "fft.h"
+#include "calibrate.h"
 #include <iostream>
 #include <iostream>
 #include <vector>
@@ -26,7 +27,11 @@ auto main() -> int
 
 	//FFT::UnitTests::separateModes();
 	//FFT::UnitTests::dft();
-	FFT::UnitTests::pricingfft();
+	//FFT::UnitTests::pricingfft();
+
+	Calibrate::testHeston();
+
+	//Calibrate::testBSM();
 
 	return 0;
 }

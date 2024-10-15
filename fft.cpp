@@ -145,7 +145,7 @@ namespace FFT
 			xX.push_back(std::exp(-IMNUM * lowestLogStrike * nuJ) * psi_nuJ * weight);
 		}
 
-		// compute fft TODO
+		// compute fft 
 		std::vector<std::complex<double>> yY{ fft(xX) };
 		// ----------------
 

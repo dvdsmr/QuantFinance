@@ -48,7 +48,7 @@ namespace Calibrate
 		return prices;
 	}
 
-	auto hestonTest(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view, std::string_view optimizer) -> HestonParams
+	auto hestonTest(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> HestonParams
 	{
 
 
@@ -72,8 +72,7 @@ namespace Calibrate
 		// the maturity of the market variable will change later, the other values are fixed
 		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
 
-		[[maybe_unused]]double error{};
-		[[maybe_unused]] double newError{};
+		double error{ 1e20 };
 		for (const auto& rr : reversionRates)
 		{
 			for (const auto& lv : longVariances)
@@ -84,8 +83,9 @@ namespace Calibrate
 					{
 						for (const auto& iv : initialVariances)
 						{
-							// collect model parameters
+							// collect model parameters and initialize error
 							HestonParams modelParams{rr,lv,vv,cr,iv};
+							double newError{ 0.0 };
 
 							// add up errors of predicted prices
 							// rows are maturities
@@ -94,22 +94,25 @@ namespace Calibrate
 								// adjust maturity of market params
 								marketParams.maturity = priceSurface.m_rowVals[row];
 
+								// get model prediction and interpolate to fit the query strikes (cols are strikes)
 								FFT::LogStrikePricePair pair{ FFT::pricingfftHeston(modelParams, marketParams, params) };
+								std::vector<double> modelPrices{ interpolatePrices(pair,priceSurface.m_colVals) };
+
 								// cols are strikes
 								for (std::size_t col{ 0 }; col < std::size(priceSurface.m_colVals); ++col)
 								{
-									rr;
-									lv;
-									vv;
-									cr;
-									iv;
-									row;
-									col;
-									optimizer;
-									dividendYield;
-									spot;
-									riskFreeReturn;
+									// add up the errors
+									newError += (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col]);
 								}
+							}
+							// get mean error over all entries
+							newError /= (priceSurface.m_numCols * priceSurface.m_numRows);
+
+							if (newError < error)
+							{
+								error = newError;
+								finalParams = modelParams;
+								std::cout << "New optimal parameter set with error " << error << "found.\n";
 							}
 
 						}
@@ -117,8 +120,7 @@ namespace Calibrate
 				}
 			}
 		}
-
-
+		std::cout << "Final parameter set has error " << error << ".\n";
 		return finalParams;
 	}
 }

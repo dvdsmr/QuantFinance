@@ -13,7 +13,7 @@ A more flexible model than BSM is the Heston model, in which the volatility itse
 
 BSM calibrated price surface            |  Heston calibrated price surface
 :-------------------------:|:-------------------------:
-![Price](Plots/BSMModelSurfacePlot.png) |  ![Vol](Plots/HestonModelSurfacePlot.png)
+![Price](Plots/bsmModelSurfacePlot.png) |  ![Vol](Plots/hestonModelSurfacePlot.png)
 
 Both models have a hard time fitting the exact curvature of the true surface, but the slope of the curve can be seen to be more accurate in the Heston model. The BSM surface is calibrated using the analytical pricinf formula. No analytical formula is available for the Heston model, but the prices can be approximated, e.g. via the characteristic function and Fast Fourier Transform, which is used in the calibration.
 

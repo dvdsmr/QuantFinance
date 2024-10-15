@@ -52,12 +52,19 @@ namespace Calibrate
 	auto hestonCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> HestonParams
 	{
 
+		/*
+		std::vector<double> reversionRates{ np::linspace<double>(0.045,0.045,1) };
+		std::vector<double> longVariances{ np::linspace<double>(4.,4.,1) };
+		std::vector<double> volVols{ np::linspace<double>(5.4,5.4,1) };
+		std::vector<double> correlations{ np::linspace<double>(0.1,0.1,1) };
+		std::vector<double> initialVariances{ np::linspace<double>(0.5,0.5,1) };
+		*/
 
-		std::vector<double> reversionRates{ np::linspace<double>(0.05,0.15,3) };
-		std::vector<double> longVariances{ np::linspace<double>(25,35.,3) };
-		std::vector<double> volVols{ np::linspace<double>(2.5,7.5,3) };
-		std::vector<double> correlations{ np::linspace<double>(0.4,0.6,3) };
-		std::vector<double> initialVariances{ np::linspace<double>(0.05,0.15,3) };
+		std::vector<double> reversionRates{ np::linspace<double>(0.035,0.035,1) };
+		std::vector<double> longVariances{ np::linspace<double>(3.,3.,1) };
+		std::vector<double> volVols{ np::linspace<double>(5.4,10.4,10) };
+		std::vector<double> correlations{ np::linspace<double>(0.05,0.05,1) };
+		std::vector<double> initialVariances{ np::linspace<double>(0.6,0.6,1) };
 
 		HestonParams finalParams{
 			reversionRates[static_cast<std::size_t>(0)],
@@ -131,7 +138,7 @@ namespace Calibrate
 	{
 
 
-		std::vector<double> vols{ np::linspace<double>(0.01,1.0,200) };
+		std::vector<double> vols{ np::linspace<double>(0.5,.7,100) };
 
 		BSMParams finalParams{
 			vols[static_cast<std::size_t>(0)]

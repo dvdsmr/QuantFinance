@@ -57,6 +57,7 @@ namespace Calibrate
 		// we store this surface (initialized as a copy of the true surface) 
 		// to be able to plot it later (and compare it to the true surface)
 		LabeledTable modelPriceSurface{ priceSurface };
+		modelPriceSurface.m_tableName = "Heston price surface";
 		LabeledTable errorSurface{ priceSurface };
 		errorSurface.m_tableName = "Relative squared error";
 		errorSurface.m_tableLabel = "Error";
@@ -69,9 +70,9 @@ namespace Calibrate
 		std::vector<double> initialVariances{ np::linspace<double>(0.5,0.5,1) };
 		*/
 
-		std::vector<double> reversionRates{ np::linspace<double>(0.025,0.025,1) };
+		std::vector<double> reversionRates{ np::linspace<double>(0.2,0.2,1) };
 		std::vector<double> longVariances{ np::linspace<double>(1.,1.,1) };
-		std::vector<double> volVols{ np::linspace<double>(5.4,5.4,1) };
+		std::vector<double> volVols{ np::linspace<double>(7.4,7.4,1) };
 		std::vector<double> correlations{ np::linspace<double>(0.05,0.05,1) };
 		std::vector<double> initialVariances{ np::linspace<double>(0.6,0.6,1) };
 
@@ -159,6 +160,7 @@ namespace Calibrate
 		// we store this surface (initialized as a copy of the true surface) 
 		// to be able to plot it later (and compare it to the true surface)
 		LabeledTable modelPriceSurface{ priceSurface };
+		modelPriceSurface.m_tableName = "BSM price surface";
 		LabeledTable errorSurface{ priceSurface };
 		errorSurface.m_tableName = "Relative squared error";
 		errorSurface.m_tableLabel = "Error";

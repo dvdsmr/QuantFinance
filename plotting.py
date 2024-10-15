@@ -105,3 +105,6 @@ if __name__ == "__main__":
     # plotSurface("Data/ArtificialPriceSurface.csv","priceSurfacePlot")
     # plotSurface("Data/ArtificalVolSurface.csv","volSurfacePlot")
     plotSurface("Data/HestonModelPriceSurface.csv","hestonModelPriceSurfacePlot")
+    plotSurface("Data/HestonModelErrorSurface.csv","hestonModelErrorSurfacePlot")
+    plotSurface("Data/BSMModelPriceSurface.csv","bsmModelPriceSurfacePlot")
+    plotSurface("Data/BSMModelErrorSurface.csv","bsmModelErrorSurfacePlot")

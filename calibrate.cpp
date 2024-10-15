@@ -57,6 +57,9 @@ namespace Calibrate
 		// we store this surface (initialized as a copy of the true surface) 
 		// to be able to plot it later (and compare it to the true surface)
 		LabeledTable modelPriceSurface{ priceSurface };
+		LabeledTable errorSurface{ priceSurface };
+		errorSurface.m_tableName = "Relative squared error";
+		errorSurface.m_tableLabel = "Error";
 
 		/*
 		std::vector<double> reversionRates{ np::linspace<double>(0.045,0.045,1) };
@@ -116,11 +119,13 @@ namespace Calibrate
 								for (std::size_t col{ 0 }; col < std::size(priceSurface.m_colVals); ++col)
 								{
 									// add up the errors
-									newError += (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
-													/ (priceSurface.m_table[row][col]* priceSurface.m_table[row][col]);
+									double currentError{ (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
+													/ (priceSurface.m_table[row][col] * priceSurface.m_table[row][col]) };
+									newError += currentError;
 								
 									// update model price surface
 									modelPriceSurface.m_table[row][col] = modelPrices[col];
+									errorSurface.m_table[row][col] = currentError;
 								}
 							}
 							// get mean error over all entries
@@ -142,6 +147,7 @@ namespace Calibrate
 
 		// save the model price table to file
 		Saving::write_labeledTable_to_csv("Data/HestonModelPriceSurface.csv", modelPriceSurface);
+		Saving::write_labeledTable_to_csv("Data/HestonModelErrorSurface.csv", errorSurface);
 
 		return finalParams;
 	}
@@ -153,6 +159,9 @@ namespace Calibrate
 		// we store this surface (initialized as a copy of the true surface) 
 		// to be able to plot it later (and compare it to the true surface)
 		LabeledTable modelPriceSurface{ priceSurface };
+		LabeledTable errorSurface{ priceSurface };
+		errorSurface.m_tableName = "Relative squared error";
+		errorSurface.m_tableLabel = "Error";
 
 		std::vector<double> vols{ np::linspace<double>(0.5,.7,100) };
 
@@ -199,10 +208,12 @@ namespace Calibrate
 				for (std::size_t col{ 0 }; col < std::size(priceSurface.m_colVals); ++col)
 				{
 					// add up the errors
-					newError += (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
-						/ (priceSurface.m_table[row][col] * priceSurface.m_table[row][col]);
+					double currentError{ (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
+													/ (priceSurface.m_table[row][col] * priceSurface.m_table[row][col]) };
+					newError += currentError;
 					// update model price surface
 					modelPriceSurface.m_table[row][col] = modelPrices[col];
+					errorSurface.m_table[row][col] = currentError;
 				}
 			}
 			// get mean error over all entries
@@ -220,6 +231,7 @@ namespace Calibrate
 
 		// save the model price table to file
 		Saving::write_labeledTable_to_csv("Data/BSMModelPriceSurface.csv", modelPriceSurface);
+		Saving::write_labeledTable_to_csv("Data/BSMModelErrorSurface.csv", errorSurface);
 
 		return finalParams;
 	}

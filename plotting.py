@@ -103,5 +103,5 @@ if __name__ == "__main__":
     # plotStockCSV(["Data/stockPath1.csv","Data/stockPath2.csv","Data/stockPath3.csv"])
     # plotOptionCSV(["Data/callPrices.csv","Data/callDeltas.csv","Data/callGammas.csv"])
     # plotSurface("Data/ArtificialPriceSurface.csv","priceSurfacePlot")
-    plotSurface("Data/ArtificalVolSurface.csv","volSurfacePlot")
-
+    # plotSurface("Data/ArtificalVolSurface.csv","volSurfacePlot")
+    plotSurface("Data/HestonModelPriceSurface.csv","hestonModelPriceSurfacePlot")

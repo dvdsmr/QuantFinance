@@ -1,5 +1,6 @@
 #include "calibrate.h"
 #include "options.h"
+#include "saving.h"
 #include <algorithm>
 #include <cassert>
 
@@ -52,6 +53,11 @@ namespace Calibrate
 	auto hestonCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> HestonParams
 	{
 
+		// Since we need to populate the surface of model generated prices anyway to compute the model error,
+		// we store this surface (initialized as a copy of the true surface) 
+		// to be able to plot it later (and compare it to the true surface)
+		LabeledTable modelPriceSurface{ priceSurface };
+
 		/*
 		std::vector<double> reversionRates{ np::linspace<double>(0.045,0.045,1) };
 		std::vector<double> longVariances{ np::linspace<double>(4.,4.,1) };
@@ -60,9 +66,9 @@ namespace Calibrate
 		std::vector<double> initialVariances{ np::linspace<double>(0.5,0.5,1) };
 		*/
 
-		std::vector<double> reversionRates{ np::linspace<double>(0.035,0.035,1) };
-		std::vector<double> longVariances{ np::linspace<double>(3.,3.,1) };
-		std::vector<double> volVols{ np::linspace<double>(5.4,10.4,10) };
+		std::vector<double> reversionRates{ np::linspace<double>(0.025,0.025,1) };
+		std::vector<double> longVariances{ np::linspace<double>(1.,1.,1) };
+		std::vector<double> volVols{ np::linspace<double>(5.4,5.4,1) };
 		std::vector<double> correlations{ np::linspace<double>(0.05,0.05,1) };
 		std::vector<double> initialVariances{ np::linspace<double>(0.6,0.6,1) };
 
@@ -112,6 +118,9 @@ namespace Calibrate
 									// add up the errors
 									newError += (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
 													/ (priceSurface.m_table[row][col]* priceSurface.m_table[row][col]);
+								
+									// update model price surface
+									modelPriceSurface.m_table[row][col] = modelPrices[col];
 								}
 							}
 							// get mean error over all entries
@@ -130,13 +139,20 @@ namespace Calibrate
 			}
 		}
 		std::cout << "Final parameter set has error " << error << ".\n";
+
+		// save the model price table to file
+		Saving::write_labeledTable_to_csv("Data/HestonModelPriceSurface.csv", modelPriceSurface);
+
 		return finalParams;
 	}
 
 	// NOTE: we use FFT but we could replace it with the explicit pricing formula
 	auto bsmCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view pricing) -> BSMParams
 	{
-
+		// Since we need to populate the surface of model generated prices anyway to compute the model error,
+		// we store this surface (initialized as a copy of the true surface) 
+		// to be able to plot it later (and compare it to the true surface)
+		LabeledTable modelPriceSurface{ priceSurface };
 
 		std::vector<double> vols{ np::linspace<double>(0.5,.7,100) };
 
@@ -185,6 +201,8 @@ namespace Calibrate
 					// add up the errors
 					newError += (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
 						/ (priceSurface.m_table[row][col] * priceSurface.m_table[row][col]);
+					// update model price surface
+					modelPriceSurface.m_table[row][col] = modelPrices[col];
 				}
 			}
 			// get mean error over all entries
@@ -199,6 +217,10 @@ namespace Calibrate
 
 		}
 		std::cout << "Final parameter set has error " << error << ".\n";
+
+		// save the model price table to file
+		Saving::write_labeledTable_to_csv("Data/BSMModelPriceSurface.csv", modelPriceSurface);
+
 		return finalParams;
 	}
 
@@ -296,9 +318,12 @@ namespace Calibrate
 		std::cout << "The optimal params found with analytic pricing are: \n";
 		std::cout << "Vol: " << fitParams.vol << "\n";
 
+		// test FFT
+		/*
 		fitParams = bsmCall(priceSurface, riskFreeReturn, spot, dividendYield, "fft");
 
 		std::cout << "The optimal params found with FFT pricing are: \n";
 		std::cout << "Vol: " << fitParams.vol << "\n";
+		*/
 	}
 }

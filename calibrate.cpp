@@ -1,13 +1,50 @@
 #include "calibrate.h"
+#include <algorithm>
+#include <cassert>
 
 namespace Calibrate
 {
 
 	auto interpolatePrices(const FFT::LogStrikePricePair& pair, const std::vector<double>& strikes) -> std::vector<double>
 	{
+		std::size_t lengthFftStrikes{ std::size(pair.logStrikes) };
+		std::size_t lengthStrikes{ std::size(strikes) };
+
+		// first, we get the actual strikes from the log strikes
+		std::vector<double> fftStrikes(lengthFftStrikes);
+		for (std::size_t i{ 0 }; i < lengthFftStrikes; ++i)
+		{
+			fftStrikes[i] = std::exp(pair.logStrikes[i]);
+		}
+
 		std::vector<double> prices{};
-		pair;
-		strikes;
+		std::vector<double> fftPrices{ pair.prices };
+		// now we interpolate between the prices computed by FFT
+		for (std::size_t i{ 0 }; i < lengthStrikes; ++i)
+		{
+			double queryStrike{ strikes[i] };
+			// we search for the first FFT strike which is greater than the query strike
+			auto found{ std::find_if(std::begin(fftStrikes), std::end(fftStrikes),
+						   [&queryStrike](double val)
+						   {
+							 return val > queryStrike;
+						   }) };
+
+			// we have to make sure that the queried price is lower that the last FFT price...
+			assert(found != std::end(fftStrikes));
+			// ...and higher than the first FFT price.
+			// we don't want to extrapolate, only interpolate. Otherwise the program terminates here.
+			std::size_t index = static_cast<std::size_t>(found - std::begin(fftStrikes));
+			assert(index > 0);
+
+			// If the program did not terminate, we now have the index of the lower and higher prices
+			// now, we can interpolate these prices to get the price at the query strike.
+			double t{ (queryStrike - fftStrikes[index - 1]) / (fftStrikes[index] - fftStrikes[index - 1]) };
+
+			double interpolatedPrice{ (1-t)*fftPrices[index-1] + t * fftPrices[index] };
+			prices[i] = interpolatedPrice;
+		}
+
 		return prices;
 	}
 

@@ -71,10 +71,10 @@ namespace Calibrate
 		*/
 
 		std::vector<double> reversionRates{ np::linspace<double>(0.2,0.2,1) };
-		std::vector<double> longVariances{ np::linspace<double>(1.,1.,1) };
-		std::vector<double> volVols{ np::linspace<double>(7.4,7.4,1) };
-		std::vector<double> correlations{ np::linspace<double>(0.05,0.05,1) };
-		std::vector<double> initialVariances{ np::linspace<double>(0.6,0.6,1) };
+		std::vector<double> longVariances{ np::linspace<double>(0.62,0.62,1) };
+		std::vector<double> volVols{ np::linspace<double>(6.64,6.64,1) };
+		std::vector<double> correlations{ np::linspace<double>(-0.15,-0.15,1) };
+		std::vector<double> initialVariances{ np::linspace<double>(0.62,0.62,1) };
 
 		HestonParams finalParams{
 			reversionRates[static_cast<std::size_t>(0)],

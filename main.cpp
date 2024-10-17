@@ -29,9 +29,11 @@ auto main() -> int
 	//FFT::UnitTests::dft();
 	//FFT::UnitTests::pricingfft();
 
-	Calibrate::testHeston();
+	//Calibrate::testHeston();
 
-	Calibrate::testBSM();
+	//Calibrate::testBSM();
+
+	SDE::Testing::saveHestonPaths();
 
 	return 0;
 }

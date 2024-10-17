@@ -62,19 +62,20 @@ namespace Calibrate
 		errorSurface.m_tableName = "Relative squared error";
 		errorSurface.m_tableLabel = "Error";
 
-		/*
-		std::vector<double> reversionRates{ np::linspace<double>(0.045,0.045,1) };
-		std::vector<double> longVariances{ np::linspace<double>(4.,4.,1) };
-		std::vector<double> volVols{ np::linspace<double>(5.4,5.4,1) };
-		std::vector<double> correlations{ np::linspace<double>(0.1,0.1,1) };
-		std::vector<double> initialVariances{ np::linspace<double>(0.5,0.5,1) };
-		*/
+		std::vector<double> reversionRates{ np::linspace<double>(0.01,2.0,10) };
+		std::vector<double> longVariances{ np::linspace<double>(0.1,2.0,10) };
+		std::vector<double> volVols{ np::linspace<double>(0.1,2.0,10) };
+		std::vector<double> correlations{ np::linspace<double>(-0.9,0.9,10) };
+		std::vector<double> initialVariances{ np::linspace<double>(0.1,2.0,10) };
+		
 
+		/*
 		std::vector<double> reversionRates{ np::linspace<double>(0.2,0.2,1) };
 		std::vector<double> longVariances{ np::linspace<double>(0.62,0.62,1) };
 		std::vector<double> volVols{ np::linspace<double>(6.64,6.64,1) };
 		std::vector<double> correlations{ np::linspace<double>(-0.15,-0.15,1) };
 		std::vector<double> initialVariances{ np::linspace<double>(0.62,0.62,1) };
+		*/
 
 		HestonParams finalParams{
 			reversionRates[static_cast<std::size_t>(0)],

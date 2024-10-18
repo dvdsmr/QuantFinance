@@ -150,17 +150,18 @@ namespace SDE
 	{
 		auto saveHestonPaths() -> void
 		{
-			/*
+			
 			XYVals spath2{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
 			Saving::write_xyvals_to_csv("Data/stockPath1.csv", spath2);
 			XYVals spath3{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
 			Saving::write_xyvals_to_csv("Data/stockPath2.csv", spath3);
 			XYVals spath4{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
 			Saving::write_xyvals_to_csv("Data/stockPath3.csv", spath4);
-			*/
+		
 
 			//HestonPath(initialState,terminalTime,timePoints,drift,initialVariance,longVariance,correlation,reversionRate,volVol)
 
+			/*
 			XYVals spath4{ SDE::HestonPath(100.0, 0.2, 1000, 0.045-0.007, 0.62, 0.62,-0.15,0.2,6.64) };
 			Saving::write_xyvals_to_csv("Data/stockPath4.csv", spath4);
 			XYVals spath5{ SDE::HestonPath(100.0, 0.2, 1000, 0.045 - 0.007, 0.62, 0.62,-0.15,0.2,6.64) };
@@ -174,6 +175,7 @@ namespace SDE
 			Saving::write_xyvals_to_csv("Data/stockPath8.csv", spath8);
 			XYVals spath9{ geometricBrownianMotionPath(100.0, 0.2, 1000, 0.045 - 0.007, 0.62) };
 			Saving::write_xyvals_to_csv("Data/stockPath9.csv", spath9);
+			*/
 
 		}
 	}

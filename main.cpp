@@ -33,9 +33,9 @@ auto main() -> int
 
 	//Calibrate::testBSM();
 
-	Calibrate::testVarianceGamma();
+	//Calibrate::testVarianceGamma();
 
-	//SDE::Testing::saveHestonPaths();
+	SDE::Testing::saveHestonPaths();
 
 	return 0;
 }

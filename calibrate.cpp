@@ -251,9 +251,9 @@ namespace Calibrate
 		errorSurface.m_tableName = "Relative squared error";
 		errorSurface.m_tableLabel = "Error";
 
-		std::vector<double> vols{ np::linspace<double>(0.1,0.9,10) };
-		std::vector<double> drifts{ np::linspace<double>(0.01,.5,10) };
-		std::vector<double> variances{ np::linspace<double>(0.1,0.9,10) };
+		std::vector<double> vols{ np::linspace<double>(0.1,1.0,10) };
+		std::vector<double> drifts{ np::linspace<double>(0.2,1.2,10) };
+		std::vector<double> variances{ np::linspace<double>(0.01,1.0,10) };
 
 		VarianceGammaParams finalParams{
 			vols[static_cast<std::size_t>(0)],

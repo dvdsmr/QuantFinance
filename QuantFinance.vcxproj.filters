@@ -104,5 +104,8 @@
     <ClInclude Include="calibrate.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="pso.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

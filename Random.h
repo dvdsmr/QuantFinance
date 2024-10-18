@@ -4,6 +4,7 @@
 #include <chrono>
 #include <random>
 #include <cmath>
+#include <cassert>
 
 // This header-only Random namespace implements a self-seeding Mersenne Twister.
 // Requires C++17 or newer.
@@ -79,6 +80,33 @@ namespace Random
 	{
 		return std::exp(Random::normal(mean, variance));
 	}
+
+	// Generate a random floating point number between [min, max)
+	inline double get(double min, double max)
+	{
+		return std::uniform_real_distribution<double>{ min, max }(mt);
+	}
+
+	inline std::vector<double> getVector(std::vector<double> mins, std::vector<double> maxs)
+	{
+		assert (std::size(mins) == std::size(maxs));
+		std::vector<double> randomVector(std::size(mins));
+		for (std::size_t i{ 0 }; i < std::size(mins); ++i)
+		{
+			randomVector[i] = Random::get(mins[i], maxs[i]);
+		}
+	}
+
+	inline std::vector<double> getVectorNormals(std::vector<double> means, std::vector<double> variances)
+	{
+		assert(std::size(means) == std::size(variances));
+		std::vector<double> randomVector(std::size(means));
+		for (std::size_t i{ 0 }; i < std::size(means); ++i)
+		{
+			randomVector[i] = Random::normal(means[i], variances[i]);
+		}
+	}
+
 }
 
 #endif

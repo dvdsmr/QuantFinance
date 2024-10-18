@@ -159,6 +159,7 @@
     <ClInclude Include="adam.h" />
     <ClInclude Include="fft.h" />
     <ClInclude Include="out.h" />
+    <ClInclude Include="pso.h" />
     <ClInclude Include="saving.h" />
     <ClInclude Include="securities.h" />
     <ClInclude Include="options.h" />

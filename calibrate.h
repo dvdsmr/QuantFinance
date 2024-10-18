@@ -10,8 +10,10 @@ namespace Calibrate
 	auto interpolatePrices(const FFT::LogStrikePricePair& pair, const std::vector<double>& strikes) -> std::vector<double>;
 	auto hestonCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> HestonParams;
 	auto bsmCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view pricing = "analytic") -> BSMParams;
+	auto varianceGammaCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> VarianceGammaParams;
 	void testHeston();
 	void testBSM();
+	void testVarianceGamma();
 }
 
 #endif

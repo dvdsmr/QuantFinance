@@ -115,6 +115,15 @@ namespace SDE
 			return phi;
 		}
 
+		auto VarianceGamma(std::complex<double> argument, double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double drift, double variance) -> std::complex<double>
+		{
+			double omega{ std::log(1-drift*variance - volatility*volatility*variance*0.5) / variance};
+			std::complex<double> factor1{ std::exp(IMNUM * argument * (std::log(spot)+(riskFreeReturn-dividendYield+omega)*maturity)) };
+			std::complex<double> factor2{ std::pow(1.0-IMNUM*argument*drift*variance + volatility*volatility*argument*argument*variance*0.5,-maturity/variance) };
+			return factor1 * factor2;
+
+		}
+
 		auto generalCF(std::complex<double> argument, const HestonParams& modelParams, const MarketParams& marketParams) -> std::complex<double>
 		{
 
@@ -127,6 +136,11 @@ namespace SDE
 		{
 			return BSM(argument, marketParams.riskFreeReturn, modelParams.vol, marketParams.maturity, 
 						marketParams.spot, marketParams.dividendYield);
+		}
+		auto generalCF(std::complex<double> argument, const VarianceGammaParams& modelParams, const MarketParams& marketParams) -> std::complex<double>
+		{
+			return VarianceGamma(argument, marketParams.riskFreeReturn, marketParams.maturity,
+				marketParams.spot, marketParams.dividendYield, modelParams.vol, modelParams.drift, modelParams.variance);
 		}
 
 

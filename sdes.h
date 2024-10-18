@@ -27,8 +27,13 @@ struct HestonParams
 	double volVol{ 0.2 };
 	double correlation{ 0.2 };
 	double initialVariance{ 8. };
-	// should be deleted
-	// double vol{ 0.8 };
+};
+
+struct VarianceGammaParams
+{
+	double vol{ 0.1 };
+	double drift{ 0.5 };
+	double variance{ 0.2 };
 };
 
 struct MarketParams
@@ -53,8 +58,10 @@ namespace SDE
 	{
 		auto BSM(std::complex<double> argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> std::complex<double>;
 		auto Heston(std::complex<double> argument, double riskFreeReturn, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot, double dividendYield) -> std::complex<double>;
+		auto VarianceGamma(std::complex<double> argument, double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double drift, double variance) -> std::complex<double>;
 		auto generalCF(std::complex<double> argument, const HestonParams& modelParams, const MarketParams& marketParams) -> std::complex<double>;
 		auto generalCF(std::complex<double> argument, const BSMParams& modelParams, const MarketParams& marketParams) -> std::complex<double>;
+		auto generalCF(std::complex<double> argument, const VarianceGammaParams& modelParams, const MarketParams& marketParams) -> std::complex<double>;
 	}
 
 	namespace Testing

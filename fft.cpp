@@ -171,6 +171,11 @@ namespace FFT
 		return pricingfft(modelParams, marketParams, params);
 	}
 
+	auto pricingfftVarianceGamma(const VarianceGammaParams& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
+	{
+		return pricingfft(modelParams, marketParams, params);
+	}
+
 
 
 	namespace UnitTests

@@ -20,7 +20,7 @@ Both models have a hard time fitting the exact curvature of the true surface, bu
 The repository also contains tools to simulate the stochastic processes modelling stock prices, which can be useful for Monte-Carlo based techniques. The example plot below shows three paths of a Heston model, used to to model stock prices with a stochastic volatility process.
 
 <p align="center">
-  <img src="Plots/stockPath.png" alt="Heston model paths" width="50%">
+  <img src="Plots/stockPathShowcase.png" alt="Heston model paths" width="50%">
 </p>
 
 Canonical models for derivative pricing and Hedging are included. The below plot shows the development of the fair price, Delta and Gamma of a european call option with a strike of $100 in the Black-Scholes-Merton model as time to maturity increases.

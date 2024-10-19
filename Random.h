@@ -97,6 +97,15 @@ namespace Random
 		}
 	}
 
+	inline std::vector<double> getVector(std::size_t size, double min, double max)
+	{
+		std::vector<double> randomVector(size);
+		for (std::size_t i{ 0 }; i < size; ++i)
+		{
+			randomVector[i] = Random::get(min, max);
+		}
+	}
+
 	inline std::vector<double> getVectorNormals(std::vector<double> means, std::vector<double> variances)
 	{
 		assert(std::size(means) == std::size(variances));
@@ -104,6 +113,15 @@ namespace Random
 		for (std::size_t i{ 0 }; i < std::size(means); ++i)
 		{
 			randomVector[i] = Random::normal(means[i], variances[i]);
+		}
+	}
+
+	inline std::vector<double> getVectorNormals(std::size_t size, double mean, double variance)
+	{
+		std::vector<double> randomVector(size);
+		for (std::size_t i{ 0 }; i < size; ++i)
+		{
+			randomVector[i] = Random::normal(mean, variance);
 		}
 	}
 

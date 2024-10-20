@@ -95,6 +95,7 @@ namespace Random
 		{
 			randomVector[i] = Random::get(mins[i], maxs[i]);
 		}
+		return randomVector;
 	}
 
 	inline std::vector<double> getVector(std::size_t size, double min, double max)
@@ -104,6 +105,7 @@ namespace Random
 		{
 			randomVector[i] = Random::get(min, max);
 		}
+		return randomVector;
 	}
 
 	inline std::vector<double> getVectorNormals(std::vector<double> means, std::vector<double> variances)
@@ -114,6 +116,7 @@ namespace Random
 		{
 			randomVector[i] = Random::normal(means[i], variances[i]);
 		}
+		return randomVector;
 	}
 
 	inline std::vector<double> getVectorNormals(std::size_t size, double mean, double variance)
@@ -123,6 +126,7 @@ namespace Random
 		{
 			randomVector[i] = Random::normal(mean, variance);
 		}
+		return randomVector;
 	}
 
 }

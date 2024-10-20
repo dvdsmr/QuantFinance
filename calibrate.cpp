@@ -1,6 +1,7 @@
 #include "calibrate.h"
 #include "options.h"
 #include "saving.h"
+#include "pso.h"
 #include <algorithm>
 #include <cassert>
 
@@ -43,12 +44,98 @@ namespace Calibrate
 			// now, we can interpolate these prices to get the price at the query strike.
 			double t{ (queryStrike - fftStrikes[index - 1]) / (fftStrikes[index] - fftStrikes[index - 1]) };
 
-			double interpolatedPrice{ (1-t)*fftPrices[index-1] + t * fftPrices[index] };
+			double interpolatedPrice{ (1 - t) * fftPrices[index - 1] + t * fftPrices[index] };
 			prices[i] = interpolatedPrice;
 		}
 
 		return prices;
 	}
+
+	auto computeFFTModelMRSE(const LabeledTable& priceSurface,
+		MarketParams& marketParams,
+		const auto& modelParams,
+		const FFT::FFTParams& params,
+		LabeledTable& modelPriceSurface,
+		LabeledTable& errorSurface) -> double
+	{
+
+		double newError{ 0.0 };
+
+		// add up errors of predicted prices
+		// rows are maturities
+		for (std::size_t row{ 0 }; row < std::size(priceSurface.m_rowVals); ++row)
+		{
+			// adjust maturity of market params
+			marketParams.maturity = priceSurface.m_rowVals[row];
+
+			std::vector<double> modelPrices(priceSurface.m_numCols);
+
+			// get model prediction and interpolate to fit the query strikes (cols are strikes)
+			FFT::LogStrikePricePair pair{ FFT::pricingfft(modelParams, marketParams, params) };
+			modelPrices = interpolatePrices(pair, priceSurface.m_colVals);
+
+			// cols are strikes
+			for (std::size_t col{ 0 }; col < std::size(priceSurface.m_colVals); ++col)
+			{
+				// add up the errors
+				double currentError{ (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
+												/ (priceSurface.m_table[row][col] * priceSurface.m_table[row][col]) };
+				newError += currentError;
+				// update model price surface
+				modelPriceSurface.m_table[row][col] = modelPrices[col];
+				errorSurface.m_table[row][col] = currentError;
+			}
+		}
+		// get mean error over all entries
+		newError /= (priceSurface.m_numCols * priceSurface.m_numRows);
+
+		return newError;
+	}
+
+	auto computeBSM_MRSE(const LabeledTable& priceSurface,
+		MarketParams& marketParams,
+		const BSMParams& modelParams,
+		LabeledTable& modelPriceSurface,
+		LabeledTable& errorSurface) -> double
+	{
+
+		double newError{ 0.0 };
+
+		// add up errors of predicted prices
+		// rows are maturities
+		for (std::size_t row{ 0 }; row < std::size(priceSurface.m_rowVals); ++row)
+		{
+			// adjust maturity of market params
+			marketParams.maturity = priceSurface.m_rowVals[row];
+
+			std::vector<double> modelPrices(priceSurface.m_numCols);
+
+			// get model prediction and interpolate to fit the query strikes (cols are strikes)
+			for (std::size_t i{ 0 }; i < priceSurface.m_numCols; ++i)
+			{
+				modelPrices[i] = Options::Pricing::BSM::call(marketParams.riskFreeReturn, modelParams.vol,
+					priceSurface.m_rowVals[row], priceSurface.m_colVals[i],
+					marketParams.spot, marketParams.dividendYield);
+			}
+
+			// cols are strikes
+			for (std::size_t col{ 0 }; col < std::size(priceSurface.m_colVals); ++col)
+			{
+				// add up the errors
+				double currentError{ (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
+												/ (priceSurface.m_table[row][col] * priceSurface.m_table[row][col]) };
+				newError += currentError;
+				// update model price surface
+				modelPriceSurface.m_table[row][col] = modelPrices[col];
+				errorSurface.m_table[row][col] = currentError;
+			}
+		}
+		// get mean error over all entries
+		newError /= (priceSurface.m_numCols * priceSurface.m_numRows);
+		return newError;
+
+	}
+
 
 	auto hestonCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> HestonParams
 	{
@@ -62,11 +149,11 @@ namespace Calibrate
 		errorSurface.m_tableName = "Relative squared error";
 		errorSurface.m_tableLabel = "Error";
 
-		std::vector<double> reversionRates{ np::linspace<double>(0.01,2.0,10) };
-		std::vector<double> longVariances{ np::linspace<double>(0.1,2.0,10) };
-		std::vector<double> volVols{ np::linspace<double>(0.1,2.0,10) };
-		std::vector<double> correlations{ np::linspace<double>(-0.9,0.9,10) };
-		std::vector<double> initialVariances{ np::linspace<double>(0.1,2.0,10) };
+		std::vector<double> reversionRates{ np::linspace<double>(0.01,2.0,2) };
+		std::vector<double> longVariances{ np::linspace<double>(0.1,2.0,2) };
+		std::vector<double> volVols{ np::linspace<double>(0.1,2.0,2) };
+		std::vector<double> correlations{ np::linspace<double>(-0.9,0.9,2) };
+		std::vector<double> initialVariances{ np::linspace<double>(0.1,2.0,2) };
 		
 
 		/*
@@ -86,7 +173,7 @@ namespace Calibrate
 		};
 
 		// define params of FFT pricing method
-		FFT::fttParams params{};
+		FFT::FFTParams params{};
 
 		// the maturity of the market variable will change later, the other values are fixed
 		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
@@ -102,36 +189,9 @@ namespace Calibrate
 					{
 						for (const auto& iv : initialVariances)
 						{
-							// collect model parameters and initialize error
+							// collect model parameters, compute error and update surfaces
 							HestonParams modelParams{rr,lv,vv,cr,iv};
-							double newError{ 0.0 };
-
-							// add up errors of predicted prices
-							// rows are maturities
-							for (std::size_t row{ 0 }; row < std::size(priceSurface.m_rowVals); ++row)
-							{
-								// adjust maturity of market params
-								marketParams.maturity = priceSurface.m_rowVals[row];
-
-								// get model prediction and interpolate to fit the query strikes (cols are strikes)
-								FFT::LogStrikePricePair pair{ FFT::pricingfftHeston(modelParams, marketParams, params) };
-								std::vector<double> modelPrices{ interpolatePrices(pair,priceSurface.m_colVals) };
-
-								// cols are strikes
-								for (std::size_t col{ 0 }; col < std::size(priceSurface.m_colVals); ++col)
-								{
-									// add up the errors
-									double currentError{ (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
-													/ (priceSurface.m_table[row][col] * priceSurface.m_table[row][col]) };
-									newError += currentError;
-								
-									// update model price surface
-									modelPriceSurface.m_table[row][col] = modelPrices[col];
-									errorSurface.m_table[row][col] = currentError;
-								}
-							}
-							// get mean error over all entries
-							newError /= (priceSurface.m_numCols * priceSurface.m_numRows);
+							double newError{ computeFFTModelMRSE(priceSurface, marketParams, modelParams, params, modelPriceSurface, errorSurface) };
 
 							if (newError < error)
 							{
@@ -173,7 +233,7 @@ namespace Calibrate
 		};
 
 		// define params of FFT pricing method
-		FFT::fttParams params{};
+		FFT::FFTParams params{};
 
 		// the maturity of the market variable will change later, the other values are fixed
 		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
@@ -181,46 +241,17 @@ namespace Calibrate
 		double error{ 1e20 };
 		for (const auto& vol : vols)
 		{
-			// collect model parameters and initialize error
+			// collect model parameters, compute error and update surfaces
 			BSMParams modelParams{ vol };
-			double newError{ 0.0 };
-
-			// add up errors of predicted prices
-			// rows are maturities
-			for (std::size_t row{ 0 }; row < std::size(priceSurface.m_rowVals); ++row)
+			double newError{};
+			if (pricing == "fft")
 			{
-				// adjust maturity of market params
-				marketParams.maturity = priceSurface.m_rowVals[row];
-
-				std::vector<double> modelPrices(priceSurface.m_numCols);
-				if (pricing == "fft")
-				{
-					// get model prediction and interpolate to fit the query strikes (cols are strikes)
-					FFT::LogStrikePricePair pair{ FFT::pricingfftBSM(modelParams, marketParams, params) };
-					modelPrices =  interpolatePrices(pair,priceSurface.m_colVals);
-				}
-				else // analytic pricing
-				{
-					for (std::size_t i{0}; i < priceSurface.m_numCols; ++i)
-					{
-						modelPrices[i] = Options::Pricing::BSM::call(riskFreeReturn, vol, priceSurface.m_rowVals[row], priceSurface.m_colVals[i], spot, dividendYield);
-					}
-				}
-
-				// cols are strikes
-				for (std::size_t col{ 0 }; col < std::size(priceSurface.m_colVals); ++col)
-				{
-					// add up the errors
-					double currentError{ (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
-													/ (priceSurface.m_table[row][col] * priceSurface.m_table[row][col]) };
-					newError += currentError;
-					// update model price surface
-					modelPriceSurface.m_table[row][col] = modelPrices[col];
-					errorSurface.m_table[row][col] = currentError;
-				}
+				newError = computeFFTModelMRSE(priceSurface, marketParams, modelParams, params, modelPriceSurface, errorSurface);
 			}
-			// get mean error over all entries
-			newError /= (priceSurface.m_numCols * priceSurface.m_numRows);
+			else
+			{
+				newError = computeBSM_MRSE(priceSurface, marketParams, modelParams, modelPriceSurface, errorSurface);
+			}
 
 			if (newError < error)
 			{
@@ -251,9 +282,9 @@ namespace Calibrate
 		errorSurface.m_tableName = "Relative squared error";
 		errorSurface.m_tableLabel = "Error";
 
-		std::vector<double> vols{ np::linspace<double>(0.1,1.0,10) };
-		std::vector<double> drifts{ np::linspace<double>(0.2,1.2,10) };
-		std::vector<double> variances{ np::linspace<double>(0.01,1.0,10) };
+		std::vector<double> vols{ np::linspace<double>(0.1,1.0,3) };
+		std::vector<double> drifts{ np::linspace<double>(0.2,1.2,3) };
+		std::vector<double> variances{ np::linspace<double>(0.01,1.0,3) };
 
 		VarianceGammaParams finalParams{
 			vols[static_cast<std::size_t>(0)],
@@ -262,7 +293,7 @@ namespace Calibrate
 		};
 
 		// define params of FFT pricing method
-		FFT::fttParams params{};
+		FFT::FFTParams params{};
 
 		// the maturity of the market variable will change later, the other values are fixed
 		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
@@ -274,37 +305,9 @@ namespace Calibrate
 			{
 				for (const auto& variance : variances)
 				{
-					// collect model parameters and initialize error
+					// collect model parameters, compute error and update surfaces
 					VarianceGammaParams modelParams{ vol,drift,variance };
-					double newError{ 0.0 };
-
-					// add up errors of predicted prices
-					// rows are maturities
-					for (std::size_t row{ 0 }; row < std::size(priceSurface.m_rowVals); ++row)
-					{
-						// adjust maturity of market params
-						marketParams.maturity = priceSurface.m_rowVals[row];
-
-						std::vector<double> modelPrices(priceSurface.m_numCols);
-
-						// get model prediction and interpolate to fit the query strikes (cols are strikes)
-						FFT::LogStrikePricePair pair{ FFT::pricingfftVarianceGamma(modelParams, marketParams, params) };
-						modelPrices = interpolatePrices(pair, priceSurface.m_colVals);
-
-						// cols are strikes
-						for (std::size_t col{ 0 }; col < std::size(priceSurface.m_colVals); ++col)
-						{
-							// add up the errors
-							double currentError{ (modelPrices[col] - priceSurface.m_table[row][col]) * (modelPrices[col] - priceSurface.m_table[row][col])
-															/ (priceSurface.m_table[row][col] * priceSurface.m_table[row][col]) };
-							newError += currentError;
-							// update model price surface
-							modelPriceSurface.m_table[row][col] = modelPrices[col];
-							errorSurface.m_table[row][col] = currentError;
-						}
-					}
-					// get mean error over all entries
-					newError /= (priceSurface.m_numCols * priceSurface.m_numRows);
+					double newError{ computeFFTModelMRSE(priceSurface, marketParams, modelParams, params, modelPriceSurface, errorSurface) };
 
 					if (newError < error)
 					{

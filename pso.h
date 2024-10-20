@@ -106,14 +106,14 @@ constexpr std::vector<double> PSO::optimize(const auto& func, const auto& deriv,
 
     // initialize best known position of entire swarm
     double bestFuncVal{ 1e20 };
-    double currentfuncVal{};
-    for (const auto& position : m_swarm.positions)
+    double currentFuncVal{};
+    for (const auto& position : m_swarm.m_positions)
     {
         currentFuncVal = func(position);
-        if (currentfuncVal < bestFuncVal)
+        if (currentFuncVal < bestFuncVal)
         {
             m_swarm.m_bestKnownPositionSwarm = position;
-            bestFuncVal = currentfuncVal;
+            bestFuncVal = currentFuncVal;
         }
     }
 
@@ -123,25 +123,26 @@ constexpr std::vector<double> PSO::optimize(const auto& func, const auto& deriv,
     {
         for (std::size_t i{ 0 }; i < m_swarm.m_numParticles; ++i)
         {
-            rp = Random::getVector(m_swarm.m_dimension,0.0,1.0);
-            rg = Random::getVector(m_swarm.m_dimension,0.0,1.0);
+            std::vector<double> rp{ Random::getVector(m_swarm.m_dimension,0.0,1.0) };
+            std::vector<double> rg{ Random::getVector(m_swarm.m_dimension,0.0,1.0) };
 
             // update velocities
-            m_swarm.m_velocities[i] = np::multiply(m_swarm.m_velocities[i], m_inertiaWeight)
-                + np::multiply(np::multiply(m_cognitiveCoeff, rp), np::add(m_swarm.m_bestKnownPositions[i], m_swarm.m_positions[i], 1.0, -1.0))
-                + np::multiply(np::multiply(m_socialCoeff, rg), np::add(m_swarm.m_bestKnownPositionSwarm, m_swarm.m_positions[i], 1.0, -1.0));
+            m_swarm.m_velocities[i] = np::add(np::add( np::multiply(m_swarm.m_velocities[i], m_inertiaWeight)
+                , np::multiply(np::multiply(m_cognitiveCoeff, rp), np::add(m_swarm.m_bestKnownPositions[i], m_swarm.m_positions[i], 1.0, -1.0)) )
+                , np::multiply(np::multiply(m_socialCoeff, rg), np::add(m_swarm.m_bestKnownPositionSwarm, m_swarm.m_positions[i], 1.0, -1.0)) );
 
             // update positions
             m_swarm.m_positions[i] = np::add(m_swarm.m_positions[i], m_swarm.m_velocities[i]);
 
             // check new function values
-            if (func(m_swarm.m_positions[i]) < func(m_swarm.m_bestKnownPositions[i])
+            if (func(m_swarm.m_positions[i]) < func(m_swarm.m_bestKnownPositions[i]))
             {
                 m_swarm.m_bestKnownPositions[i] = m_swarm.m_positions[i];
                 if (func(m_swarm.m_bestKnownPositions[i]) < bestFuncVal)
                 {
                     m_swarm.m_bestKnownPositionSwarm = m_swarm.m_bestKnownPositions[i];
                     bestFuncVal = func(m_swarm.m_bestKnownPositions[i]);
+                    std::cout << "New best position with function value " << bestFuncVal << " found.\n";
                 }
             }
         }

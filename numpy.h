@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <cmath>
+#include <cassert>
 
 namespace np
 {
@@ -39,7 +40,7 @@ namespace np
     }
 
     template <typename T>
-    std::vector<T> add(const std::vector<T>& vec1, const std::vector<T>& vec2, T factor1 = 1, T factor2 = 1)
+    std::vector<T> add(const std::vector<T>& vec1, const std::vector<T>& vec2, T factor1 = 1.0, T factor2 = 1.0)
     {
         assert(std::size(vec1) == std::size(vec2));
         std::vector<T> result(vec1.size());

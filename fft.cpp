@@ -97,7 +97,7 @@ namespace FFT
 
 	}
 
-	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
+	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair
 	{
 
 		// Parameters setting in fourier transform
@@ -161,17 +161,17 @@ namespace FFT
 		return result;
 	}
 
-	auto pricingfftHeston(const HestonParams& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
+	auto pricingfftHeston(const HestonParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair
 	{
 		return pricingfft(modelParams, marketParams, params);
 	}
 
-	auto pricingfftBSM(const BSMParams& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
+	auto pricingfftBSM(const BSMParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair
 	{
 		return pricingfft(modelParams, marketParams, params);
 	}
 
-	auto pricingfftVarianceGamma(const VarianceGammaParams& modelParams, const MarketParams& marketParams, const fttParams& params) -> LogStrikePricePair
+	auto pricingfftVarianceGamma(const VarianceGammaParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair
 	{
 		return pricingfft(modelParams, marketParams, params);
 	}
@@ -249,7 +249,7 @@ namespace FFT
 		{
 			HestonParams hestonParams{};
 			BSMParams bsmParams{};
-			fttParams params{};
+			FFTParams params{};
 			MarketParams marketParams{};
 
 			LogStrikePricePair pricePairs{ pricingfft(bsmParams, marketParams, params) };

@@ -31,7 +31,7 @@ auto main() -> int
 
 	//Calibrate::testHeston();
 
-	//Calibrate::testBSM();
+	Calibrate::testBSM();
 
 	Calibrate::testVarianceGamma();
 

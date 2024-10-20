@@ -76,12 +76,7 @@ namespace np
     template <typename T>
     std::vector<T> multiply(T factor, const std::vector<T>& vec)
     {
-        std::vector<T> result(vec.size());
-        for (std::size_t i = 0; i < vec.size(); ++i)
-        {
-            result[i] = factor * vec[i];
-        }
-        return result;
+        return multiply(vec, factor);
     }
 
     template <typename T>

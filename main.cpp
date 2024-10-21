@@ -13,6 +13,7 @@
 #include "volatility.h"
 #include "fft.h"
 #include "calibrate.h"
+#include "pso.h"
 #include <iostream>
 #include <iostream>
 #include <vector>
@@ -31,9 +32,11 @@ auto main() -> int
 
 	//Calibrate::testHeston();
 
-	Calibrate::testBSM();
+	//Calibrate::testBSM();
 
-	Calibrate::testVarianceGamma();
+	//Calibrate::testVarianceGamma();
+
+	testPSO();
 
 	//SDE::Testing::saveHestonPaths();
 

@@ -146,6 +146,7 @@
     <ClCompile Include="adam.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="out.cpp" />
+    <ClCompile Include="pso.cpp" />
     <ClCompile Include="saving.cpp" />
     <ClCompile Include="sdes.cpp" />
     <ClCompile Include="securities.cpp" />

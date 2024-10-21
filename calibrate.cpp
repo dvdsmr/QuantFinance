@@ -1,7 +1,6 @@
 #include "calibrate.h"
 #include "options.h"
 #include "saving.h"
-#include "pso.h"
 #include <algorithm>
 #include <cassert>
 

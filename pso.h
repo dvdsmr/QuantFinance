@@ -116,7 +116,7 @@ constexpr std::vector<double> PSO::optimize(const auto& func, bool verbose)
         }
 
         ++counter;
-        if (bestFuncVal < 1e-5 || counter > 1000)
+        if (bestFuncVal < 1e-5 || counter > 100)
         {
             converged = true;
         }

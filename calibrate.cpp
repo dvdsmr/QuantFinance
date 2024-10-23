@@ -253,8 +253,8 @@ namespace Calibrate
 		finalParams = { optParams[0], optParams[1], optParams[2], optParams[3], optParams[4] };
 
 		// save the model price table to file
-		Saving::write_labeledTable_to_csv("Data/BSMModelPriceSurface.csv", modelPriceSurface);
-		Saving::write_labeledTable_to_csv("Data/BSMModelErrorSurface.csv", errorSurface);
+		Saving::write_labeledTable_to_csv("Data/HestonModelPriceSurface.csv", modelPriceSurface);
+		Saving::write_labeledTable_to_csv("Data/HestonModelErrorSurface.csv", errorSurface);
 
 		return finalParams;
 	}

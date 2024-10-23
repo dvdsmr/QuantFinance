@@ -30,7 +30,7 @@ auto main() -> int
 	//FFT::UnitTests::dft();
 	//FFT::UnitTests::pricingfft();
 
-	//Calibrate::testHeston();
+	Calibrate::testHeston();
 
 	Calibrate::testBSM();
 

@@ -11,6 +11,7 @@ namespace Calibrate
 	auto computeFFTModelMRSE(const LabeledTable& priceSurface, MarketParams& marketParams, const auto& modelParams, const FFT::FFTParams& params, LabeledTable& modelPriceSurface, LabeledTable& errorSurface) -> double;
 	auto computeBSM_MRSE(const LabeledTable& priceSurface, MarketParams& marketParams, const BSMParams& modelParams, LabeledTable& modelPriceSurface, LabeledTable& errorSurface) -> double;
 	auto hestonCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> HestonParams;
+	auto hestonCallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> HestonParams;
 	auto bsmCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view pricing = "analytic") -> BSMParams;
 	auto bsmCallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> BSMParams;
 	auto varianceGammaCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> VarianceGammaParams;

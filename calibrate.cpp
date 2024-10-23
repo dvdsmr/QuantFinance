@@ -214,6 +214,53 @@ namespace Calibrate
 		return finalParams;
 	}
 
+
+	auto hestonCallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> HestonParams
+	{
+		// Since we need to populate the surface of model generated prices anyway to compute the model error,
+		// we store this surface (initialized as a copy of the true surface) 
+		// to be able to plot it later (and compare it to the true surface)
+		LabeledTable modelPriceSurface{ priceSurface };
+		modelPriceSurface.m_tableName = "Heston price surface";
+		LabeledTable errorSurface{ priceSurface };
+		errorSurface.m_tableName = "Relative squared error";
+		errorSurface.m_tableLabel = "Error";
+
+		HestonParams finalParams{ };
+
+		// define params of FFT pricing method
+		FFT::FFTParams params{};
+
+		// the maturity of the market variable will change later, the other values are fixed
+		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
+
+		// define pso  
+		PSO pso{ 100,5 };
+		pso.set_uniformRandomPositions({ 0.01,0.1,0.1,-0.9,0.1 }, { 2.0,2.0,2.0,0.9,2.0 });
+		pso.set_uniformRandomVelocities({ 0.01,0.1,0.1,-0.9,0.1 }, { 2.0,2.0,2.0,0.9,2.0 });
+
+		// define objective function
+		auto func
+		{
+			[&](std::vector<double> paremeters) 
+			{
+				HestonParams hparams{ paremeters[0], paremeters[1], paremeters[2], paremeters[3], paremeters[4]};
+				return computeFFTModelMRSE(priceSurface, marketParams, hparams, params, modelPriceSurface, errorSurface); 
+			}
+		};
+
+		std::vector<double> optParams{ pso.optimize(func,true) };
+		finalParams = { optParams[0], optParams[1], optParams[2], optParams[3], optParams[4] };
+
+		// save the model price table to file
+		Saving::write_labeledTable_to_csv("Data/BSMModelPriceSurface.csv", modelPriceSurface);
+		Saving::write_labeledTable_to_csv("Data/BSMModelErrorSurface.csv", errorSurface);
+
+		return finalParams;
+	}
+
+
+
 	// NOTE: we use FFT but we could replace it with the explicit pricing formula
 	auto bsmCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view pricing) -> BSMParams
 	{
@@ -283,14 +330,7 @@ namespace Calibrate
 		errorSurface.m_tableName = "Relative squared error";
 		errorSurface.m_tableLabel = "Error";
 
-		std::vector<double> vols{ np::linspace<double>(0.5,.7,100) };
-
-		BSMParams finalParams{
-			vols[static_cast<std::size_t>(0)]
-		};
-
-		// define params of FFT pricing method
-		FFT::FFTParams params{};
+		BSMParams finalParams{ };
 
 		// the maturity of the market variable will change later, the other values are fixed
 		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
@@ -415,7 +455,7 @@ namespace Calibrate
 		const double spot{ 175.0 };
 		const double riskFreeReturn{ 0.045 };
 
-		HestonParams fitParams{ hestonCall(priceSurface,riskFreeReturn,spot,dividendYield) };
+		HestonParams fitParams{ hestonCallPSO(priceSurface,riskFreeReturn,spot,dividendYield) };
 
 		std::cout << "The optimal params found are: \n";
 		std::cout << "reversionRate: " << fitParams.reversionRate << "\n";

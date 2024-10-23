@@ -32,11 +32,12 @@ auto main() -> int
 
 	//Calibrate::testHeston();
 
-	//Calibrate::testBSM();
+	Calibrate::testBSM();
 
 	//Calibrate::testVarianceGamma();
 
-	testPSO();
+	//testPSO();
+
 
 	//SDE::Testing::saveHestonPaths();
 

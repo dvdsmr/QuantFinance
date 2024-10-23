@@ -1,6 +1,7 @@
 #include "calibrate.h"
 #include "options.h"
 #include "saving.h"
+#include "pso.h"
 #include <algorithm>
 #include <cassert>
 
@@ -270,6 +271,52 @@ namespace Calibrate
 	}
 
 
+	// NOTE: we use FFT but we could replace it with the explicit pricing formula
+	auto bsmCallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> BSMParams
+	{
+		// Since we need to populate the surface of model generated prices anyway to compute the model error,
+		// we store this surface (initialized as a copy of the true surface) 
+		// to be able to plot it later (and compare it to the true surface)
+		LabeledTable modelPriceSurface{ priceSurface };
+		modelPriceSurface.m_tableName = "BSM price surface";
+		LabeledTable errorSurface{ priceSurface };
+		errorSurface.m_tableName = "Relative squared error";
+		errorSurface.m_tableLabel = "Error";
+
+		std::vector<double> vols{ np::linspace<double>(0.5,.7,100) };
+
+		BSMParams finalParams{
+			vols[static_cast<std::size_t>(0)]
+		};
+
+		// define params of FFT pricing method
+		FFT::FFTParams params{};
+
+		// the maturity of the market variable will change later, the other values are fixed
+		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
+
+		// define pso on 
+		PSO pso{ 100,1 };
+		pso.set_uniformRandomPositions({ 0.1 }, { 0.9 });
+		pso.set_uniformRandomVelocities({ 0.1 }, { 0.9 });
+
+		// define objective function
+		auto func
+		{
+			[&](std::vector<double> vol) {return  computeBSM_MRSE(priceSurface, marketParams, BSMParams{vol[static_cast<std::size_t>(0)]}, modelPriceSurface, errorSurface); }
+		};
+
+		std::vector<double> optVol{ pso.optimize(func,true) };
+		std::cout << "PSO found vol of " << optVol[static_cast<std::size_t>(0)] << "\n";
+		finalParams = { optVol[static_cast<std::size_t>(0)] };
+
+		// save the model price table to file
+		Saving::write_labeledTable_to_csv("Data/BSMModelPriceSurface.csv", modelPriceSurface);
+		Saving::write_labeledTable_to_csv("Data/BSMModelErrorSurface.csv", errorSurface);
+
+		return finalParams;
+	}
+
 	auto varianceGammaCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> VarianceGammaParams
 	{
 		// Since we need to populate the surface of model generated prices anyway to compute the model error,
@@ -418,7 +465,8 @@ namespace Calibrate
 		const double spot{ 175.0 };
 		const double riskFreeReturn{ 0.045 };
 
-		BSMParams fitParams{ bsmCall(priceSurface,riskFreeReturn,spot,dividendYield)};
+		//BSMParams fitParams{ bsmCall(priceSurface,riskFreeReturn,spot,dividendYield)};
+		BSMParams fitParams{ bsmCallPSO(priceSurface,riskFreeReturn,spot,dividendYield) };
 
 		std::cout << "The optimal params found with analytic pricing are: \n";
 		std::cout << "Vol: " << fitParams.vol << "\n";

@@ -66,14 +66,18 @@ constexpr std::vector<double> PSO::optimize(const auto& func, bool verbose)
     // initialize best known position of entire swarm
     double bestFuncVal{ 1e20 };
     double currentFuncVal{};
+    std::vector<double> bestCurrentFuncVals(m_swarm.m_numParticles);
+    std::size_t count{ 0 };
     for (const auto& position : m_swarm.m_positions)
     {
         currentFuncVal = func(position);
+        bestCurrentFuncVals[count] = currentFuncVal;
         if (currentFuncVal < bestFuncVal)
         {
             m_swarm.m_bestKnownPositionSwarm = position;
             bestFuncVal = currentFuncVal;
         }
+        ++count;
     }
 
     bool converged{ false };
@@ -94,13 +98,15 @@ constexpr std::vector<double> PSO::optimize(const auto& func, bool verbose)
             m_swarm.m_positions[i] = np::add(m_swarm.m_positions[i], m_swarm.m_velocities[i]);
 
             // check new function values
-            if (func(m_swarm.m_positions[i]) < func(m_swarm.m_bestKnownPositions[i]))
+            currentFuncVal = func(m_swarm.m_positions[i]);
+            if (currentFuncVal < bestCurrentFuncVals[i])
             {
                 m_swarm.m_bestKnownPositions[i] = m_swarm.m_positions[i];
-                if (func(m_swarm.m_bestKnownPositions[i]) < bestFuncVal)
+                bestCurrentFuncVals[i] = currentFuncVal;
+                if (bestCurrentFuncVals[i] < bestFuncVal)
                 {
                     m_swarm.m_bestKnownPositionSwarm = m_swarm.m_bestKnownPositions[i];
-                    bestFuncVal = func(m_swarm.m_bestKnownPositions[i]);
+                    bestFuncVal = bestCurrentFuncVals[i];
                     if (verbose)
                     {
                         std::cout << "New best position with function value " << bestFuncVal << " found.\n";
@@ -113,6 +119,10 @@ constexpr std::vector<double> PSO::optimize(const auto& func, bool verbose)
         if (bestFuncVal < 1e-5 || counter > 1000)
         {
             converged = true;
+        }
+        if (verbose)
+        {
+            std::cout << "Iteration " << counter << " finished.\n";
         }
     }
 

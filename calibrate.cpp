@@ -235,7 +235,7 @@ namespace Calibrate
 		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
 
 		// define pso  
-		PSO pso{ 10,5 };
+		PSO pso{ 20,5 };
 		pso.set_uniformRandomPositions({ 0.01,0.1,0.1,-0.9,0.1 }, { 2.0,2.0,2.0,0.9,2.0 });
 		pso.set_uniformRandomVelocities({ 0.01,0.1,0.1,-0.9,0.1 }, { 2.0,2.0,2.0,0.9,2.0 });
 
@@ -408,6 +408,50 @@ namespace Calibrate
 		}
 
 		std::cout << "Final parameter set has error " << error << ".\n";
+
+		// save the model price table to file
+		Saving::write_labeledTable_to_csv("Data/VGModelPriceSurface.csv", modelPriceSurface);
+		Saving::write_labeledTable_to_csv("Data/VGModelErrorSurface.csv", errorSurface);
+
+		return finalParams;
+	}
+
+	auto varianceGammaCallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> VarianceGammaParams
+	{
+		// Since we need to populate the surface of model generated prices anyway to compute the model error,
+		// we store this surface (initialized as a copy of the true surface) 
+		// to be able to plot it later (and compare it to the true surface)
+		LabeledTable modelPriceSurface{ priceSurface };
+		modelPriceSurface.m_tableName = "Variance Gamma price surface";
+		LabeledTable errorSurface{ priceSurface };
+		errorSurface.m_tableName = "Relative squared error";
+		errorSurface.m_tableLabel = "Error";
+
+		VarianceGammaParams finalParams{ };
+
+		// define params of FFT pricing method
+		FFT::FFTParams params{};
+
+		// the maturity of the market variable will change later, the other values are fixed
+		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
+
+		// define pso  
+		PSO pso{ 20,5 };
+		pso.set_uniformRandomPositions({ 0.1,0.01,0.1 }, { 2.0,1.0,2.0 });
+		pso.set_uniformRandomVelocities({ 0.1,0.01,0.1 }, { 2.0,1.0,2.0 });
+
+		// define objective function
+		auto func
+		{
+			[&](std::vector<double> paremeters)
+			{
+				VarianceGammaParams vgparams{ paremeters[0], paremeters[1], paremeters[2]};
+				return computeFFTModelMRSE(priceSurface, marketParams, vgparams, params, modelPriceSurface, errorSurface);
+			}
+		};
+
+		std::vector<double> optParams{ pso.optimize(func,true) };
+		finalParams = { optParams[0], optParams[1], optParams[2] };
 
 		// save the model price table to file
 		Saving::write_labeledTable_to_csv("Data/VGModelPriceSurface.csv", modelPriceSurface);

@@ -15,6 +15,7 @@ namespace Calibrate
 	auto bsmCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view pricing = "analytic") -> BSMParams;
 	auto bsmCallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> BSMParams;
 	auto varianceGammaCall(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> VarianceGammaParams;
+	auto varianceGammaCallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> VarianceGammaParams;
 	void testHeston();
 	void testBSM();
 	void testVarianceGamma();

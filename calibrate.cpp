@@ -438,7 +438,7 @@ namespace Calibrate
 		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
 
 		// define pso  
-		PSO pso{ 20,3 };
+		PSO pso{ 10,3 };
 		pso.set_uniformRandomPositions({ 0.1,0.01,0.1 }, { 2.0,1.0,2.0 });
 		pso.set_uniformRandomVelocities({ 0.1,0.01,0.1 }, { 2.0,1.0,2.0 });
 
@@ -501,7 +501,7 @@ namespace Calibrate
 		const double spot{ 175.0 };
 		const double riskFreeReturn{ 0.045 };
 
-		HestonParams fitParams{ hestonCall(priceSurface,riskFreeReturn,spot,dividendYield) };
+		HestonParams fitParams{ hestonCallPSO(priceSurface,riskFreeReturn,spot,dividendYield) };
 
 		std::cout << "The optimal params found are: \n";
 		std::cout << "reversionRate: " << fitParams.reversionRate << "\n";

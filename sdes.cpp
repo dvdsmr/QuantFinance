@@ -61,7 +61,8 @@ namespace SDE
 	{
 		double gammaIncrement{ Random::gamma(stepSize / variance, variance) };
 		double normalIncrement{ Random::normal(0.,1.) };
-		return initialState + drift * gammaIncrement + vol * std::sqrt(gammaIncrement) * normalIncrement;
+		double VGIncrement{ drift * gammaIncrement + vol * std::sqrt(gammaIncrement) * normalIncrement };
+		return initialState * std::exp(VGIncrement);
 	}
 
 	// careful: the step is only accurate for very small time steps
@@ -206,11 +207,11 @@ namespace SDE
 		auto saveVarianceGammaPaths() -> void
 		{
 
-			XYVals spath2{ SDE::VarianceGammaPath(100.0, 1.0, 1000, 0.09, 7., 0.1) };
+			XYVals spath2{ SDE::VarianceGammaPath(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
 			Saving::write_xyvals_to_csv("Data/VGstockPath1.csv", spath2);
-			XYVals spath3{ SDE::VarianceGammaPath(100.0, 1.0, 1000, 0.09, 7., 0.1) };
+			XYVals spath3{ SDE::VarianceGammaPath(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
 			Saving::write_xyvals_to_csv("Data/VGstockPath2.csv", spath3);
-			XYVals spath4{ SDE::VarianceGammaPath(100.0, 1.0, 1000, 0.09, 7., 0.1) };
+			XYVals spath4{ SDE::VarianceGammaPath(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
 			Saving::write_xyvals_to_csv("Data/VGstockPath3.csv", spath4);
 
 		}

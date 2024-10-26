@@ -129,30 +129,10 @@ private:
 
 
 // overload operators for Options
-Option operator-(const Option& opt)
-{
-	Option newOpt{ opt };
-	newOpt.set_quantity(-opt.get_quantity());
-	return newOpt;
-}
-
-Option operator+(const Option& opt)
-{
-	Option newOpt{ opt };
-	return newOpt;
-}
-
-Option operator*(double quantity, const Option& opt)
-{
-	Option newOpt{ opt };
-	newOpt.set_quantity(quantity*opt.get_quantity());
-	return newOpt;
-}
-
-Option operator*(const Option& opt, double quantity)
-{
-	return quantity * opt;
-}
+Option operator-(const Option& opt);
+Option operator+(const Option& opt);
+Option operator*(double quantity, const Option& opt);
+Option operator*(const Option& opt, double quantity);
 
 
 

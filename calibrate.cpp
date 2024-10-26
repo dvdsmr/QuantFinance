@@ -149,20 +149,22 @@ namespace Calibrate
 		errorSurface.m_tableName = "Relative squared error";
 		errorSurface.m_tableLabel = "Error";
 
+		/*
 		std::vector<double> reversionRates{ np::linspace<double>(0.01,2.0,2) };
 		std::vector<double> longVariances{ np::linspace<double>(0.1,2.0,2) };
 		std::vector<double> volVols{ np::linspace<double>(0.1,2.0,2) };
 		std::vector<double> correlations{ np::linspace<double>(-0.9,0.9,2) };
 		std::vector<double> initialVariances{ np::linspace<double>(0.1,2.0,2) };
+		*/
 		
 
-		/*
+		
 		std::vector<double> reversionRates{ np::linspace<double>(0.2,0.2,1) };
 		std::vector<double> longVariances{ np::linspace<double>(0.62,0.62,1) };
 		std::vector<double> volVols{ np::linspace<double>(6.64,6.64,1) };
 		std::vector<double> correlations{ np::linspace<double>(-0.15,-0.15,1) };
 		std::vector<double> initialVariances{ np::linspace<double>(0.62,0.62,1) };
-		*/
+		
 
 		HestonParams finalParams{
 			reversionRates[static_cast<std::size_t>(0)],
@@ -499,7 +501,7 @@ namespace Calibrate
 		const double spot{ 175.0 };
 		const double riskFreeReturn{ 0.045 };
 
-		HestonParams fitParams{ hestonCallPSO(priceSurface,riskFreeReturn,spot,dividendYield) };
+		HestonParams fitParams{ hestonCall(priceSurface,riskFreeReturn,spot,dividendYield) };
 
 		std::cout << "The optimal params found are: \n";
 		std::cout << "reversionRate: " << fitParams.reversionRate << "\n";

@@ -5,7 +5,7 @@ As a first example of the methods in the repo, we can calibrate the Black-Schole
 
 European call price surface            |  European call BSM impled Vol
 :-------------------------:|:-------------------------:
-![Price](Plots/priceSurfacePlot.png) |  ![Vol](Plots/volSurfacePlot.png)
+![Price](Plots/priceSurfacePlot_show.png) |  ![Vol](Plots/volSurfacePlot_show.png)
 
 
 The Black-Scholes-Merton implied volatility varies for different strikes and maturities. No single volatility parameter is sufficient to accurately replicate the price surface, which is a clear sign of the limitations of the BSM model (the above price surfaces is artificial, but the effect can be even more pronounced for real options). If we calibrate the BSM model to the above price surface, we get a best fit with a vol of 0.62 leading to a mean relative squared error of 0.04 on the prices. 
@@ -13,7 +13,7 @@ A more flexible model than BSM is the Heston model, in which the volatility itse
 
 BSM calibrated price surface            |  Heston calibrated price surface
 :-------------------------:|:-------------------------:
-![Price](Plots/bsmModelPriceSurfacePlot.png) |  ![Vol](Plots/hestonModelPriceSurfacePlot.png)
+![Price](Plots/bsmModelPriceSurfacePlot_show.png) |  ![Vol](Plots/hestonModelPriceSurfacePlot_show.png)
 
 Both models have a hard time fitting the exact curvature of the true surface, but the slope of the curve can be seen to be more accurate in the Heston model, particularly for large times to maturity. For this plot, the BSM surface is calibrated using the analytical pricing formula. No analytical formula is available for the Heston model, but the prices can be approximated, e.g. via the characteristic function and Fast Fourier Transform, which is used in the calibration.
 

@@ -26,7 +26,8 @@ def plotStockCSV(filenames):
     ax.set_xlabel("Time")
     ax.set_ylabel("Stock price")
     plt.title("Paths of a Variance Gamma Model")
-    plt.savefig("Plots/VGstockPath.png")            
+    plt.grid(True)
+    plt.savefig("Plots/VGstockPath.png")     
     plt.plot()
 
 def plotSurface(filename,plotName):
@@ -108,5 +109,5 @@ if __name__ == "__main__":
     # plotSurface("Data/HestonModelErrorSurface.csv","hestonModelErrorSurfacePlot")
     # plotSurface("Data/BSMModelPriceSurface.csv","bsmModelPriceSurfacePlot")
     # plotSurface("Data/BSMModelErrorSurface.csv","bsmModelErrorSurfacePlot")
-    plotSurface("Data/VGModelPriceSurface.csv","hestonModelPriceSurfacePlot")
-    plotSurface("Data/VGModelErrorSurface.csv","hestonModelErrorSurfacePlot")
+    # plotSurface("Data/VGModelPriceSurface.csv","hestonModelPriceSurfacePlot")
+    # plotSurface("Data/VGModelErrorSurface.csv","hestonModelErrorSurfacePlot")

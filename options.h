@@ -111,11 +111,11 @@ public:
 	void set_underlying(SimpleStock stock) { m_underlying = stock; }
 
 	// getters
-	Option::PayoffType get_payoffType() { return m_type; }
-	Option::ExerciseType get_exerciseType() { return m_etype; }
-	Option::Position get_position() { return m_position; }
-	double get_quantity() { return m_quantity; }
-	SimpleStock get_underlying() { return m_underlying; }
+	Option::PayoffType get_payoffType() const { return m_type; }
+	Option::ExerciseType get_exerciseType() const { return m_etype; }
+	Option::Position get_position() const { return m_position; }
+	double get_quantity() const { return m_quantity; }
+	SimpleStock get_underlying() const { return m_underlying; }
 
 private:
 	double m_strike{ 100. };
@@ -129,6 +129,31 @@ private:
 
 
 // overload operators for Options
+Option operator-(const Option& opt)
+{
+	Option newOpt{ opt };
+	newOpt.set_quantity(-opt.get_quantity());
+	return newOpt;
+}
+
+Option operator+(const Option& opt)
+{
+	Option newOpt{ opt };
+	return newOpt;
+}
+
+Option operator*(double quantity, const Option& opt)
+{
+	Option newOpt{ opt };
+	newOpt.set_quantity(quantity*opt.get_quantity());
+	return newOpt;
+}
+
+Option operator*(const Option& opt, double quantity)
+{
+	return quantity * opt;
+}
+
 
 
 

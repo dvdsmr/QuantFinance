@@ -436,7 +436,7 @@ namespace Calibrate
 		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
 
 		// define pso  
-		PSO pso{ 20,5 };
+		PSO pso{ 20,3 };
 		pso.set_uniformRandomPositions({ 0.1,0.01,0.1 }, { 2.0,1.0,2.0 });
 		pso.set_uniformRandomVelocities({ 0.1,0.01,0.1 }, { 2.0,1.0,2.0 });
 
@@ -604,7 +604,7 @@ namespace Calibrate
 		const double spot{ 175.0 };
 		const double riskFreeReturn{ 0.045 };
 
-		VarianceGammaParams fitParams{ varianceGammaCall(priceSurface,riskFreeReturn,spot,dividendYield) };
+		VarianceGammaParams fitParams{ varianceGammaCallPSO(priceSurface,riskFreeReturn,spot,dividendYield) };
 
 		std::cout << "The optimal params found are: \n";
 		std::cout << "Vol: " << fitParams.vol << "\n";

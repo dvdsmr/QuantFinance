@@ -17,13 +17,15 @@ BSM calibrated price surface            |  Heston calibrated price surface
 
 Both models have a hard time fitting the exact curvature of the true surface, but the slope of the curve can be seen to be more accurate in the Heston model, particularly for large times to maturity. For this plot, the BSM surface is calibrated using the analytical pricing formula. No analytical formula is available for the Heston model, but the prices can be approximated, e.g. via the characteristic function and Fast Fourier Transform, which is used in the calibration.
 
-The repository also contains tools to simulate the stochastic processes modelling stock prices, which can be useful for Monte-Carlo based techniques. The example plot below shows three paths of a Heston model, used to to model stock prices with a stochastic volatility process.
+The repository also contains tools to simulate the stochastic processes modelling stock prices, which can be useful for Monte-Carlo based techniques. The example plot below shows three paths of a Heston model on the left and three paths of a Variance Gamma model on the right.
 
-<p align="center">
-  <img src="Plots/stockPathShowcase.png" alt="Heston model paths" width="50%">
-</p>
+Heston model paths          |  Variance Gamma model paths
+:-------------------------:|:-------------------------:
+![Price](Plots/stockPathShowcase.png) |  ![Vol](Plots/VGstockPathShowcase.png)
 
-Canonical models for derivative pricing and Hedging are included. The below plot shows the development of the fair price, Delta and Gamma of a european call option with a strike of $100 in the Black-Scholes-Merton model as time to maturity increases.
+The Heston model models stock prices with a stochastic volatility process. Among other parameters, it involves a reversion rate, enabling analysts to incorparate typical stock behaviours like mean reversion or momentum in the model. It does not incorporate jumps however: like in the BSM model, the process is almost surely continuous. The Variance Gamma model on the other hand includes random discontinuous jumps. It can be used to model gap-ups and gap-downs or quasi instantaneuous price jumps due to unexpected and crucial news on a company.
+
+Canonical models for derivative pricing and Hedging are included in the repository. The below plot shows the development of the fair price, Delta and Gamma of a european call option with a strike of $100 in the Black-Scholes-Merton model as time to maturity increases.
 
 <p align="center">
   <img src="Plots/optionPrice.gif" alt="European call option in BSM model" width="50%">

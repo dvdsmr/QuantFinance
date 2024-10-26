@@ -57,6 +57,13 @@ namespace SDE
 		return initialState + stepSize * drift * initialState + std::sqrt(stepSize) * variance * correlatedNormal;
 	}
 
+	auto VarianceGammaStep(double initialState, double stepSize, double drift, double variance, double vol) -> double
+	{
+		double gammaIncrement{ Random::gamma(stepSize / variance, variance) };
+		double normalIncrement{ Random::normal(0.,1.) };
+		return initialState + drift * gammaIncrement + vol * std::sqrt(gammaIncrement) * normalIncrement;
+	}
+
 	// careful: the step is only accurate for very small time steps
 	auto HestonPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals
 	{
@@ -90,6 +97,23 @@ namespace SDE
 		}
 		return spath;
 
+	}
+
+	auto VarianceGammaPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double variance, double vol) -> XYVals
+	{
+
+
+		XYVals spath{ timePoints };
+		spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
+		spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
+		double time = terminalTime / (timePoints - 1);
+		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+		{
+			// update values
+			spath.m_xVals[i] = static_cast<double>(i) * time;
+			spath.m_yVals[i] = VarianceGammaStep(spath.m_yVals[i - 1], time, drift, variance, vol);
+		}
+		return spath;
 	}
 
 
@@ -152,11 +176,11 @@ namespace SDE
 		{
 			
 			XYVals spath2{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
-			Saving::write_xyvals_to_csv("Data/stockPath1.csv", spath2);
+			Saving::write_xyvals_to_csv("Data/HstockPath1.csv", spath2);
 			XYVals spath3{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
-			Saving::write_xyvals_to_csv("Data/stockPath2.csv", spath3);
+			Saving::write_xyvals_to_csv("Data/HstockPath2.csv", spath3);
 			XYVals spath4{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
-			Saving::write_xyvals_to_csv("Data/stockPath3.csv", spath4);
+			Saving::write_xyvals_to_csv("Data/HstockPath3.csv", spath4);
 		
 
 			//HestonPath(initialState,terminalTime,timePoints,drift,initialVariance,longVariance,correlation,reversionRate,volVol)
@@ -178,5 +202,18 @@ namespace SDE
 			*/
 
 		}
+
+		auto saveVarianceGammaPaths() -> void
+		{
+
+			XYVals spath2{ SDE::VarianceGammaPath(100.0, 1.0, 1000, 0.09, 7., 0.1) };
+			Saving::write_xyvals_to_csv("Data/VGstockPath1.csv", spath2);
+			XYVals spath3{ SDE::VarianceGammaPath(100.0, 1.0, 1000, 0.09, 7., 0.1) };
+			Saving::write_xyvals_to_csv("Data/VGstockPath2.csv", spath3);
+			XYVals spath4{ SDE::VarianceGammaPath(100.0, 1.0, 1000, 0.09, 7., 0.1) };
+			Saving::write_xyvals_to_csv("Data/VGstockPath3.csv", spath4);
+
+		}
+
 	}
 }

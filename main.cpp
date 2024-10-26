@@ -34,12 +34,14 @@ auto main() -> int
 
 	//Calibrate::testBSM();
 
-	Calibrate::testVarianceGamma();
+	//Calibrate::testVarianceGamma();
 
 	//testPSO();
 
 
 	//SDE::Testing::saveHestonPaths();
+
+	SDE::Testing::saveVarianceGammaPaths();
 
 	return 0;
 }

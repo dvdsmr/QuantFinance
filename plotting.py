@@ -25,8 +25,8 @@ def plotStockCSV(filenames):
         ax.plot(data[:,0],data[:,1])
     ax.set_xlabel("Time")
     ax.set_ylabel("Stock price")
-    plt.title("Paths of a Heston Model")
-    plt.savefig("Plots/stockPath.png")            
+    plt.title("Paths of a Variance Gamma Model")
+    plt.savefig("Plots/VGstockPath.png")            
     plt.plot()
 
 def plotSurface(filename,plotName):
@@ -100,7 +100,7 @@ def plotOptionCSV(filenames):
     ani.save('plots/optionPrice.gif', writer=writer)
 
 if __name__ == "__main__":
-    # plotStockCSV(["Data/stockPath1.csv","Data/stockPath2.csv","Data/stockPath3.csv"])
+    plotStockCSV(["Data/VGstockPath1.csv","Data/VGstockPath2.csv","Data/VGstockPath3.csv"])
     # plotOptionCSV(["Data/callPrices.csv","Data/callDeltas.csv","Data/callGammas.csv"])
     # plotSurface("Data/ArtificialPriceSurface.csv","priceSurfacePlot")
     # plotSurface("Data/ArtificalVolSurface.csv","volSurfacePlot")

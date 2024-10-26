@@ -76,6 +76,11 @@ namespace Random
 		return std::normal_distribution<double>{ mean, variance }(mt);
 	}
 
+	inline double gamma(double alpha, double beta)
+	{
+		return std::gamma_distribution<double>{ alpha, beta}(mt);
+	}
+
 	inline double logNormal(double mean, double variance)
 	{
 		return std::exp(Random::normal(mean, variance));

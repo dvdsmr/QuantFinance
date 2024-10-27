@@ -54,7 +54,8 @@ namespace SDE
 
 	auto HestonPriceStep(double initialState, double stepSize, double drift, double variance, double correlatedNormal) -> double
 	{
-		return initialState + stepSize * drift * initialState + std::sqrt(stepSize) * variance * correlatedNormal;
+		// return initialState + stepSize * drift * initialState + std::sqrt(stepSize * variance) * correlatedNormal;
+		return initialState * std::exp((drift - variance / 2) * stepSize + std::sqrt(variance) * std::sqrt(stepSize) * correlatedNormal);
 	}
 
 
@@ -221,20 +222,21 @@ namespace SDE
 		{
 			double initialState{ 100. };
 			double terminalTime{ 0.5 };
-			std::size_t samples{ 500 };
+			std::size_t samples{ 2000 };
 			double drift{ 0.05 };
 			double volatility{ 0.4 };
 			XYVals mcSamplesBSM{ BSMMonteCarlo(initialState, terminalTime, samples, drift, volatility) };
 
 			std::size_t timePoints{ 1000 };
-			double initialVariance{ volatility * volatility };
-			double longVariance{ volatility * volatility };
-			double correlation{ 0.5 };
-			double reversionRate{ 0.5 };
-			double volVol{ 0.2 };
-			XYVals mcSamplesHeston{ HestonMonteCarlo(initialState, terminalTime, samples, timePoints, drift, initialVariance, longVariance, correlation, reversionRate, volVol) };
+			double initialVariance{ volatility*volatility };
+			double longVariance{ volatility*volatility };
+			double hestonDrift{ 0.05 };
+			double correlation{ 0.0 };
+			double reversionRate{ 0.0 };
+			double volVol{ 0.0 };
+			XYVals mcSamplesHeston{ HestonMonteCarlo(initialState, terminalTime, samples, timePoints, hestonDrift, initialVariance, longVariance, correlation, reversionRate, volVol) };
 
-			double variance{ 0.001 };
+			double variance{ 0.005 };
 			XYVals mcSamplesVarianceGamma{ VarianceGammaMonteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
 
 			Saving::write_xyvals_to_csv("Data/mcSamplesBSM.csv", mcSamplesBSM);

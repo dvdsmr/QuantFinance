@@ -35,7 +35,7 @@ def plotStockCSV(filenames):
 
 def plotHistogramCSV(filenames):
     distData = [genfromtxt(filename, delimiter=',') for filename in filenames]
-    n_bins = 30
+    n_bins = 50
 
     # We can set the number of bins with the *bins* keyword argument.
     for i in range(len(filenames)):

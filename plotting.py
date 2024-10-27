@@ -7,6 +7,7 @@ import numpy as np
 
 # for kde
 import scipy.stats
+import seaborn as sns
 
 
 
@@ -37,18 +38,22 @@ def plotHistogramCSV(filenames):
     distData = [genfromtxt(filename, delimiter=',') for filename in filenames]
     n_bins = 50
 
+    labels = ["BSM", "Heston", "VG"]
+
     # We can set the number of bins with the *bins* keyword argument.
+    fig = plt.figure(figsize=(10,6))
     for i in range(len(filenames)):
-        fig = plt.figure(figsize=(8,6))
         dist = distData[i][:,1]
-        density = scipy.stats.gaussian_kde(dist)
-        _, x, _ = plt.hist(dist, bins=n_bins, histtype=u'step', density=True)
-        plt.xlabel("Stock price")
-        plt.title("Approximated probability density")
-        plt.yticks([])
-        plt.plot(x, density(x))
-        plt.savefig(f"Plots/mcSamplesHistogram{i}.png")    
-        plt.show()
+        #density = scipy.stats.gaussian_kde(dist)
+        #_, x, _ = plt.hist(dist, bins=n_bins, histtype=u'step', density=True)
+        #plt.plot(x, density(x), label=labels[i])
+        sns.kdeplot(dist,label=labels[i])
+    plt.xlabel("Stock price")
+    plt.title("Probability densities for different models")
+    plt.yticks([])
+    plt.legend()
+    plt.savefig("Plots/mcSamplesHistogramMultiModel.png")    
+    plt.show()
 
 def plotSurface(filename,plotName):
 

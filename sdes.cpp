@@ -227,8 +227,8 @@ namespace SDE
 		auto saveMCsamples() -> void
 		{
 			double initialState{ 100. };
-			double terminalTime{ 0.5 };
-			std::size_t samples{ 2000 };
+			double terminalTime{ 0.2 };
+			std::size_t samples{ 50000 };
 			double drift{ 0.05 };
 			double volatility{ 0.4 };
 			XYVals mcSamplesBSM{ BSMMonteCarlo(initialState, terminalTime, samples, drift, volatility) };
@@ -236,13 +236,13 @@ namespace SDE
 			std::size_t timePoints{ 1000 };
 			double initialVariance{ volatility*volatility };
 			double longVariance{ volatility*volatility };
-			double hestonDrift{ 0.05 };
-			double correlation{ -0.2 };
-			double reversionRate{ 0.8 };
-			double volVol{ 0.5 };
+			double hestonDrift{ drift };
+			double correlation{ -0.9 };
+			double reversionRate{ 1.5 };
+			double volVol{ 0.6 };
 			XYVals mcSamplesHeston{ HestonMonteCarlo(initialState, terminalTime, samples, timePoints, hestonDrift, initialVariance, longVariance, correlation, reversionRate, volVol) };
 
-			double variance{ 0.005 };
+			double variance{ 0.15 };
 			XYVals mcSamplesVarianceGamma{ VarianceGammaMonteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
 
 			Saving::write_xyvals_to_csv("Data/mcSamplesBSM.csv", mcSamplesBSM);

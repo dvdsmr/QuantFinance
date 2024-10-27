@@ -13,7 +13,7 @@ double SimpleStock::samplePrice(double time, std::string_view model)
 	}
 	else if (model == "bachelier")
 	{
-		return SDE::OrnsteinUhlenbeckSimulate(m_initialPrice, time/100.0, m_drift, m_vol, time);
+		return SDE::OrnsteinUhlenbeckSimulate(m_initialPrice, time/100.0, m_drift, 0.0, m_vol, time);
 	}
 	else // default is BSM
 	{

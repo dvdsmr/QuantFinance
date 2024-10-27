@@ -12,20 +12,24 @@ constexpr std::complex<double> IMNUM(0.0, 1.0);
 namespace SDE
 {
 	// careful: the OU step is only accurate for very small time steps
-	auto OrnsteinUhlenbeckStep(double state, double stepSize, double drift, double diffusion) -> double
+	auto OrnsteinUhlenbeck(double state, double stepSize, double drift, double mean, double diffusion) -> double
 	{
-		return state + stepSize * drift * state + std::sqrt(stepSize) * diffusion * Random::normal(0.0,1.0);
+		double variance{ diffusion * diffusion * 0.5 / drift * (1.0 - std::exp(-2.0 * drift * stepSize)) };
+		return state * std::exp(-drift * stepSize) + mean * (1.0 - std::exp(-drift * stepSize)) + Random::normal(0.0,variance);
+		//return state + stepSize * drift * state + std::sqrt(stepSize) * diffusion * Random::normal(0.0,1.0);
 	}
-	auto OrnsteinUhlenbeckSimulate(double state, double stepSize, double drift, double diffusion, double time) -> double
+
+	// should be deleted, not necessary
+	auto OrnsteinUhlenbeckSimulate(double state, double stepSize, double drift, double mean, double diffusion, double time) -> double
 	{
 		double terminalState = state;
 		double currentTime = 0.0;
 		while (currentTime <= time-stepSize)
 		{
-			terminalState = OrnsteinUhlenbeckStep(terminalState,stepSize,drift,diffusion);
+			terminalState = OrnsteinUhlenbeck(terminalState,stepSize,drift,mean,diffusion);
 			currentTime += stepSize;
 		}
-		terminalState = OrnsteinUhlenbeckStep(terminalState, time-currentTime, drift, diffusion);
+		terminalState = OrnsteinUhlenbeck(terminalState, time-currentTime, drift,mean, diffusion);
 		return terminalState;
 	}
 	auto geometricBrownianMotion(double initialState, double time, double drift, double volatility) -> double
@@ -42,11 +46,13 @@ namespace SDE
 		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
 		{
 			spath.m_xVals[i] = static_cast<double>(i) * time;
-			spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
+			spath.m_yVals[i] = geometricBrownianMotion(spath.m_yVals[i - 1], time, drift, volatility);
+			//spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
 		}
 		return spath;
 	}
 
+	// TODO: This can be made exact like the price step, since this is an OU process
 	auto HestonVarianceStep(double initialVariance, double stepSize, double longVariance, double correlatedNormal, double reversionRate, double volVol) -> double
 	{
 		return std::abs(initialVariance + stepSize * reversionRate * (longVariance - initialVariance) * stepSize + std::sqrt(stepSize * initialVariance) * volVol * correlatedNormal);
@@ -231,9 +237,9 @@ namespace SDE
 			double initialVariance{ volatility*volatility };
 			double longVariance{ volatility*volatility };
 			double hestonDrift{ 0.05 };
-			double correlation{ 0.0 };
-			double reversionRate{ 0.0 };
-			double volVol{ 0.0 };
+			double correlation{ -0.2 };
+			double reversionRate{ 0.8 };
+			double volVol{ 0.5 };
 			XYVals mcSamplesHeston{ HestonMonteCarlo(initialState, terminalTime, samples, timePoints, hestonDrift, initialVariance, longVariance, correlation, reversionRate, volVol) };
 
 			double variance{ 0.005 };

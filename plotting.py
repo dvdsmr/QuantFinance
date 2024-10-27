@@ -5,6 +5,9 @@ import csv
 from numpy import genfromtxt
 import numpy as np
 
+# for kde
+import scipy.stats
+
 
 
 plt.rcParams.update({'font.size': 22})
@@ -29,6 +32,23 @@ def plotStockCSV(filenames):
     plt.grid(True)
     plt.savefig("Plots/VGstockPath.png")     
     plt.plot()
+
+def plotHistogramCSV(filenames):
+    distData = [genfromtxt(filename, delimiter=',') for filename in filenames]
+    n_bins = 30
+
+    # We can set the number of bins with the *bins* keyword argument.
+    for i in range(len(filenames)):
+        fig = plt.figure(figsize=(8,6))
+        dist = distData[i][:,1]
+        density = scipy.stats.gaussian_kde(dist)
+        _, x, _ = plt.hist(dist, bins=n_bins, histtype=u'step', density=True)
+        plt.xlabel("Stock price")
+        plt.title("Approximated probability density")
+        plt.yticks([])
+        plt.plot(x, density(x))
+        plt.savefig(f"Plots/mcSamplesHistogram{i}.png")    
+        plt.show()
 
 def plotSurface(filename,plotName):
 
@@ -101,7 +121,8 @@ def plotOptionCSV(filenames):
     ani.save('plots/optionPrice.gif', writer=writer)
 
 if __name__ == "__main__":
-    plotStockCSV(["Data/VGstockPath1.csv","Data/VGstockPath2.csv","Data/VGstockPath3.csv"])
+    plotHistogramCSV(["Data/mcSamplesBSM.csv","Data/mcSamplesHeston.csv","Data/mcSamplesVarianceGamma.csv"])
+    # plotStockCSV(["Data/VGstockPath1.csv","Data/VGstockPath2.csv","Data/VGstockPath3.csv"])
     # plotOptionCSV(["Data/callPrices.csv","Data/callDeltas.csv","Data/callGammas.csv"])
     # plotSurface("Data/ArtificialPriceSurface.csv","priceSurfacePlot")
     # plotSurface("Data/ArtificalVolSurface.csv","volSurfacePlot")

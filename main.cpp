@@ -38,10 +38,11 @@ auto main() -> int
 
 	//testPSO();
 
+	SDE::Testing::saveMCsamples();
 
 	//SDE::Testing::saveHestonPaths();
 
-	SDE::Testing::saveVarianceGammaPaths();
+	//SDE::Testing::saveVarianceGammaPaths();
 
 	return 0;
 }

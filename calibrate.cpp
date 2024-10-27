@@ -438,9 +438,9 @@ namespace Calibrate
 		MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
 
 		// define pso  
-		PSO pso{ 15,3 };
-		pso.set_uniformRandomPositions({ 0.1,0.01,0.1 }, { 2.0,1.0,2.0 });
-		pso.set_uniformRandomVelocities({ 0.1,0.01,0.1 }, { 2.0,1.0,2.0 });
+		PSO pso{ 10,3 };
+		pso.set_uniformRandomPositions({ 0.05,0.01,0.001 }, { 0.5,0.1,0.01 });
+		pso.set_uniformRandomVelocities({ 0.05,0.01,0.001 }, { 0.5,0.1,0.01 });
 
 		// define objective function
 		auto func

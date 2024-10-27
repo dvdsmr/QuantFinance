@@ -55,6 +55,11 @@ namespace SDE
 	auto VarianceGammaStep(double initialState, double stepSize, double drift, double variance, double vol) -> double;
 	auto HestonPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals;
 	auto VarianceGammaPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double variance, double vol) -> XYVals;
+	auto BSMMonteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals;
+	auto HestonMonteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals;
+	auto VarianceGammaMonteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double variance, double vol) -> XYVals;
+
+
 
 	namespace CharacteristicFunctions
 	{
@@ -68,6 +73,7 @@ namespace SDE
 
 	namespace Testing
 	{
+		auto saveMCsamples() -> void;
 		auto saveHestonPaths() -> void;
 		auto saveVarianceGammaPaths() -> void;
 	}

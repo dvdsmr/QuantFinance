@@ -57,6 +57,7 @@ namespace SDE
 		return initialState + stepSize * drift * initialState + std::sqrt(stepSize) * variance * correlatedNormal;
 	}
 
+
 	auto VarianceGammaStep(double initialState, double stepSize, double drift, double variance, double vol) -> double
 	{
 		double gammaIncrement{ Random::gamma(stepSize / variance, variance) };
@@ -103,7 +104,6 @@ namespace SDE
 	auto VarianceGammaPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double variance, double vol) -> XYVals
 	{
 
-
 		XYVals spath{ timePoints };
 		spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
 		spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
@@ -115,6 +115,49 @@ namespace SDE
 			spath.m_yVals[i] = VarianceGammaStep(spath.m_yVals[i - 1], time, drift, variance, vol);
 		}
 		return spath;
+	}
+
+	auto BSMMonteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals
+	{
+		XYVals mcSamples{ samples };
+		for (std::size_t i{ 0 }; i < samples; i++)
+		{
+			mcSamples.m_xVals[i] = static_cast<double>(i);
+			mcSamples.m_yVals[i] = geometricBrownianMotion(initialState, terminalTime, drift, volatility);
+		}
+		return mcSamples;
+	}
+
+	auto HestonMonteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals
+	{
+		XYVals mcSamples{ samples };
+
+		// initialize samples with initial state
+		mcSamples.m_yVals = std::vector<double>(samples, initialState);
+
+		for (std::size_t i{ 0 }; i < samples; i++)
+		{
+			mcSamples.m_xVals[i] = static_cast<double>(i);
+			XYVals spath{ HestonPath(initialState, terminalTime, timePoints, drift, initialVariance, longVariance, correlation, reversionRate, volVol) };
+			mcSamples.m_yVals[i] = spath.m_yVals.back();
+		}
+		return mcSamples;
+	}
+
+	auto VarianceGammaMonteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double variance, double vol) -> XYVals
+	{
+		XYVals mcSamples{ samples };
+
+		// initialize samples with initial state
+		mcSamples.m_yVals = std::vector<double>(samples, initialState);
+
+		for (std::size_t i{ 0 }; i < samples; i++)
+		{
+			mcSamples.m_xVals[i] = static_cast<double>(i);
+			XYVals spath{ VarianceGammaPath(initialState, terminalTime, timePoints, drift, variance, vol) };
+			mcSamples.m_yVals[i] = spath.m_yVals.back();
+		}
+		return mcSamples;
 	}
 
 
@@ -173,6 +216,32 @@ namespace SDE
 
 	namespace Testing
 	{
+
+		auto saveMCsamples() -> void
+		{
+			double initialState{ 100. };
+			double terminalTime{ 0.5 };
+			std::size_t samples{ 500 };
+			double drift{ 0.05 };
+			double volatility{ 0.4 };
+			XYVals mcSamplesBSM{ BSMMonteCarlo(initialState, terminalTime, samples, drift, volatility) };
+
+			std::size_t timePoints{ 1000 };
+			double initialVariance{ volatility * volatility };
+			double longVariance{ volatility * volatility };
+			double correlation{ 0.5 };
+			double reversionRate{ 0.5 };
+			double volVol{ 0.2 };
+			XYVals mcSamplesHeston{ HestonMonteCarlo(initialState, terminalTime, samples, timePoints, drift, initialVariance, longVariance, correlation, reversionRate, volVol) };
+
+			double variance{ 0.001 };
+			XYVals mcSamplesVarianceGamma{ VarianceGammaMonteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
+
+			Saving::write_xyvals_to_csv("Data/mcSamplesBSM.csv", mcSamplesBSM);
+			Saving::write_xyvals_to_csv("Data/mcSamplesHeston.csv", mcSamplesHeston);
+			Saving::write_xyvals_to_csv("Data/mcSamplesVarianceGamma.csv", mcSamplesVarianceGamma);
+		}
+
 		auto saveHestonPaths() -> void
 		{
 			

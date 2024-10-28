@@ -370,7 +370,7 @@ namespace Calibrate
 		errorSurface.m_tableName = "Relative squared error";
 		errorSurface.m_tableLabel = "Error";
 
-		std::vector<double> vols{ np::linspace<double>(0.1,1.0,3) };
+		std::vector<double> vols{ np::linspace<double>(0.62,0.62,1) };
 		std::vector<double> drifts{ np::linspace<double>(0.2,1.2,3) };
 		std::vector<double> variances{ np::linspace<double>(0.01,1.0,3) };
 
@@ -439,8 +439,8 @@ namespace Calibrate
 
 		// define pso  
 		PSO pso{ 10,3 };
-		pso.set_uniformRandomPositions({ 0.05,0.01,0.001 }, { 0.5,0.1,0.01 });
-		pso.set_uniformRandomVelocities({ 0.05,0.01,0.001 }, { 0.5,0.1,0.01 });
+		pso.set_uniformRandomPositions({ 0.58,0.01,0.001 }, { 0.62,0.1,0.01 });
+		pso.set_uniformRandomVelocities({ 0.58,0.01,0.001 }, { 0.62,0.1,0.01 });
 
 		// define objective function
 		auto func

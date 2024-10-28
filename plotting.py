@@ -24,7 +24,7 @@ def plotStockPath(stockVals, timeVals):
 
 def plotStockCSV(filenames):
     stockData = [genfromtxt(filename, delimiter=',') for filename in filenames]
-    fig, ax = plt.subplots(figsize=(13, 8))
+    fig, ax = plt.subplots(figsize=(14, 8))
     for data in stockData:
         ax.plot(data[:,0],data[:,1])
     ax.set_xlabel("Time")
@@ -41,7 +41,7 @@ def plotHistogramCSV(filenames):
     labels = ["BSM", "Heston", "VG"]
 
     # We can set the number of bins with the *bins* keyword argument.
-    fig = plt.figure(figsize=(10,6))
+    fig = plt.figure(figsize=(14,8))
     for i in range(len(filenames)):
         dist = distData[i][:,1]
         #density = scipy.stats.gaussian_kde(dist)

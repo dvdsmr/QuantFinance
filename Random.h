@@ -78,7 +78,7 @@ namespace Random
 
 	inline double gamma(double alpha, double beta)
 	{
-		return std::gamma_distribution<double>{ alpha, beta}(mt);
+		return std::gamma_distribution<double>{ alpha, beta }(mt);
 	}
 
 	inline double logNormal(double mean, double variance)

@@ -25,8 +25,9 @@ Heston model paths          |  Variance Gamma model paths
 
 The Heston model models stock prices with a stochastic volatility process. Among other parameters, it involves a reversion rate, enabling analysts to incorparate typical stock behaviours like mean reversion or momentum in the model. It does not incorporate jumps however: like in the BSM model, the process is almost surely continuous. The Variance Gamma model on the other hand includes random discontinuous jumps. It can be used to model gap-ups and gap-downs or quasi instantaneuous price jumps due to unexpected and crucial news on a company.
 
-Canonical models for derivative pricing and Hedging are included in the repository. The below plot shows the development of the fair price, Delta and Gamma of a european call option with a strike of $100 in the Black-Scholes-Merton model as time to maturity increases.
+Canonical models for derivative pricing and Hedging are included in the repository. The below plot shows the development of the fair price, Delta and Gamma of a european call option with a strike of $100 in the Black-Scholes-Merton model as time to maturity increases (left). The right plot shows the distribution of stock price in different models with similar parameters. It can be clearly seen that the choice of model affects the forecasts. For instance, both very high and very low returns are more likely in the Variance Gamma model than in the BSM model. The distribution is thus said to have "fat tails" in comparison to the log-normal distribution.
 
-<p align="center">
-  <img src="Plots/optionPrice.gif" alt="European call option in BSM model" width="50%">
-</p>
+Greeks with BSM model         |  Stock price distribution with different models
+:-------------------------:|:-------------------------:
+![Price](Plots/optionPrice.gif) |  ![Vol](Plots/mcSamplesHistogramMultiModel.png)
+

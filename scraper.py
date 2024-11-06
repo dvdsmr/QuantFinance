@@ -3,6 +3,7 @@
     Included the standard example from https://github.com/aosingh/options_scraper
 """
 
+# Path to the files is C:\Users\David\AppData\Local\Programs\Python\Python312\Lib\site-packages\options_scraper
 
 from options_scraper.scraper import NASDAQOptionsScraper
 from options_scraper.utils import batched
@@ -17,11 +18,13 @@ kwargs = { "money": 'all',
 
 records_generator = scraper(ticker_symbol, **kwargs)
 
+print(records_generator)
+#exit()
 
 # Either access each record individually as shown below
 for item in records_generator:
-    print(item)
+   print(item)
 
 # Or use the batched util to get a list of items
-for items in batched(records_generator, batch_size=100):
-    print(items)
+#for items in batched(records_generator, batch_size=100):
+#    print(items)

@@ -36,8 +36,16 @@ def options_chain(symbol):
 
     return options
 
+def extractPriceSurface(chain,Type='Call'):
+    modifiedChain = chain[chain['Type'] == Type]
+    #maturities = modifiedChain['toMaturity'].unique()
+    modifiedChain = modifiedChain[['toMaturity','strike','midPrice']]
+    return modifiedChain
+
 
 if __name__ == "__main__":
 
     chain = options_chain("AAPL")
+    chain.to_csv('Data/yFinance/AAPL.csv')
+    extractPriceSurface(chain).to_csv('Data/yFinance/AAPL_callPriceSurface.csv')
     print(chain)

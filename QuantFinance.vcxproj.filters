@@ -57,6 +57,9 @@
     <ClCompile Include="pso.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="reading.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="options.h">
@@ -108,6 +111,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="pso.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="reading.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -147,6 +147,7 @@
     <ClCompile Include="options.cpp" />
     <ClCompile Include="out.cpp" />
     <ClCompile Include="pso.cpp" />
+    <ClCompile Include="reading.cpp" />
     <ClCompile Include="saving.cpp" />
     <ClCompile Include="sdes.cpp" />
     <ClCompile Include="securities.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="fft.h" />
     <ClInclude Include="out.h" />
     <ClInclude Include="pso.h" />
+    <ClInclude Include="reading.h" />
     <ClInclude Include="saving.h" />
     <ClInclude Include="securities.h" />
     <ClInclude Include="options.h" />

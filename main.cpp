@@ -14,6 +14,7 @@
 #include "fft.h"
 #include "calibrate.h"
 #include "pso.h"
+#include "reading.h"
 #include <iostream>
 #include <iostream>
 #include <vector>
@@ -32,9 +33,9 @@ auto main() -> int
 
 	//Calibrate::testHeston();
 
-	Calibrate::testBSM();
+	//Calibrate::testBSM();
 
-	Calibrate::testVarianceGamma();
+	//Calibrate::testVarianceGamma();
 
 	//testPSO();
 
@@ -43,6 +44,19 @@ auto main() -> int
 	//SDE::Testing::saveHestonPaths();
 
 	//SDE::Testing::saveVarianceGammaPaths();
+
+	std::string filename = "Data/yFinance/AAPL_callPriceSurface.csv"; // Replace with your file name
+	std::vector<std::vector<std::string>> csvData = Reading::readCSV(filename);
+
+	// Output the CSV data
+	for (const auto& row : csvData) {
+		for (const auto& cell : row) {
+			std::cout << cell << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	return 0;
 
 	return 0;
 }

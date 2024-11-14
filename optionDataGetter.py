@@ -28,18 +28,23 @@ def options_chain(symbol):
     )
     
     # We want to use the mid price between bid and ask as a "fair" price for our model calibrations
+    options[['bid', 'ask', 'strike']] = options[['bid', 'ask', 'strike']].apply(pd.to_numeric)
     options['midPrice'] = (options['bid'] + options['ask']) / 2 
     
     # Drop unnecessary columns (might be important later for validation and testing)
-    options = options.drop(columns = ['expirationDate','openInterest','volume','contractSymbol','bid','ask',\
+    options = options.drop(columns = ['expirationDate','openInterest','volume','contractSymbol',\
                                       'contractSize', 'currency', 'change', 'percentChange', 'lastTradeDate', 'lastPrice'])
 
     return options
 
 def extractPriceSurface(chain,Type='Call'):
+    # extract desired payoff type
     modifiedChain = chain[chain['Type'] == Type]
+    # extract valid prices
+    modifiedChain = chain[chain['midPrice'] > 0.0]
+
     #maturities = modifiedChain['toMaturity'].unique()
-    modifiedChain = modifiedChain[['toMaturity','strike','midPrice']]
+    modifiedChain = modifiedChain[['toMaturity','strike','bid','ask','midPrice','impliedVolatility']]
     return modifiedChain
 
 
@@ -47,5 +52,8 @@ if __name__ == "__main__":
 
     chain = options_chain("AAPL")
     chain.to_csv('Data/yFinance/AAPL.csv')
-    extractPriceSurface(chain).to_csv('Data/yFinance/AAPL_callPriceSurface.csv')
-    print(chain)
+
+    # stored data
+    modChain = extractPriceSurface(chain)
+    modChain.to_csv('Data/yFinance/AAPL_callPriceSurface.csv')
+    print(modChain)

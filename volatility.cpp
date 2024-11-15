@@ -254,5 +254,59 @@ namespace Volatility
 			std::cout << "the true BSM implied vol is " << 0.216923754 << ".\n";
 		}
 
+		void calibrateToRealData()
+		{
+			// We read in options data from yahoo finance
+			std::string filename = "Data/yFinance/AAPL_callPriceSurface.csv"; // Replace with your file name
+			std::vector<std::vector<std::string>> csvData = Reading::readCSV(filename);
+
+			// Output the CSV data
+			for (const auto& row : csvData) {
+				for (const auto& cell : row) {
+					std::cout << cell << " ";
+				}
+				std::cout << std::endl;
+			}
+
+			// we try to estimate the implied Vol with the BSM model. Market params are (for the moment) set to
+			[[maybe_unused]] double riskFreeReturn{ 0.02 };
+			[[maybe_unused]] double dividendYield{ 0.0 };
+			[[maybe_unused]] double spot{ 225.12 };
+
+			// calibrate implied vol
+			[[maybe_unused]] double volGuess{ 0.4 };
+			Adam adam{};
+			for (std::size_t row{ 1 }; row < std::size(csvData); ++row)
+			{
+				// index for mat is 1
+				// index for price is 5
+				// index for strike is 2
+				double truePrice{ std::stod(csvData[row][4]) };
+				double mat{ std::stod(csvData[row][1]) };
+				double strike{ std::stod(csvData[row][2]) };
+				// define adam target function and derivative
+				auto func
+				{
+					[&](double vol) {
+						double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, mat, strike, spot, dividendYield) };
+						return (price - truePrice) * (price - truePrice);
+					}
+				};
+				auto deriv
+				{
+					[&](double vol) {
+						double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, mat, strike, spot, dividendYield) };
+						return 2 * (price - truePrice) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, mat, strike, spot, dividendYield);
+					}
+				};
+
+				//adam.set_state(volGuess);
+				adam.set_state(std::stod(csvData[row][6])); // use yahoo finance quoted implied vol as initial value
+				[[maybe_unused]] double calVol{ adam.optimize(func, deriv, false) };
+				std::cout << "Yahoo implied vol is " << csvData[row][6] << ". " << "BSM calibrated implied vol is " << calVol << ".\n";
+			}
+		}
+
+
 	}
 }

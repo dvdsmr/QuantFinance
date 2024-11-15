@@ -257,7 +257,7 @@ namespace Volatility
 		void calibrateToRealData()
 		{
 			// We read in options data from yahoo finance
-			std::string filename = "Data/yFinance/AAPL_callPriceSurface.csv"; // Replace with your file name
+			std::string filename = "Data/yFinance/KO_callPriceSurface.csv"; // Replace with your file name
 			std::vector<std::vector<std::string>> csvData = Reading::readCSV(filename);
 
 			// Output the CSV data
@@ -269,9 +269,9 @@ namespace Volatility
 			}
 
 			// we try to estimate the implied Vol with the BSM model. Market params are (for the moment) set to
-			[[maybe_unused]] double riskFreeReturn{ 0.02 };
+			[[maybe_unused]] double riskFreeReturn{ 0.003 }; // reported to be close to the rate used by yahoo finance
 			[[maybe_unused]] double dividendYield{ 0.0 };
-			[[maybe_unused]] double spot{ 225.12 };
+			[[maybe_unused]] double spot{ 61.27 };
 
 			// calibrate implied vol
 			[[maybe_unused]] double volGuess{ 0.4 };
@@ -300,10 +300,30 @@ namespace Volatility
 					}
 				};
 
-				//adam.set_state(volGuess);
-				adam.set_state(std::stod(csvData[row][6])); // use yahoo finance quoted implied vol as initial value
+				adam.set_state(volGuess);
+				// adam.set_state(std::stod(csvData[row][6])); // use yahoo finance quoted implied vol as initial value
 				[[maybe_unused]] double calVol{ adam.optimize(func, deriv, false) };
 				std::cout << "Yahoo implied vol is " << csvData[row][6] << ". " << "BSM calibrated implied vol is " << calVol << ".\n";
+				std::cout << "The real price is " << csvData[row][4] << ". " << "The BSM prediction has error " << func(calVol) << ".\n";
+
+				// PSO instead of adam
+				// define pso on 
+				PSO pso{ 100,1 };
+				pso.set_uniformRandomPositions({ 0.1 }, { 0.9 });
+				pso.set_uniformRandomVelocities({ 0.1 }, { 0.9 });
+
+				auto func2
+				{
+					[&](std::vector<double> vol) 
+					{
+						double price{ Options::Pricing::BSM::call(riskFreeReturn, vol[static_cast<std::size_t>(0)], mat, strike, spot, dividendYield) };
+						return (price - truePrice) * (price - truePrice);
+					}
+				};
+
+				std::vector<double> optVol{ pso.optimize(func2,false) };
+				std::cout << "PSO found vol of " << optVol[static_cast<std::size_t>(0)] << " with error " << func2(optVol) << ".\n\n";
+
 			}
 		}
 

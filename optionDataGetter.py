@@ -43,6 +43,9 @@ def extractPriceSurface(chain,Type='Call'):
     # extract valid prices
     modifiedChain = chain[chain['midPrice'] > 0.0]
 
+    # extract maturities which are bigger than 0.2 years, discarding messy volatility spikes in short maturites
+    modifiedChain = chain[chain['toMaturity'] > 0.2]
+
     #maturities = modifiedChain['toMaturity'].unique()
     modifiedChain = modifiedChain[['toMaturity','strike','bid','ask','midPrice','impliedVolatility']]
     return modifiedChain
@@ -50,10 +53,10 @@ def extractPriceSurface(chain,Type='Call'):
 
 if __name__ == "__main__":
 
-    chain = options_chain("AAPL")
-    chain.to_csv('Data/yFinance/AAPL.csv')
+    chain = options_chain("KO")
+    # chain.to_csv('Data/yFinance/AAPL.csv')
 
     # stored data
     modChain = extractPriceSurface(chain)
-    modChain.to_csv('Data/yFinance/AAPL_callPriceSurface.csv')
+    modChain.to_csv('Data/yFinance/KO_callPriceSurface.csv')
     print(modChain)

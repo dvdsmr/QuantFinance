@@ -4,6 +4,7 @@
 #include "xyvals.h"
 #include "saving.h"
 #include "reading.h"
+#include "pso.h"
 #include <string_view>
 
 namespace Volatility

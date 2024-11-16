@@ -32,7 +32,7 @@ def options_chain(symbol):
     options['midPrice'] = (options['bid'] + options['ask']) / 2 
     
     # Drop unnecessary columns (might be important later for validation and testing)
-    options = options.drop(columns = ['expirationDate','openInterest','volume','contractSymbol',\
+    options = options.drop(columns = ['expirationDate','contractSymbol',\
                                       'contractSize', 'currency', 'change', 'percentChange', 'lastTradeDate', 'lastPrice'])
 
     return options
@@ -45,6 +45,10 @@ def extractPriceSurface(chain,Type='Call'):
 
     # extract maturities which are bigger than 0.2 years, discarding messy volatility spikes in short maturites
     modifiedChain = chain[chain['toMaturity'] > 0.2]
+
+    # we focus on highly liquid and highly sought after contracts
+    modifiedChain = chain[chain['openInterest'] > 10]
+    modifiedChain = chain[chain['volume'] > 10]
 
     #maturities = modifiedChain['toMaturity'].unique()
     modifiedChain = modifiedChain[['toMaturity','strike','bid','ask','midPrice','impliedVolatility']]

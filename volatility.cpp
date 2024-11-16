@@ -309,7 +309,7 @@ namespace Volatility
 
 				// PSO instead of adam
 				// define pso on 
-				PSO pso{ 100,1 };
+				PSO pso{ 1000,1 };
 				pso.set_uniformRandomPositions({ 0.1 }, { 0.9 });
 				pso.set_uniformRandomVelocities({ 0.1 }, { 0.9 });
 

@@ -53,10 +53,11 @@ def extractPriceSurface(chain,Type='Call'):
 
 if __name__ == "__main__":
 
-    chain = options_chain("KO")
+    symbol = "KO"
+    chain = options_chain(symbol)
     # chain.to_csv('Data/yFinance/AAPL.csv')
 
     # stored data
     modChain = extractPriceSurface(chain)
-    modChain.to_csv('Data/yFinance/KO_callPriceSurface.csv')
+    modChain.to_csv(f"Data/yFinance/{symbol}_callPriceSurface.csv")
     print(modChain)

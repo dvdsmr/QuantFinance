@@ -254,10 +254,10 @@ namespace Volatility
 			std::cout << "the true BSM implied vol is " << 0.216923754 << ".\n";
 		}
 
-		void calibrateToRealData()
+		void calibrateToRealData(std::string symbol, double spot)
 		{
 			// We read in options data from yahoo finance
-			std::string filename = "Data/yFinance/KO_callPriceSurface.csv"; // Replace with your file name
+			std::string filename = "Data/yFinance/"+symbol+"_callPriceSurface.csv"; // Replace with your file name
 			std::vector<std::vector<std::string>> csvData = Reading::readCSV(filename);
 
 			// Output the CSV data
@@ -271,7 +271,7 @@ namespace Volatility
 			// we try to estimate the implied Vol with the BSM model. Market params are (for the moment) set to
 			[[maybe_unused]] double riskFreeReturn{ 0.003 }; // reported to be close to the rate used by yahoo finance
 			[[maybe_unused]] double dividendYield{ 0.0 };
-			[[maybe_unused]] double spot{ 61.27 };
+			//[[maybe_unused]] double spot{ 61.27 };
 
 			// calibrate implied vol
 			[[maybe_unused]] double volGuess{ 0.4 };
@@ -303,6 +303,7 @@ namespace Volatility
 				adam.set_state(volGuess);
 				// adam.set_state(std::stod(csvData[row][6])); // use yahoo finance quoted implied vol as initial value
 				[[maybe_unused]] double calVol{ adam.optimize(func, deriv, false) };
+				std::cout << "Maturity is " << csvData[row][1] << ".\n";
 				std::cout << "Yahoo implied vol is " << csvData[row][6] << ". " << "BSM calibrated implied vol is " << calVol << ".\n";
 				std::cout << "The real price is " << csvData[row][4] << ". " << "The BSM prediction has error " << func(calVol) << ".\n";
 

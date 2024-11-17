@@ -28,12 +28,12 @@ def options_chain(symbol):
     )
     
     # We want to use the mid price between bid and ask as a "fair" price for our model calibrations
-    options[['bid', 'ask', 'strike']] = options[['bid', 'ask', 'strike']].apply(pd.to_numeric)
+    options[['bid', 'ask', 'strike', 'lastPrice}']] = options[['bid', 'ask', 'strike', 'lastPrice']].apply(pd.to_numeric)
     options['midPrice'] = (options['bid'] + options['ask']) / 2 
     
     # Drop unnecessary columns (might be important later for validation and testing)
     options = options.drop(columns = ['expirationDate','contractSymbol',\
-                                      'contractSize', 'currency', 'change', 'percentChange', 'lastTradeDate', 'lastPrice'])
+                                      'contractSize', 'currency', 'change', 'percentChange', 'lastTradeDate'])
 
     return options
 
@@ -42,6 +42,7 @@ def extractPriceSurface(chain,Type='Call'):
     modifiedChain = chain[chain['Type'] == Type]
     # extract valid prices
     modifiedChain = chain[chain['midPrice'] > 0.0]
+    modifiedChain = chain[chain['lastPrice'] > 0.0]
 
     # extract maturities which are bigger than 0.2 years, discarding messy volatility spikes in short maturites
     modifiedChain = chain[chain['toMaturity'] > 0.2]
@@ -51,13 +52,13 @@ def extractPriceSurface(chain,Type='Call'):
     modifiedChain = chain[chain['volume'] > 10]
 
     #maturities = modifiedChain['toMaturity'].unique()
-    modifiedChain = modifiedChain[['toMaturity','strike','bid','ask','midPrice','impliedVolatility']]
+    modifiedChain = modifiedChain[['toMaturity','strike','bid','ask','midPrice','impliedVolatility','lastPrice']]
     return modifiedChain
 
 
 if __name__ == "__main__":
 
-    symbol = "KO"
+    symbol = "TSLA"
     chain = options_chain(symbol)
     # chain.to_csv('Data/yFinance/AAPL.csv')
 

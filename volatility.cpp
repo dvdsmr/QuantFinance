@@ -269,7 +269,7 @@ namespace Volatility
 			}
 
 			// we try to estimate the implied Vol with the BSM model. Market params are (for the moment) set to
-			[[maybe_unused]] double riskFreeReturn{ 0.003 }; // reported to be close to the rate used by yahoo finance
+			[[maybe_unused]] double riskFreeReturn{ 0.001 }; // reported to be close to the rate used by yahoo finance
 			[[maybe_unused]] double dividendYield{ 0.0 };
 			//[[maybe_unused]] double spot{ 61.27 };
 
@@ -279,9 +279,9 @@ namespace Volatility
 			for (std::size_t row{ 1 }; row < std::size(csvData); ++row)
 			{
 				// index for mat is 1
-				// index for price is 5
+				// index for price is 5 for mid, or 7 for last traded
 				// index for strike is 2
-				double truePrice{ std::stod(csvData[row][4]) };
+				double truePrice{ std::stod(csvData[row][5]) };
 				double mat{ std::stod(csvData[row][1]) };
 				double strike{ std::stod(csvData[row][2]) };
 				// define adam target function and derivative
@@ -305,7 +305,8 @@ namespace Volatility
 				[[maybe_unused]] double calVol{ adam.optimize(func, deriv, false) };
 				std::cout << "Maturity is " << csvData[row][1] << ".\n";
 				std::cout << "Yahoo implied vol is " << csvData[row][6] << ". " << "BSM calibrated implied vol is " << calVol << ".\n";
-				std::cout << "The real price is " << csvData[row][4] << ". " << "The BSM prediction has error " << func(calVol) << ".\n";
+				std::cout << "The real price is " << truePrice << ". " << "The BSM prediction has error " << func(calVol) << ".\n";
+				std::cout << "Using the yfinance implied vol, BSM yields the price " << Options::Pricing::BSM::call(riskFreeReturn, std::stod(csvData[row][6]), mat, strike, spot, dividendYield) << ".\n\n";
 
 				// PSO instead of adam
 				// define pso on 

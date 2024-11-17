@@ -45,7 +45,7 @@ auto main() -> int
 
 	//SDE::Testing::saveVarianceGammaPaths();
 
-	Volatility::Surface::calibrateToRealData("KO",61.74);
+	Volatility::Surface::calibrateToRealData("TSLA", 320.72);
 
 	return 0;
 }

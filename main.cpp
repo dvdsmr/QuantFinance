@@ -31,11 +31,11 @@ auto main() -> int
 	//FFT::UnitTests::dft();
 	//FFT::UnitTests::pricingfft();
 
-	//Calibrate::testHeston();
+	//Calibrate::Heston::test();
 
-	//Calibrate::testBSM();
+	//Calibrate::BSM::test();
 
-	//Calibrate::testVarianceGamma();
+	//Calibrate::VarianceGamma::test();
 
 	//testPSO();
 
@@ -45,7 +45,7 @@ auto main() -> int
 
 	//SDE::Testing::saveVarianceGammaPaths();
 
-	Volatility::Surface::calibrateToRealData("TSLA", 320.72);
+	Calibrate::BSM::calibrateToRealData("TSLA", 320.72);
 
 	return 0;
 }

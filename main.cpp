@@ -45,6 +45,16 @@ auto main() -> int
 
 	//SDE::Testing::saveVarianceGammaPaths();
 
+	// save loss curve for BSM calibration
+	double riskFreeReturn{ 0.003 };
+	double dividendYield{ 0.0 };
+	double maturity{ 0.0136986 };
+	double strike{ 520. };
+	double spot{ 320.72 };
+	double truePrice{ 0.045 };
+	Calibrate::BSM::saveLossShape(riskFreeReturn, dividendYield, maturity, strike, spot, truePrice);
+
+
 	Calibrate::BSM::calibrateToRealData("TSLA", 320.72);
 
 	return 0;

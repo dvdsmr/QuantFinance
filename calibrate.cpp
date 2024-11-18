@@ -249,7 +249,7 @@ namespace Calibrate
 			//[[maybe_unused]] double spot{ 61.27 };
 
 			// calibrate implied vol
-			[[maybe_unused]] double volGuess{ 0.8 };
+			[[maybe_unused]] double volGuess{ 0.4 };
 			Adam adam{};
 			for (std::size_t row{ 1 }; row < std::size(csvData); ++row)
 			{
@@ -278,9 +278,11 @@ namespace Calibrate
 				adam.set_state(volGuess);
 				//adam.set_state(std::stod(csvData[row][6])); // use yahoo finance quoted implied vol as initial value
 				[[maybe_unused]] double calVol{ adam.optimize(func, deriv, false) };
-				std::cout << "Maturity is " << csvData[row][1] << ".\n";
+				std::cout << "Maturity is " << mat << ".\n";
+				std::cout << "Strike is " << strike << ".\n";
+				std::cout << "True price is " << truePrice << ".\n";
 				std::cout << "Yahoo implied vol is " << csvData[row][6] << ". " << "BSM calibrated implied vol is " << calVol << ".\n";
-				std::cout << "The real price is " << truePrice << ". " << "The BSM prediction has error " << func(calVol) << ".\n";
+				std::cout << "The BSM prediction has error " << func(calVol) << ".\n";
 				std::cout << "Using the yfinance implied vol, BSM yields the price " << Options::Pricing::BSM::call(riskFreeReturn, std::stod(csvData[row][6]), mat, strike, spot, dividendYield) << ".\n\n";
 
 				// PSO instead of adam
@@ -358,14 +360,21 @@ namespace Calibrate
 			*/
 		}
 
-		auto saveLossShape(double riskFreeReturn, double dividendYield, double maturity, double strike, double spot) -> XYVals
+		auto saveLossShape(double riskFreeReturn, double dividendYield, double maturity, double strike, double spot, double truePrice) -> void
 		{
 			// We return the optimization loss at several vol values we encounter in calibrating a BSM model for fixed parameters
 			// the returned XYVals can be visualized using the methods in plotting.py
 			std::size_t numVols{ 1000 };
 			std::vector<double> vols{ np::linspace<double>(0.01,4.0,numVols) };
 		
-			auto loss{ [&](double vol) { return Options::Pricing::BSM::call(riskFreeReturn,vol,maturity,strike,spot,dividendYield); } };
+			auto loss
+			{ 
+				[&](double vol) 
+				{ 
+					double modelPrice{Options::Pricing::BSM::call(riskFreeReturn,vol,maturity,strike,spot,dividendYield)};
+					return (modelPrice-truePrice)*(modelPrice-truePrice); 
+				} 
+			};
 
 			XYVals lossCurve{ numVols };
 			std::size_t index{ 0 };
@@ -376,7 +385,7 @@ namespace Calibrate
 				++index;
 			}
 			
-			return lossCurve;
+			Saving::write_xyvals_to_csv("data/BSMlossCurve", lossCurve);
 		}
 	
 	}

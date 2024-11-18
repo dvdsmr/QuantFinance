@@ -13,6 +13,20 @@ import seaborn as sns
 
 plt.rcParams.update({'font.size': 22})
 
+
+def plotLossCSV(filenames):
+    Data = [genfromtxt(filename, delimiter=',') for filename in filenames]
+    fig, ax = plt.subplots(figsize=(14, 8))
+    for data in Data:
+        ax.plot(data[:,0],data[:,1])
+    ax.set_xlabel("Vol")
+    ax.set_ylabel("Squared error")
+    plt.title("BSM loss shape")
+    plt.grid(True)
+    plt.savefig("Plots/BSMlossShape.png")     
+    plt.plot()
+
+
 def plotStockPath(stockVals, timeVals):
     assert len(stockVals) == len(timeVals)
     fig, ax = plt.figure(figsize=(10,8))
@@ -126,7 +140,8 @@ def plotOptionCSV(filenames):
     ani.save('plots/optionPrice.gif', writer=writer)
 
 if __name__ == "__main__":
-    plotHistogramCSV(["Data/mcSamplesBSM.csv","Data/mcSamplesHeston.csv","Data/mcSamplesVarianceGamma.csv"])
+    plotLossCSV(["Data/BSMlossCurve"])
+    # plotHistogramCSV(["Data/mcSamplesBSM.csv","Data/mcSamplesHeston.csv","Data/mcSamplesVarianceGamma.csv"])
     # plotStockCSV(["Data/VGstockPath1.csv","Data/VGstockPath2.csv","Data/VGstockPath3.csv"])
     # plotOptionCSV(["Data/callPrices.csv","Data/callDeltas.csv","Data/callGammas.csv"])
     # plotSurface("Data/ArtificialPriceSurface.csv","priceSurfacePlot")

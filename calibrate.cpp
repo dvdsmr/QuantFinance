@@ -357,6 +357,27 @@ namespace Calibrate
 			std::cout << "Vol: " << fitParams.vol << "\n";
 			*/
 		}
+
+		auto saveLossShape(double riskFreeReturn, double dividendYield, double maturity, double strike, double spot) -> XYVals
+		{
+			// We return the optimization loss at several vol values we encounter in calibrating a BSM model for fixed parameters
+			// the returned XYVals can be visualized using the methods in plotting.py
+			std::size_t numVols{ 1000 };
+			std::vector<double> vols{ np::linspace<double>(0.01,4.0,numVols) };
+		
+			auto loss{ [&](double vol) { return Options::Pricing::BSM::call(riskFreeReturn,vol,maturity,strike,spot,dividendYield); } };
+
+			XYVals lossCurve{ numVols };
+			std::size_t index{ 0 };
+			for (auto vol : vols)
+			{
+				lossCurve.m_xVals[index] = vol;
+				lossCurve.m_yVals[index] = loss(vol);
+				++index;
+			}
+			
+			return lossCurve;
+		}
 	
 	}
 

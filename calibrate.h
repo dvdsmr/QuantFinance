@@ -24,6 +24,8 @@ namespace Calibrate
 		auto CallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> BSMParams;
 		void test();
 		void calibrateToRealData(std::string symbol, double spot);
+		auto saveLossShape(double riskFreeReturn, double dividendYield, double maturity, double strike, double spot) -> XYVals;
+
 	}
 	
 	namespace Heston

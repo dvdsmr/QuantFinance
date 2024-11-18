@@ -9,8 +9,9 @@
 
 namespace np
 {
-    template<typename T>
-    std::vector<T> linspace(double start, double end, int num) 
+    template<typename T, typename N,
+        typename = std::enable_if_t<std::is_integral<N>::value>> // allow only integral types for the stepsize
+    std::vector<T> linspace(double start, double end, N num) 
     {
         std::vector<T> linspaced;
         double delta{};
@@ -27,6 +28,7 @@ namespace np
         }
         return linspaced;
     }
+
 
     template <typename T>
     std::vector<T> abs(const std::vector<T>& vec) 

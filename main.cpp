@@ -49,13 +49,12 @@ auto main() -> int
 	double riskFreeReturn{ 0.003 };
 	double dividendYield{ 0.0 };
 	double maturity{ 0.0136986 };
-	double strike{ 520. };
+	double strike{ 320. };
 	double spot{ 320.72 };
-	double truePrice{ 0.045 };
+	double truePrice{ 10.35 };
+
 	Calibrate::BSM::saveLossShape(riskFreeReturn, dividendYield, maturity, strike, spot, truePrice);
-
-
-	Calibrate::BSM::calibrateToRealData("TSLA", 320.72);
+	Calibrate::BSM::calibrateToRealData("TSLA", 338.74);
 
 	return 0;
 }

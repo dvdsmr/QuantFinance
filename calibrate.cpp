@@ -253,55 +253,65 @@ namespace Calibrate
 			Adam adam{};
 			for (std::size_t row{ 1 }; row < std::size(csvData); ++row)
 			{
+
+
 				// index for mat is 1
 				// index for price is 5 for mid, or 7 for last traded
 				// index for strike is 2
-				double truePrice{ std::stod(csvData[row][5]) };
-				double mat{ std::stod(csvData[row][1]) };
-				double strike{ std::stod(csvData[row][2]) };
-				// define adam target function and derivative
-				auto func
+				[[maybe_unused]]double truePrice{ std::stod(csvData[row][7]) };
+				[[maybe_unused]]double mat{ std::stod(csvData[row][1]) };
+				[[maybe_unused]]double strike{ std::stod(csvData[row][2]) };
+				
+				// Since the BSM implied volatility becomes ill - defined for deep ITM or OTM options, we restrict to near the money
+				if (std::abs(strike - spot) / std::abs(spot) < 0.02)
 				{
-					[&](double vol) {
-						double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, mat, strike, spot, dividendYield) };
-						return (price - truePrice) * (price - truePrice);
-					}
-				};
-				auto deriv
-				{
-					[&](double vol) {
-						double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, mat, strike, spot, dividendYield) };
-						return 2 * (price - truePrice) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, mat, strike, spot, dividendYield);
-					}
-				};
-
-				adam.set_state(volGuess);
-				//adam.set_state(std::stod(csvData[row][6])); // use yahoo finance quoted implied vol as initial value
-				[[maybe_unused]] double calVol{ adam.optimize(func, deriv, false) };
-				std::cout << "Maturity is " << mat << ".\n";
-				std::cout << "Strike is " << strike << ".\n";
-				std::cout << "True price is " << truePrice << ".\n";
-				std::cout << "Yahoo implied vol is " << csvData[row][6] << ". " << "BSM calibrated implied vol is " << calVol << ".\n";
-				std::cout << "The BSM prediction has error " << func(calVol) << ".\n";
-				std::cout << "Using the yfinance implied vol, BSM yields the price " << Options::Pricing::BSM::call(riskFreeReturn, std::stod(csvData[row][6]), mat, strike, spot, dividendYield) << ".\n\n";
-
-				// PSO instead of adam
-				// define pso on 
-				PSO pso{ 1000,1 };
-				pso.set_uniformRandomPositions({ 0.1 }, { 4.9 });
-				pso.set_uniformRandomVelocities({ 0.1 }, { 4.9 });
-
-				auto func2
-				{
-					[&](std::vector<double> vol)
+					std::cout << "Current ratio is " << std::abs(strike - spot) / std::abs(spot) << ".\n";
+				
+					// define adam target function and derivative
+					auto func
 					{
-						double price{ Options::Pricing::BSM::call(riskFreeReturn, vol[static_cast<std::size_t>(0)], mat, strike, spot, dividendYield) };
-						return (price - truePrice) * (price - truePrice) + (vol[static_cast<std::size_t>(0)] < 0.0)*1e10;
-					}
-				};
+						[&](double vol) {
+							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, mat, strike, spot, dividendYield) };
+							return (price - truePrice) * (price - truePrice);
+						}
+					};
+					auto deriv
+					{
+						[&](double vol) {
+							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol, mat, strike, spot, dividendYield) };
+							return 2 * (price - truePrice) * Options::Pricing::BSM::callVega(riskFreeReturn, vol, mat, strike, spot, dividendYield);
+						}
+					};
 
-				std::vector<double> optVol{ pso.optimize(func2,false) };
-				std::cout << "PSO found vol of " << optVol[static_cast<std::size_t>(0)] << " with error " << func2(optVol) << ".\n\n";
+					adam.set_state(volGuess);
+					//adam.set_state(std::stod(csvData[row][6])); // use yahoo finance quoted implied vol as initial value
+					[[maybe_unused]] double calVol{ adam.optimize(func, deriv, false) };
+					std::cout << "Maturity is " << mat << ".\n";
+					std::cout << "Strike is " << strike << ".\n";
+					std::cout << "True price is " << truePrice << ".\n";
+					std::cout << "Yahoo implied vol is " << csvData[row][6] << ". " << "BSM calibrated implied vol is " << calVol << ".\n";
+					std::cout << "The BSM prediction has error " << func(calVol) << ".\n";
+					std::cout << "Using the yfinance implied vol, BSM yields the price " << Options::Pricing::BSM::call(riskFreeReturn, std::stod(csvData[row][6]), mat, strike, spot, dividendYield) << ".\n\n";
+
+					// PSO instead of adam
+					// define pso on 
+					PSO pso{ 1000,1 };
+					pso.set_uniformRandomPositions({ 0.1 }, { 4.9 });
+					pso.set_uniformRandomVelocities({ 0.1 }, { 4.9 });
+
+					auto func2
+					{
+						[&](std::vector<double> vol)
+						{
+							double price{ Options::Pricing::BSM::call(riskFreeReturn, vol[static_cast<std::size_t>(0)], mat, strike, spot, dividendYield) };
+							return (price - truePrice) * (price - truePrice) + (vol[static_cast<std::size_t>(0)] < 0.0) * 1e10;
+						}
+					};
+
+					std::vector<double> optVol{ pso.optimize(func2,false) };
+					std::cout << "PSO found vol of " << optVol[static_cast<std::size_t>(0)] << " with error " << func2(optVol) << ".\n\n";
+
+				}
 
 			}
 		}

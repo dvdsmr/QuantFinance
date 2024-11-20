@@ -6,7 +6,7 @@ namespace Copola
 {
 	namespace Gaussian
 	{
-		std::vector<double> probOfNDefaultsUncorrolated(std::vector<double> defaultProbs);
+		auto probOfNDefaultsUncorrolated(std::vector<double> defaultProbs) -> std::vector<double>;
 		void testDefaultProbs();
 	}
 }

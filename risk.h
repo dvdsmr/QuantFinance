@@ -7,6 +7,7 @@
 
 namespace Risk
 {
+	auto sampleVAR(XYVals samples, double level, double currentValue) -> double;
 	auto sampleCVAR(XYVals samples, double level, double currentValue) -> double;
 }
 

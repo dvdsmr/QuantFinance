@@ -15,6 +15,7 @@
 #include "calibrate.h"
 #include "pso.h"
 #include "reading.h"
+#include "risk.h"
 #include <iostream>
 #include <iostream>
 #include <vector>
@@ -46,6 +47,7 @@ auto main() -> int
 	//SDE::Testing::saveVarianceGammaPaths();
 
 	// save loss curve for BSM calibration
+	/*
 	double riskFreeReturn{ 0.003 };
 	double dividendYield{ 0.0 };
 	double maturity{ 0.0136986 };
@@ -55,6 +57,9 @@ auto main() -> int
 
 	Calibrate::BSM::saveLossShape(riskFreeReturn, dividendYield, maturity, strike, spot, truePrice);
 	Calibrate::BSM::calibrateToRealData("TSLA", 338.74);
+	*/
+
+	Risk::testSampleRiskMeasures();
 
 	return 0;
 }

@@ -32,7 +32,47 @@ namespace Risk
 		{
 			mean += currentValue - samples.m_yVals[i];
 		}
+		mean /= static_cast<double>(index + 1);
+
 		return mean;
+	}
+
+	void testSampleRiskMeasures()
+	{
+		double initialState{ 100. };
+		double terminalTime{ 0.2 };
+		std::size_t samples{ 50000 };
+		double drift{ 0.05 };
+		double volatility{ 0.4 };
+		XYVals mcSamplesBSM{ SDE::BSMMonteCarlo(initialState, terminalTime, samples, drift, volatility) };
+
+		std::size_t timePoints{ 1000 };
+		double initialVariance{ volatility * volatility };
+		double longVariance{ volatility * volatility };
+		double hestonDrift{ drift };
+		double correlation{ -0.9 };
+		double reversionRate{ 1.5 };
+		double volVol{ 0.6 };
+		XYVals mcSamplesHeston{ SDE::HestonMonteCarlo(initialState, terminalTime, samples, timePoints, hestonDrift, initialVariance, longVariance, correlation, reversionRate, volVol) };
+
+		double variance{ 0.15 };
+		XYVals mcSamplesVarianceGamma{ SDE::VarianceGammaMonteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
+
+		
+		// compute var and cvar
+		double level{ 0.05 };
+		double bsmVar{ sampleVAR(mcSamplesBSM, level, initialState) };
+		double hestonVar{ sampleVAR(mcSamplesHeston, level, initialState) };
+		double vgVar{ sampleVAR(mcSamplesVarianceGamma, level, initialState) };
+
+		double bsmCVAR{ sampleCVAR(mcSamplesBSM, level, initialState) };
+		double hestonCVAR{ sampleCVAR(mcSamplesHeston, level, initialState) };
+		double vgCVAR{ sampleCVAR(mcSamplesVarianceGamma, level, initialState) };
+
+		std::cout << "BSM VAR at the " << level * 100. << "% level is $" << bsmVar << ". CVAR at the same level is $" << bsmCVAR << ".\n";
+		std::cout << "Heston VAR at the " << level * 100. << "% level is $" << hestonVar << ". CVAR at the same level is $" << hestonCVAR << ".\n";
+		std::cout << "Variance Gamma VAR at the " << level * 100. << "% level is $" << vgVar << ". CVAR at the same level is $" << vgCVAR << ".\n";
+
 	}
 
 }

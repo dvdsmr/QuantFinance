@@ -109,10 +109,21 @@ namespace Options
 		// todo: don't repeat d1, d2 definition in every function
 		namespace BSM
 		{
+			auto _d1(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				return (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
+			}
+
+			auto _d2(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double d1{ _d1(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+				return d1 - vol * std::sqrt(maturity);
+			}
+
 			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
 			{
-				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
-				double d2 = d1 - vol * std::sqrt(maturity);
+				double d1{ _d1(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+				double d2{ _d2(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
 				return spot * std::exp(-dividendYield * maturity) * Distributions::CDFs::standardNormal(d1)
 					- strike * std::exp(-riskFreeReturn * maturity) * Distributions::CDFs::standardNormal(d2);
 			}
@@ -126,7 +137,7 @@ namespace Options
 
 			auto callDelta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
 			{
-				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
+				double d1{ _d1(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
 				return std::exp(-dividendYield * maturity) * Distributions::CDFs::standardNormal(d1);
 			}
 
@@ -138,7 +149,7 @@ namespace Options
 
 			auto callGamma(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
 			{
-				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
+				double d1{ _d1(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
 				return std::exp(-dividendYield * maturity) * Distributions::PDFs::standardNormal(d1) / vol / spot / std::sqrt(maturity);
 			}
 
@@ -150,7 +161,7 @@ namespace Options
 
 			auto callVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
 			{
-				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
+				double d1{ _d1(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
 				return std::exp(-dividendYield * maturity) * Distributions::PDFs::standardNormal(d1) * spot * std::sqrt(maturity);
 			}
 
@@ -162,8 +173,8 @@ namespace Options
 
 			auto callTheta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
 			{
-				double d1 = (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity);
-				double d2 = d1 - vol * std::sqrt(maturity);
+				double d1{ _d1(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+				double d2{ _d2(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
 				return -std::exp(-dividendYield * maturity) * spot * Distributions::PDFs::standardNormal(d1) * vol / 2.0 / std::sqrt(maturity)
 					+ dividendYield * std::exp(-dividendYield * maturity) * spot * Distributions::CDFs::standardNormal(d1)
 					- riskFreeReturn * strike * std::exp(-riskFreeReturn * maturity) * Distributions::CDFs::standardNormal(d2);
@@ -180,9 +191,9 @@ namespace Options
 			// for digital option pricing
 			auto callStrikeDerivative(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
 			{
-				double d1{ (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity) };
+				double d1{ _d1(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
 				double d1deriv{ -1.0 / strike / vol / std::sqrt(maturity) };
-				double d2{ d1 - vol * std::sqrt(maturity) };
+				double d2{ _d2(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
 				double d2deriv{ d1deriv };
 				return spot * std::exp(-dividendYield * maturity) * Distributions::PDFs::standardNormal(d1) * d1deriv
 					- std::exp(-riskFreeReturn * maturity) * Distributions::CDFs::standardNormal(d2)
@@ -191,18 +202,17 @@ namespace Options
 
 			auto callStrikeDerivativeApprox(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
 			{
-				double d1{ (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity) };
-				double d2{ d1 - vol * std::sqrt(maturity) };
+				double d2{ _d2(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
 				return -std::exp(-riskFreeReturn * maturity) * Distributions::CDFs::standardNormal(d2);
 			}
 
 			auto callStrikeSpotDerivativeApprox(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
 			{
-				[[maybe_unused]] double d1{ (std::log(spot / strike) + (riskFreeReturn - dividendYield + vol * vol / 2.) * maturity) / vol / std::sqrt(maturity) };
+				[[maybe_unused]] double d1{ _d1(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
 				[[maybe_unused]] double d1deriv{ -1.0 / strike / vol / std::sqrt(maturity) };
 				[[maybe_unused]] double d1derivSpot{ 1.0 / spot / vol / std::sqrt(maturity) };
 				[[maybe_unused]] double d1derivStrikeSpot{ 0.0 };
-				[[maybe_unused]] double d2{ d1 - vol * std::sqrt(maturity) };
+				[[maybe_unused]] double d2{ _d2(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
 				[[maybe_unused]] double d2deriv{ d1deriv };
 				[[maybe_unused]] double d2derivSpot{ d1derivSpot };
 				[[maybe_unused]] double d2derivStrikeSpot{ 0.0 };
@@ -288,6 +298,35 @@ namespace Options
 
 					return priceSurface;
 				}
+			}
+
+		}
+
+		namespace Bachelier
+		{
+			auto _dplus(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				return (spot * std::exp((riskFreeReturn-dividendYield) * maturity) - strike) / vol / std::sqrt(maturity);
+			}
+
+			auto _dminus(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double dplus{ _dplus(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+				return -dplus;
+			}
+
+			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double dplus{ _dplus(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+				return std::exp(-(riskFreeReturn-dividendYield) * maturity) * vol * std::sqrt(maturity) * 
+						(dplus * Distributions::CDFs::standardNormal(dplus) + Distributions::PDFs::standardNormal(dplus));
+			}
+
+			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double dminus{ _dminus(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+				return std::exp(-riskFreeReturn * maturity) * vol * std::sqrt(maturity) *
+					(dminus * Distributions::CDFs::standardNormal(dminus) + Distributions::PDFs::standardNormal(dminus));
 			}
 
 		}

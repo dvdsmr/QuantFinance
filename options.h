@@ -30,16 +30,24 @@ namespace Options
 		}
 		namespace BSM
 		{
+			auto _d1(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+			auto _d2(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+
 			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield=0.) -> double;
 			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield=0.) -> double;
+
 			auto callDelta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto putDelta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+
 			auto callGamma(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto putGamma(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+
 			auto callVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto putVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+
 			auto callTheta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto putTheta(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+
 			auto callStrikeDerivative(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto callStrikeDerivativeApprox(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto callStrikeSpotDerivativeApprox(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
@@ -50,6 +58,15 @@ namespace Options
 				auto call(double riskFreeReturn, double vol, double maturity, double strike, double dividendYield) -> DataTable;
 				auto callPriceSurface(double riskFreeReturn, double vol, double spot, double dividendYield) -> LabeledTable;
 			}
+
+		}
+
+		namespace Bachelier
+		{
+			auto _dplus(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+
+			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield = 0.) -> double;
+			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield = 0.) -> double;
 
 		}
 

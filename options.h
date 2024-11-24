@@ -68,6 +68,8 @@ namespace Options
 			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield = 0.) -> double;
 			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield = 0.) -> double;
 
+			auto callVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+			auto putVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 		}
 
 	}

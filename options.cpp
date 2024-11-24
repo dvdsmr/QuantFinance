@@ -329,6 +329,33 @@ namespace Options
 					(dminus * Distributions::CDFs::standardNormal(dminus) + Distributions::PDFs::standardNormal(dminus));
 			}
 
+
+			auto callVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double dplus{ _dplus(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+				double cdfTerm{ Distributions::CDFs::standardNormal(dplus) };
+				double pdfTerm{ Distributions::PDFs::standardNormal(dplus) };
+				double pdf_dxTerm{ Distributions::PDFs::standardNormal_dx(dplus) };
+				double term1{ std::exp(-(riskFreeReturn - dividendYield) * maturity) * std::sqrt(maturity) *
+					(dplus * cdfTerm + pdfTerm) };
+				double term2{ std::exp(-(riskFreeReturn - dividendYield) * maturity) * vol * std::sqrt(maturity)*
+							 -dplus/vol*cdfTerm - dplus*dplus/vol*pdfTerm - dplus/vol*pdf_dxTerm };
+				return term1 + term2;
+			}
+
+			auto putVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				double dminus{ _dminus(riskFreeReturn, vol, maturity, strike, spot, dividendYield) };
+				double cdfTerm{ Distributions::CDFs::standardNormal(dminus) };
+				double pdfTerm{ Distributions::PDFs::standardNormal(dminus) };
+				double pdf_dxTerm{ Distributions::PDFs::standardNormal_dx(dminus) };
+				double term1{ std::exp(-(riskFreeReturn - dividendYield) * maturity) * std::sqrt(maturity) *
+					(dminus * cdfTerm + pdfTerm) };
+				double term2{ std::exp(-(riskFreeReturn - dividendYield) * maturity) * vol * std::sqrt(maturity) *
+							 -dminus / vol * cdfTerm - dminus * dminus / vol * pdfTerm - dminus / vol * pdf_dxTerm };
+				return term1 + term2;
+			}
+
 		}
 
 	}

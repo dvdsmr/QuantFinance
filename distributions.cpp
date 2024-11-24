@@ -46,6 +46,12 @@ namespace Distributions
 			double pi = 3.1415926535;
 			return 1.0 / sqrt(2 * pi) * exp(-x * x / 2.0);
 		}
+		// derivative of pdf
+		auto standardNormal_dx(double x) -> double
+		{
+			double pi = 3.1415926535;
+			return - x / sqrt(2 * pi) * exp(-x * x / 2.0);
+		}
 	}
 
 	namespace Utils

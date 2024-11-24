@@ -14,6 +14,7 @@ namespace Distributions
 	namespace PDFs
 	{
 		auto standardNormal(double x) -> double;
+		auto standardNormal_dx(double x) -> double;
 	}
 	namespace Utils
 	{

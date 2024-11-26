@@ -20,6 +20,11 @@ struct BSMParams
 	double vol{ 0.1 };
 };
 
+struct BachelierParams
+{
+	double vol{ 0.1 };
+};
+
 struct HestonParams
 {
 	double reversionRate{ 0.3 };

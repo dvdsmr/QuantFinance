@@ -17,7 +17,15 @@ namespace Calibrate
 	auto interpolatePrices(const FFT::LogStrikePricePair& pair, const std::vector<double>& strikes) -> std::vector<double>;
 	auto computeFFTModelMRSE(const LabeledTable& priceSurface, MarketParams& marketParams, const auto& modelParams, const FFT::FFTParams& params, LabeledTable& modelPriceSurface, LabeledTable& errorSurface) -> double;
 	auto computeBSM_MRSE(const LabeledTable& priceSurface, MarketParams& marketParams, const BSMParams& modelParams, LabeledTable& modelPriceSurface, LabeledTable& errorSurface) -> double;
-	
+	auto computeBachelier_MRSE(const LabeledTable& priceSurface, MarketParams& marketParams, const BachelierParams& modelParams, LabeledTable& modelPriceSurface, LabeledTable& errorSurface) -> double;
+
+	namespace Bachelier
+	{
+		auto Call(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> BachelierParams;
+		auto CallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> BachelierParams;
+		void test();
+	}
+
 	namespace BSM
 	{
 		auto Call(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield, std::string_view pricing = "analytic") -> BSMParams;

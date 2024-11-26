@@ -168,6 +168,7 @@ namespace SDE
 	}
 
 
+	// NOTE: the argument in the CFs is the log of the stock price (commonly denoted as log S_t)
 	namespace CharacteristicFunctions
 	{
 		auto BSM(std::complex<double> argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> std::complex<double>

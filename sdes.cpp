@@ -40,7 +40,7 @@ namespace SDE
 
 	auto Bachelier(double initialState, double time, double drift, double volatility) -> double
 	{
-		return initialState * std::exp(drift*time) + std::sqrt(volatility*volatility/2./drift*(std::exp(2*drift*time)-1.)) * Random::normal(0.0, 1.0);
+		return initialState * std::exp(drift*time) + volatility*std::sqrt(1./2./drift*(std::exp(2*drift*time)-1.)) * Random::normal(0.0, 1.0);
 	}
 
 	auto geometricBrownianMotionPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals
@@ -265,7 +265,8 @@ namespace SDE
 			double drift{ 0.05 };
 			double volatility{ 0.4 };
 			XYVals mcSamplesBSM{ BSMMonteCarlo(initialState, terminalTime, samples, drift, volatility) };
-			XYVals mcSamplesBachelier{ BachelierMonteCarlo(initialState, terminalTime, samples, drift, volatility) };
+			double bachelierVol{ volatility * initialState }; // otherwise Bachelier has comparably tiny vol
+			XYVals mcSamplesBachelier{ BachelierMonteCarlo(initialState, terminalTime, samples, drift, bachelierVol) };
 
 			std::size_t timePoints{ 1000 };
 			double initialVariance{ volatility*volatility };

@@ -34,14 +34,14 @@ auto main() -> int
 
 	//Calibrate::Heston::test();
 
-	Calibrate::BSM::test();
-	Calibrate::Bachelier::test();
+	//Calibrate::BSM::test();
+	//Calibrate::Bachelier::test();
 
 	//Calibrate::VarianceGamma::test();
 
 	//testPSO();
 
-	//SDE::Testing::saveMCsamples();
+	SDE::Testing::saveMCsamples();
 
 	//SDE::Testing::saveHestonPaths();
 

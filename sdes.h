@@ -53,14 +53,17 @@ namespace SDE
 {
 	auto OrnsteinUhlenbeck(double state, double stepSize, double drift, double mean, double diffusion) -> double;
 	auto geometricBrownianMotion(double initialState, double time, double drift, double volatility) -> double;
+	auto Bachelier(double initialState, double time, double drift, double volatility) -> double;
 	auto OrnsteinUhlenbeckSimulate(double state, double stepSize, double drift, double mean, double diffusion, double time) -> double;
 	auto geometricBrownianMotionPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals;
+	auto BachelierPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals;
 	auto HestonVarianceStep(double initialVariance, double stepSize, double longVariance, double correlatedNormal, double reversionRate, double volVol) -> double;
 	auto HestonPriceStep(double initialState, double stepSize, double drift, double variance, double correlatedNormal) -> double;
 	auto VarianceGammaStep(double initialState, double stepSize, double drift, double variance, double vol) -> double;
 	auto HestonPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals;
 	auto VarianceGammaPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double variance, double vol) -> XYVals;
 	auto BSMMonteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals;
+	auto BachelierMonteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals;
 	auto HestonMonteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals;
 	auto VarianceGammaMonteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double variance, double vol) -> XYVals;
 

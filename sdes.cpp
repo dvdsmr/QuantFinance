@@ -32,9 +32,15 @@ namespace SDE
 		terminalState = OrnsteinUhlenbeck(terminalState, time-currentTime, drift,mean, diffusion);
 		return terminalState;
 	}
+
 	auto geometricBrownianMotion(double initialState, double time, double drift, double volatility) -> double
 	{
 		return initialState * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
+	}
+
+	auto Bachelier(double initialState, double time, double drift, double volatility) -> double
+	{
+		return initialState * std::exp(drift*time) + std::sqrt(volatility*volatility/2./drift*(std::exp(2*drift*time)-1.)) * Random::normal(0.0, 1.0);
 	}
 
 	auto geometricBrownianMotionPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals
@@ -47,6 +53,21 @@ namespace SDE
 		{
 			spath.m_xVals[i] = static_cast<double>(i) * time;
 			spath.m_yVals[i] = geometricBrownianMotion(spath.m_yVals[i - 1], time, drift, volatility);
+			//spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
+		}
+		return spath;
+	}
+
+	auto BachelierPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals
+	{
+		XYVals spath{ timePoints };
+		spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
+		spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
+		double time = terminalTime / (timePoints - 1);
+		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+		{
+			spath.m_xVals[i] = static_cast<double>(i) * time;
+			spath.m_yVals[i] = Bachelier(spath.m_yVals[i - 1], time, drift, volatility);
 			//spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
 		}
 		return spath;
@@ -131,6 +152,17 @@ namespace SDE
 		{
 			mcSamples.m_xVals[i] = static_cast<double>(i);
 			mcSamples.m_yVals[i] = geometricBrownianMotion(initialState, terminalTime, drift, volatility);
+		}
+		return mcSamples;
+	}
+
+	auto BachelierMonteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals
+	{
+		XYVals mcSamples{ samples };
+		for (std::size_t i{ 0 }; i < samples; i++)
+		{
+			mcSamples.m_xVals[i] = static_cast<double>(i);
+			mcSamples.m_yVals[i] = Bachelier(initialState, terminalTime, drift, volatility);
 		}
 		return mcSamples;
 	}
@@ -233,6 +265,7 @@ namespace SDE
 			double drift{ 0.05 };
 			double volatility{ 0.4 };
 			XYVals mcSamplesBSM{ BSMMonteCarlo(initialState, terminalTime, samples, drift, volatility) };
+			XYVals mcSamplesBachelier{ BachelierMonteCarlo(initialState, terminalTime, samples, drift, volatility) };
 
 			std::size_t timePoints{ 1000 };
 			double initialVariance{ volatility*volatility };
@@ -247,6 +280,7 @@ namespace SDE
 			XYVals mcSamplesVarianceGamma{ VarianceGammaMonteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
 
 			Saving::write_xyvals_to_csv("Data/mcSamplesBSM.csv", mcSamplesBSM);
+			Saving::write_xyvals_to_csv("Data/mcSamplesBachelier.csv", mcSamplesBachelier);
 			Saving::write_xyvals_to_csv("Data/mcSamplesHeston.csv", mcSamplesHeston);
 			Saving::write_xyvals_to_csv("Data/mcSamplesVarianceGamma.csv", mcSamplesVarianceGamma);
 		}

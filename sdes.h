@@ -51,22 +51,36 @@ struct MarketParams
 
 namespace SDE
 {
-	auto OrnsteinUhlenbeck(double state, double stepSize, double drift, double mean, double diffusion) -> double;
-	auto geometricBrownianMotion(double initialState, double time, double drift, double volatility) -> double;
-	auto Bachelier(double initialState, double time, double drift, double volatility) -> double;
-	auto OrnsteinUhlenbeckSimulate(double state, double stepSize, double drift, double mean, double diffusion, double time) -> double;
-	auto geometricBrownianMotionPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals;
-	auto BachelierPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals;
-	auto HestonVarianceStep(double initialVariance, double stepSize, double longVariance, double correlatedNormal, double reversionRate, double volVol) -> double;
-	auto HestonPriceStep(double initialState, double stepSize, double drift, double variance, double correlatedNormal) -> double;
-	auto VarianceGammaStep(double initialState, double stepSize, double drift, double variance, double vol) -> double;
-	auto HestonPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals;
-	auto VarianceGammaPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double variance, double vol) -> XYVals;
-	auto BSMMonteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals;
-	auto BachelierMonteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals;
-	auto HestonMonteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals;
-	auto VarianceGammaMonteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double variance, double vol) -> XYVals;
+	namespace OrnsteinUhlenbeck
+	{
+		auto simulate(double state, double time, double drift, double mean, double diffusion) -> double;
+	}
+	namespace BSM
+	{
+		auto simulate(double initialState, double time, double drift, double volatility) -> double;
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals;
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals;
+	}
+	namespace Bachelier
+	{
+		auto simulate(double initialState, double time, double drift, double volatility) -> double;
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals;
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals;
+	}
+	namespace Heston
+	{
+		auto varianceStep(double initialVariance, double stepSize, double longVariance, double correlatedNormal, double reversionRate, double volVol) -> double;
+		auto priceStep(double initialState, double stepSize, double drift, double variance, double correlatedNormal) -> double;
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals;
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals;
+	}
+	namespace VarianceGamma
+	{
+		auto step(double initialState, double stepSize, double drift, double variance, double vol) -> double;
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double variance, double vol) -> XYVals;
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double variance, double vol) -> XYVals;
 
+	}
 
 
 	namespace CharacteristicFunctions

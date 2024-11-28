@@ -44,7 +44,7 @@ namespace Risk
 		std::size_t samples{ 50000 };
 		double drift{ 0.05 };
 		double volatility{ 0.4 };
-		XYVals mcSamplesBSM{ SDE::BSMMonteCarlo(initialState, terminalTime, samples, drift, volatility) };
+		XYVals mcSamplesBSM{ SDE::BSM::monteCarlo(initialState, terminalTime, samples, drift, volatility) };
 
 		std::size_t timePoints{ 1000 };
 		double initialVariance{ volatility * volatility };
@@ -53,10 +53,10 @@ namespace Risk
 		double correlation{ -0.9 };
 		double reversionRate{ 1.5 };
 		double volVol{ 0.6 };
-		XYVals mcSamplesHeston{ SDE::HestonMonteCarlo(initialState, terminalTime, samples, timePoints, hestonDrift, initialVariance, longVariance, correlation, reversionRate, volVol) };
+		XYVals mcSamplesHeston{ SDE::Heston::monteCarlo(initialState, terminalTime, samples, timePoints, hestonDrift, initialVariance, longVariance, correlation, reversionRate, volVol) };
 
 		double variance{ 0.15 };
-		XYVals mcSamplesVarianceGamma{ SDE::VarianceGammaMonteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
+		XYVals mcSamplesVarianceGamma{ SDE::VarianceGamma::monteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
 
 		
 		// compute var and cvar

@@ -11,193 +11,195 @@ constexpr std::complex<double> IMNUM(0.0, 1.0);
 
 namespace SDE
 {
-	// careful: the OU step is only accurate for very small time steps
-	auto OrnsteinUhlenbeck(double state, double stepSize, double drift, double mean, double diffusion) -> double
+	namespace OrnsteinUhlenbeck
 	{
-		double variance{ diffusion * diffusion * 0.5 / drift * (1.0 - std::exp(-2.0 * drift * stepSize)) };
-		return state * std::exp(-drift * stepSize) + mean * (1.0 - std::exp(-drift * stepSize)) + Random::normal(0.0,variance);
-		//return state + stepSize * drift * state + std::sqrt(stepSize) * diffusion * Random::normal(0.0,1.0);
-	}
-
-	// should be deleted, not necessary
-	auto OrnsteinUhlenbeckSimulate(double state, double stepSize, double drift, double mean, double diffusion, double time) -> double
-	{
-		double terminalState = state;
-		double currentTime = 0.0;
-		while (currentTime <= time-stepSize)
+		auto simulate(double state, double time, double drift, double mean, double diffusion) -> double
 		{
-			terminalState = OrnsteinUhlenbeck(terminalState,stepSize,drift,mean,diffusion);
-			currentTime += stepSize;
+			double variance{ diffusion * diffusion * 0.5 / drift * (1.0 - std::exp(-2.0 * drift * time)) };
+			return state * std::exp(-drift * time) + mean * (1.0 - std::exp(-drift * time)) + Random::normal(0.0,variance);
+			//return state + stepSize * drift * state + std::sqrt(stepSize) * diffusion * Random::normal(0.0,1.0);
 		}
-		terminalState = OrnsteinUhlenbeck(terminalState, time-currentTime, drift,mean, diffusion);
-		return terminalState;
 	}
 
-	auto geometricBrownianMotion(double initialState, double time, double drift, double volatility) -> double
+	namespace BSM
 	{
-		return initialState * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
-	}
-
-	auto Bachelier(double initialState, double time, double drift, double volatility) -> double
-	{
-		return initialState * std::exp(drift*time) + volatility*std::sqrt(1./2./drift*(std::exp(2*drift*time)-1.)) * Random::normal(0.0, 1.0);
-	}
-
-	auto geometricBrownianMotionPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals
-	{
-		XYVals spath{ timePoints };
-		spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
-		spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
-		double time = terminalTime / (timePoints - 1);
-		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+		auto simulate(double initialState, double time, double drift, double volatility) -> double
 		{
-			spath.m_xVals[i] = static_cast<double>(i) * time;
-			spath.m_yVals[i] = geometricBrownianMotion(spath.m_yVals[i - 1], time, drift, volatility);
-			//spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
+			return initialState * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
 		}
-		return spath;
-	}
-
-	auto BachelierPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals
-	{
-		XYVals spath{ timePoints };
-		spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
-		spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
-		double time = terminalTime / (timePoints - 1);
-		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals
 		{
-			spath.m_xVals[i] = static_cast<double>(i) * time;
-			spath.m_yVals[i] = Bachelier(spath.m_yVals[i - 1], time, drift, volatility);
-			//spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
+			XYVals spath{ timePoints };
+			spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
+			spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
+			double time = terminalTime / (timePoints - 1);
+			for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+			{
+				spath.m_xVals[i] = static_cast<double>(i) * time;
+				spath.m_yVals[i] = simulate(spath.m_yVals[i - 1], time, drift, volatility);
+				//spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
+			}
+			return spath;
 		}
-		return spath;
-	}
-
-	// TODO: This can be made exact like the price step, since this is an OU process
-	auto HestonVarianceStep(double initialVariance, double stepSize, double longVariance, double correlatedNormal, double reversionRate, double volVol) -> double
-	{
-		return std::abs(initialVariance + stepSize * reversionRate * (longVariance - initialVariance) * stepSize + std::sqrt(stepSize * initialVariance) * volVol * correlatedNormal);
-	}
-
-	auto HestonPriceStep(double initialState, double stepSize, double drift, double variance, double correlatedNormal) -> double
-	{
-		// return initialState + stepSize * drift * initialState + std::sqrt(stepSize * variance) * correlatedNormal;
-		return initialState * std::exp((drift - variance / 2) * stepSize + std::sqrt(variance) * std::sqrt(stepSize) * correlatedNormal);
-	}
-
-
-	auto VarianceGammaStep(double initialState, double stepSize, double drift, double variance, double vol) -> double
-	{
-		double gammaIncrement{ Random::gamma(stepSize / variance, variance) };
-		double normalIncrement{ Random::normal(0.,1.) };
-		double VGIncrement{ drift * gammaIncrement + vol * std::sqrt(gammaIncrement) * normalIncrement };
-		return initialState * std::exp(VGIncrement);
-	}
-
-	// careful: the step is only accurate for very small time steps
-	auto HestonPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals
-	{
-		// assert the Feller condition, which ensures that the process is positive
-		if (2 * reversionRate * longVariance <= volVol * volVol)
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals
 		{
-			std::cout << "Warning: Feller condition of Heston model not satisfied, variance can become zero.\n";
+			XYVals mcSamples{ samples };
+			for (std::size_t i{ 0 }; i < samples; i++)
+			{
+				mcSamples.m_xVals[i] = static_cast<double>(i);
+				mcSamples.m_yVals[i] = simulate(initialState, terminalTime, drift, volatility);
+			}
+			return mcSamples;
 		}
-		// assert(2 * reversionRate * longVariance > volVol * volVol);
-
-		XYVals spath{ timePoints };
-		spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
-		spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
-		double time = terminalTime / (timePoints - 1);
-		double var {initialVariance};
-		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
-		{
-			spath.m_xVals[i] = static_cast<double>(i) * time;
-
-			// generate correlated standard normals
-			double normal1{ Random::normal(0.0,1.0) };
-			double normal2{ Random::normal(0.0,1.0) };
-			double increment1{ std::sqrt((1 + correlation) / 2.0) * normal1 + std::sqrt((1 - correlation) / 2.0) * normal2 };
-			double increment2{ std::sqrt((1 + correlation) / 2.0) * normal1 - std::sqrt((1 - correlation) / 2.0) * normal2 };
-
-			// update values
-			spath.m_yVals[i] = HestonPriceStep(spath.m_yVals[i-1], time, drift, var, increment1);
-
-			// make step with variance process for next step
-			var = HestonVarianceStep(var, time, longVariance, increment2, reversionRate, volVol);
-		}
-		return spath;
-
 	}
 
-	auto VarianceGammaPath(double initialState, double terminalTime, std::size_t timePoints, double drift, double variance, double vol) -> XYVals
+	namespace Bachelier
 	{
-
-		XYVals spath{ timePoints };
-		spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
-		spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
-		double time = terminalTime / (timePoints - 1);
-		for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+		auto simulate(double initialState, double time, double drift, double volatility) -> double
 		{
-			// update values
-			spath.m_xVals[i] = static_cast<double>(i) * time;
-			spath.m_yVals[i] = VarianceGammaStep(spath.m_yVals[i - 1], time, drift, variance, vol);
+			return initialState * std::exp(drift*time) + volatility*std::sqrt(1./2./drift*(std::exp(2*drift*time)-1.)) * Random::normal(0.0, 1.0);
 		}
-		return spath;
+
+
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals
+		{
+			XYVals spath{ timePoints };
+			spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
+			spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
+			double time = terminalTime / (timePoints - 1);
+			for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+			{
+				spath.m_xVals[i] = static_cast<double>(i) * time;
+				spath.m_yVals[i] = simulate(spath.m_yVals[i - 1], time, drift, volatility);
+				//spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
+			}
+			return spath;
+		}
+
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals
+		{
+			XYVals mcSamples{ samples };
+			for (std::size_t i{ 0 }; i < samples; i++)
+			{
+				mcSamples.m_xVals[i] = static_cast<double>(i);
+				mcSamples.m_yVals[i] = simulate(initialState, terminalTime, drift, volatility);
+			}
+			return mcSamples;
+		}
+
 	}
 
-	auto BSMMonteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals
+	namespace Heston
 	{
-		XYVals mcSamples{ samples };
-		for (std::size_t i{ 0 }; i < samples; i++)
+		// TODO: This can be made exact like the price step, since this is an OU process
+		auto varianceStep(double initialVariance, double stepSize, double longVariance, double correlatedNormal, double reversionRate, double volVol) -> double
 		{
-			mcSamples.m_xVals[i] = static_cast<double>(i);
-			mcSamples.m_yVals[i] = geometricBrownianMotion(initialState, terminalTime, drift, volatility);
+			return std::abs(initialVariance + stepSize * reversionRate * (longVariance - initialVariance) * stepSize + std::sqrt(stepSize * initialVariance) * volVol * correlatedNormal);
 		}
-		return mcSamples;
+
+		auto priceStep(double initialState, double stepSize, double drift, double variance, double correlatedNormal) -> double
+		{
+			// return initialState + stepSize * drift * initialState + std::sqrt(stepSize * variance) * correlatedNormal;
+			return initialState * std::exp((drift - variance / 2) * stepSize + std::sqrt(variance) * std::sqrt(stepSize) * correlatedNormal);
+		}
+		// careful: the step is only accurate for very small time steps
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals
+		{
+			// assert the Feller condition, which ensures that the process is positive
+			if (2 * reversionRate * longVariance <= volVol * volVol)
+			{
+				std::cout << "Warning: Feller condition of Heston model not satisfied, variance can become zero.\n";
+			}
+			// assert(2 * reversionRate * longVariance > volVol * volVol);
+
+			XYVals spath{ timePoints };
+			spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
+			spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
+			double time = terminalTime / (timePoints - 1);
+			double var {initialVariance};
+			for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+			{
+				spath.m_xVals[i] = static_cast<double>(i) * time;
+
+				// generate correlated standard normals
+				double normal1{ Random::normal(0.0,1.0) };
+				double normal2{ Random::normal(0.0,1.0) };
+				double increment1{ std::sqrt((1 + correlation) / 2.0) * normal1 + std::sqrt((1 - correlation) / 2.0) * normal2 };
+				double increment2{ std::sqrt((1 + correlation) / 2.0) * normal1 - std::sqrt((1 - correlation) / 2.0) * normal2 };
+
+				// update values
+				spath.m_yVals[i] = priceStep(spath.m_yVals[i-1], time, drift, var, increment1);
+
+				// make step with variance process for next step
+				var = varianceStep(var, time, longVariance, increment2, reversionRate, volVol);
+			}
+			return spath;
+		}
+
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals
+		{
+			XYVals mcSamples{ samples };
+
+			// initialize samples with initial state
+			mcSamples.m_yVals = std::vector<double>(samples, initialState);
+
+			for (std::size_t i{ 0 }; i < samples; i++)
+			{
+				mcSamples.m_xVals[i] = static_cast<double>(i);
+				XYVals spath{ path(initialState, terminalTime, timePoints, drift, initialVariance, longVariance, correlation, reversionRate, volVol) };
+				mcSamples.m_yVals[i] = spath.m_yVals.back();
+			}
+			return mcSamples;
+		}
 	}
 
-	auto BachelierMonteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals
+	namespace VarianceGamma
 	{
-		XYVals mcSamples{ samples };
-		for (std::size_t i{ 0 }; i < samples; i++)
+		auto step(double initialState, double stepSize, double drift, double variance, double vol) -> double
 		{
-			mcSamples.m_xVals[i] = static_cast<double>(i);
-			mcSamples.m_yVals[i] = Bachelier(initialState, terminalTime, drift, volatility);
+			double gammaIncrement{ Random::gamma(stepSize / variance, variance) };
+			double normalIncrement{ Random::normal(0.,1.) };
+			double VGIncrement{ drift * gammaIncrement + vol * std::sqrt(gammaIncrement) * normalIncrement };
+			return initialState * std::exp(VGIncrement);
 		}
-		return mcSamples;
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double variance, double vol) -> XYVals
+		{
+
+			XYVals spath{ timePoints };
+			spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
+			spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
+			double time = terminalTime / (timePoints - 1);
+			for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+			{
+				// update values
+				spath.m_xVals[i] = static_cast<double>(i) * time;
+				spath.m_yVals[i] = step(spath.m_yVals[i - 1], time, drift, variance, vol);
+			}
+			return spath;
+		}
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double variance, double vol) -> XYVals
+		{
+			XYVals mcSamples{ samples };
+
+			// initialize samples with initial state
+			mcSamples.m_yVals = std::vector<double>(samples, initialState);
+
+			for (std::size_t i{ 0 }; i < samples; i++)
+			{
+				mcSamples.m_xVals[i] = static_cast<double>(i);
+				XYVals spath{ path(initialState, terminalTime, timePoints, drift, variance, vol) };
+				mcSamples.m_yVals[i] = spath.m_yVals.back();
+			}
+			return mcSamples;
+		}
+
 	}
 
-	auto HestonMonteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals
-	{
-		XYVals mcSamples{ samples };
 
-		// initialize samples with initial state
-		mcSamples.m_yVals = std::vector<double>(samples, initialState);
 
-		for (std::size_t i{ 0 }; i < samples; i++)
-		{
-			mcSamples.m_xVals[i] = static_cast<double>(i);
-			XYVals spath{ HestonPath(initialState, terminalTime, timePoints, drift, initialVariance, longVariance, correlation, reversionRate, volVol) };
-			mcSamples.m_yVals[i] = spath.m_yVals.back();
-		}
-		return mcSamples;
-	}
 
-	auto VarianceGammaMonteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double variance, double vol) -> XYVals
-	{
-		XYVals mcSamples{ samples };
 
-		// initialize samples with initial state
-		mcSamples.m_yVals = std::vector<double>(samples, initialState);
 
-		for (std::size_t i{ 0 }; i < samples; i++)
-		{
-			mcSamples.m_xVals[i] = static_cast<double>(i);
-			XYVals spath{ VarianceGammaPath(initialState, terminalTime, timePoints, drift, variance, vol) };
-			mcSamples.m_yVals[i] = spath.m_yVals.back();
-		}
-		return mcSamples;
-	}
 
 
 	// NOTE: the argument in the CFs is the log of the stock price (commonly denoted as log S_t)
@@ -264,9 +266,9 @@ namespace SDE
 			std::size_t samples{ 50000 };
 			double drift{ 0.05 };
 			double volatility{ 0.4 };
-			XYVals mcSamplesBSM{ BSMMonteCarlo(initialState, terminalTime, samples, drift, volatility) };
+			XYVals mcSamplesBSM{ BSM::monteCarlo(initialState, terminalTime, samples, drift, volatility) };
 			double bachelierVol{ volatility * initialState }; // otherwise Bachelier has comparably tiny vol
-			XYVals mcSamplesBachelier{ BachelierMonteCarlo(initialState, terminalTime, samples, drift, bachelierVol) };
+			XYVals mcSamplesBachelier{ Bachelier::monteCarlo(initialState, terminalTime, samples, drift, bachelierVol) };
 
 			std::size_t timePoints{ 1000 };
 			double initialVariance{ volatility*volatility };
@@ -275,10 +277,10 @@ namespace SDE
 			double correlation{ -0.9 };
 			double reversionRate{ 1.5 };
 			double volVol{ 0.6 };
-			XYVals mcSamplesHeston{ HestonMonteCarlo(initialState, terminalTime, samples, timePoints, hestonDrift, initialVariance, longVariance, correlation, reversionRate, volVol) };
+			XYVals mcSamplesHeston{ Heston::monteCarlo(initialState, terminalTime, samples, timePoints, hestonDrift, initialVariance, longVariance, correlation, reversionRate, volVol) };
 
 			double variance{ 0.15 };
-			XYVals mcSamplesVarianceGamma{ VarianceGammaMonteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
+			XYVals mcSamplesVarianceGamma{ VarianceGamma::monteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
 
 			Saving::write_xyvals_to_csv("Data/mcSamplesBSM.csv", mcSamplesBSM);
 			Saving::write_xyvals_to_csv("Data/mcSamplesBachelier.csv", mcSamplesBachelier);
@@ -289,11 +291,11 @@ namespace SDE
 		auto saveHestonPaths() -> void
 		{
 			
-			XYVals spath2{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+			XYVals spath2{ Heston::path(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
 			Saving::write_xyvals_to_csv("Data/HstockPath1.csv", spath2);
-			XYVals spath3{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+			XYVals spath3{ Heston::path(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
 			Saving::write_xyvals_to_csv("Data/HstockPath2.csv", spath3);
-			XYVals spath4{ SDE::HestonPath(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
+			XYVals spath4{ Heston::path(100.0, 1.0, 1000, 0.09, 8., 15.,0.2,0.3,0.2) };
 			Saving::write_xyvals_to_csv("Data/HstockPath3.csv", spath4);
 		
 
@@ -320,11 +322,11 @@ namespace SDE
 		auto saveVarianceGammaPaths() -> void
 		{
 
-			XYVals spath2{ SDE::VarianceGammaPath(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
+			XYVals spath2{ VarianceGamma::path(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
 			Saving::write_xyvals_to_csv("Data/VGstockPath1.csv", spath2);
-			XYVals spath3{ SDE::VarianceGammaPath(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
+			XYVals spath3{ VarianceGamma::path(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
 			Saving::write_xyvals_to_csv("Data/VGstockPath2.csv", spath3);
-			XYVals spath4{ SDE::VarianceGammaPath(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
+			XYVals spath4{ VarianceGamma::path(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
 			Saving::write_xyvals_to_csv("Data/VGstockPath3.csv", spath4);
 
 		}

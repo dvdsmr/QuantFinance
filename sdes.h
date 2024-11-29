@@ -67,6 +67,10 @@ namespace SDE
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals;
 	}
+	namespace CEV
+	{
+		auto step(double state, double time, double drift, double mean, double diffusion, double exponent) -> double;
+	}
 	namespace Heston
 	{
 		auto varianceStep(double initialVariance, double stepSize, double longVariance, double correlatedNormal, double reversionRate, double volVol) -> double;

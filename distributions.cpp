@@ -14,6 +14,10 @@ namespace Distributions
 
 	namespace CDFs
 	{
+		auto chiSquared(double x, int k) -> double
+		{
+			return Utils::lower_incomplete_gamma(k / 2., x / 2.) / std::tgamma(k / 2.);
+		}
 		auto standardNormal(double x) -> double
 		{
 			// taken from https://www.johndcook.com/blog/cpp_phi/
@@ -41,6 +45,10 @@ namespace Distributions
 
 	namespace PDFs
 	{
+		auto chiSquared(double x, int k) -> double
+		{
+			return std::pow(x, k / 2. - 1.) * std::exp(-x / 2.) / (std::pow(2., k / 2.) * std::tgamma(k / 2.));
+		}
 		auto standardNormal(double x) -> double
 		{
 			double pi = 3.1415926535;
@@ -56,6 +64,7 @@ namespace Distributions
 
 	namespace Utils
 	{
+
 		template <typename T>
 		auto factorial(T n) -> T
 		{
@@ -66,6 +75,24 @@ namespace Distributions
 		auto binomialCoefficient(T n, T k) -> T
 		{
 			return factorial(n) / (factorial(k) * factorial(n - k));
+		}
+
+		// Numerical integration of gamma(a, x) using the trapezoidal rule
+		auto lower_incomplete_gamma(double s, double x, int n) -> double 
+		{
+			double h = x / n;  // Step size
+			double sum = 0.0;
+
+			for (int i = 1; i < n; ++i) {
+				double t = i * h;
+				sum += std::pow(t, s - 1) * std::exp(-t);
+			}
+
+			// Add contributions from the endpoints
+			sum += 0.5 * (std::pow(0, s - 1) * std::exp(0) + std::pow(x, s - 1) * std::exp(-x));
+			sum *= h;
+
+			return sum;
 		}
 	}
 }

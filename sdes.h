@@ -69,7 +69,7 @@ namespace SDE
 	}
 	namespace CEV
 	{
-		auto step(double state, double time, double drift, double mean, double diffusion, double exponent) -> double;
+		auto step(double state, double time, double drift, double diffusion, double exponent) -> double;
 	}
 	namespace Heston
 	{

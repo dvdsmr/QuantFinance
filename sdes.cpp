@@ -91,7 +91,7 @@ namespace SDE
 
 	namespace CEV
 	{
-		auto step(double state, double time, double drift, double mean, double diffusion, double exponent) -> double
+		auto step(double state, double time, double drift, double diffusion, double exponent) -> double
 		{
 			return state + time * drift * state + std::sqrt(time) * diffusion * std::pow(state, exponent) * Random::normal(0.0, 1.0);
 		}

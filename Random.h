@@ -76,6 +76,11 @@ namespace Random
 		return std::normal_distribution<double>{ mean, variance }(mt);
 	}
 
+	inline double chiSquared(double k)
+	{
+		return std::chi_squared_distribution<double>{ k }(mt);
+	}
+
 	inline double gamma(double alpha, double beta)
 	{
 		return std::gamma_distribution<double>{ alpha, beta }(mt);

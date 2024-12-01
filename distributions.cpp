@@ -18,6 +18,10 @@ namespace Distributions
 		{
 			return Utils::lower_incomplete_gamma(k / 2., x / 2.) / std::tgamma(k / 2.);
 		}
+		auto noncentralChiSquared(double x, int k, double lambda) -> double
+		{
+			return 1. - Utils::marcumQ(k / 2.,std::sqrt(lambda),std::sqrt(x));
+		}
 		auto standardNormal(double x) -> double
 		{
 			// taken from https://www.johndcook.com/blog/cpp_phi/
@@ -48,6 +52,10 @@ namespace Distributions
 		auto chiSquared(double x, int k) -> double
 		{
 			return std::pow(x, k / 2. - 1.) * std::exp(-x / 2.) / (std::pow(2., k / 2.) * std::tgamma(k / 2.));
+		}
+		auto noncentralChiSquared(double x, int k, double lambda) -> double
+		{
+			return 0.5 * std::exp(-0.5 * (x + lambda)) * std::pow((x / lambda), k / 4. - 1. / 2.) * Utils::modifiedBessel(k / 2. - 1., std::sqrt(lambda * x));
 		}
 		auto standardNormal(double x) -> double
 		{
@@ -80,10 +88,11 @@ namespace Distributions
 		// Numerical integration of gamma(a, x) using the trapezoidal rule
 		auto lower_incomplete_gamma(double s, double x, int n) -> double 
 		{
-			double h = x / n;  // Step size
-			double sum = 0.0;
+			double h{ x / n };  // Step size
+			double sum{ 0.0 };
 
-			for (int i = 1; i < n; ++i) {
+			for (int i = 1; i < n; ++i) 
+			{
 				double t = i * h;
 				sum += std::pow(t, s - 1) * std::exp(-t);
 			}
@@ -93,6 +102,39 @@ namespace Distributions
 			sum *= h;
 
 			return sum;
+		}
+
+		// Compute the modified Bessel function of the first kind, I_nu(x), using its series definition
+		auto modifiedBessel(double alpha, double x, int maxTerms, double tol) -> double
+		{
+			double sum{ 0.0 };
+			double term{ 1.0 }; // Initial term
+			double x2{ x / 2.0 };
+
+			for (int k = 0; k < maxTerms && std::abs(term) > tol; ++k) 
+			{
+				term = std::pow(x2, 2 * k + alpha) / (factorial(k) * std::tgamma(k + alpha + 1));
+				sum += term;
+			}
+
+			return sum;
+		}
+
+		// Numerical integration of the marcum Q function(a,b) using the trapezoidal rule
+		auto marcumQ(double nu, double a, double b, int n) -> double
+		{
+			double h{ b / n };  // Step size
+			double sum{ 0.0 };
+
+			for (int i = 1; i <= n; ++i)
+			{
+				double x = i * h;
+				sum += std::pow(x, nu) * std::exp(-0.5*(x*x+a*a)) * modifiedBessel(nu-1,a*x);
+			}
+			sum *= h;
+
+			double result{ 1. - 1. / std::pow(a,nu - 1) * sum };
+			return result;
 		}
 	}
 }

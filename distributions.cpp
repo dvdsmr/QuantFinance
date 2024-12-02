@@ -18,7 +18,7 @@ namespace Distributions
 		{
 			return Utils::lower_incomplete_gamma(k / 2., x / 2.) / std::tgamma(k / 2.);
 		}
-		auto noncentralChiSquared(double x, int k, double lambda) -> double
+		auto noncentralChiSquared(double x, double k, double lambda) -> double
 		{
 			return 1. - Utils::marcumQ(k / 2.,std::sqrt(lambda),std::sqrt(x));
 		}
@@ -53,7 +53,7 @@ namespace Distributions
 		{
 			return std::pow(x, k / 2. - 1.) * std::exp(-x / 2.) / (std::pow(2., k / 2.) * std::tgamma(k / 2.));
 		}
-		auto noncentralChiSquared(double x, int k, double lambda) -> double
+		auto noncentralChiSquared(double x, double k, double lambda) -> double
 		{
 			return 0.5 * std::exp(-0.5 * (x + lambda)) * std::pow((x / lambda), k / 4. - 1. / 2.) * Utils::modifiedBessel(k / 2. - 1., std::sqrt(lambda * x));
 		}

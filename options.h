@@ -72,6 +72,14 @@ namespace Options
 			auto putVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 		}
 
+		namespace CEV
+		{
+			auto _nu(double exponent) -> double;
+			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double;
+			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double;
+			void test();
+		}
+
 	}
 	
 	const void testCallGrid();

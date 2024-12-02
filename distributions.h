@@ -10,13 +10,13 @@ namespace Distributions
 	namespace CDFs
 	{
 		auto chiSquared(double x, int k) -> double;
-		auto noncentralChiSquared(double x, int k, double lambda) -> double;
+		auto noncentralChiSquared(double x, double k, double lambda) -> double;
 		auto standardNormal(double x) -> double;
 	}
 	namespace PDFs
 	{
 		auto chiSquared(double x, int k) -> double;
-		auto noncentralChiSquared(double x, int k, double lambda) -> double;
+		auto noncentralChiSquared(double x, double k, double lambda) -> double;
 		auto standardNormal(double x) -> double;
 		auto standardNormal_dx(double x) -> double;
 	}

@@ -362,13 +362,14 @@ namespace Options
 		{
 			auto _nu(double exponent) -> double
 			{
+				assert(exponent < 1.);
 				return 1. / (2 * (1-exponent));
 			}
 			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double
 			{
 				double nu{ _nu(exponent) };
 				double ST{ spot * std::exp((riskFreeReturn - dividendYield) * maturity) };
-				double term1{ 4 * nu * nu * std::pow(strike,1. / nu) };
+				double term1{ 4 * nu * nu * std::pow(strike,1. / nu) / (vol * vol * maturity) };
 				double term2{ 4 * nu * nu * std::pow(ST,1. / nu) / (vol * vol * maturity) };
 				return std::exp(-(riskFreeReturn - dividendYield) * maturity) * (
 					ST * (1. - Distributions::CDFs::noncentralChiSquared(term1, 2 * nu + 2., term2))
@@ -379,7 +380,7 @@ namespace Options
 			{
 				double nu{ _nu(exponent) };
 				double ST{ spot * std::exp((riskFreeReturn - dividendYield) * maturity) };
-				double term1{ 4 * nu * nu * std::pow(strike,1. / nu) };
+				double term1{ 4 * nu * nu * std::pow(strike,1. / nu) / (vol * vol * maturity) };
 				double term2{ 4 * nu * nu * std::pow(ST,1. / nu) / (vol * vol * maturity) };
 				return std::exp(-(riskFreeReturn - dividendYield) * maturity) * (
 					ST * (Distributions::CDFs::noncentralChiSquared(term1, 2 * nu + 2., term2))
@@ -394,17 +395,17 @@ namespace Options
 				double maturity = 1.0;
 				double interest = 0.03;
 				double dividendYield = 0.0;
-				double vol = 0.1;
-				double exponent = 1.;
+				double vol = 0.2;
+				double exponent = 0.5;
 
 				// check connection to BSM price
 				double cevPrice{ call(interest,vol,maturity,strike,spot,dividendYield,exponent) };
 				double bsmPrice{ BSM::call(interest,vol,maturity,strike,spot,dividendYield) };
-				std::cout << "Call :  BSM price is " << bsmPrice << ". CEV price with beta=1 is " << cevPrice << ".\n";
+				std::cout << "Call :  BSM price is " << bsmPrice << ". CEV price with beta=0.5 is " << cevPrice << ".\n";
 
 				cevPrice = put(interest,vol,maturity,strike,spot,dividendYield,exponent);
 				bsmPrice = BSM::put(interest,vol,maturity,strike,spot,dividendYield);
-				std::cout << "Put :  BSM price is " << bsmPrice << ". CEV price with beta=1 is " << cevPrice << ".\n";
+				std::cout << "Put :  BSM price is " << bsmPrice << ". CEV price with beta=0.5 is " << cevPrice << ".\n";
 
 				// connection to Bachelier
 				exponent = 0.;

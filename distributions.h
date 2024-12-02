@@ -1,6 +1,8 @@
 #ifndef DISTRIBUTIONS_H
 #define DISTRIBUTIONS_H
 
+#include "fft.h"
+
 namespace Distributions
 {
 	namespace MomentGeneratingFunctions
@@ -29,9 +31,10 @@ namespace Distributions
 		template <typename T>
 		auto factorial(T n) -> T;
 
-		auto lower_incomplete_gamma(double s, double x, int n = 1000) -> double;
-		auto modifiedBessel(double alpha, double x, int maxTerms = 100, double tol = 1e-10) -> double;
-		auto marcumQ(double nu, double a, double b, int n = 1000) -> double;
+		auto lower_incomplete_gamma(double s, double x, int n = 5000) -> double;
+		auto modifiedBessel(double alpha, double x, int maxTerms = 500, double tol = 1e-10) -> double;
+		auto logModifiedBessel(double alpha, double x, int maxTerms = 2, double tol = 1e-10) -> double;
+		auto marcumQ(double nu, double a, double b, int n = 5000) -> double;
 	}
 }
 

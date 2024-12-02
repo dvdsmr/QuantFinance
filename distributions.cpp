@@ -91,14 +91,11 @@ namespace Distributions
 			double h{ x / n };  // Step size
 			double sum{ 0.0 };
 
-			for (int i = 1; i < n; ++i) 
+			for (int i = 1; i <= n; ++i) 
 			{
 				double t = i * h;
 				sum += std::pow(t, s - 1) * std::exp(-t);
 			}
-
-			// Add contributions from the endpoints
-			sum += 0.5 * (std::pow(0, s - 1) * std::exp(0) + std::pow(x, s - 1) * std::exp(-x));
 			sum *= h;
 
 			return sum;
@@ -107,19 +104,90 @@ namespace Distributions
 		// Compute the modified Bessel function of the first kind, I_nu(x), using its series definition
 		auto modifiedBessel(double alpha, double x, int maxTerms, double tol) -> double
 		{
-			double sum{ 0.0 };
-			double term{ 1.0 }; // Initial term
-			double x2{ x / 2.0 };
 
-			for (int k = 0; k < maxTerms && std::abs(term) > tol; ++k) 
+			if (x > 30.0) // Switch to asymptotic expansion for large x
 			{
-				term = std::pow(x2, 2 * k + alpha) / (factorial(k) * std::tgamma(k + alpha + 1));
-				sum += term;
+				double term{ 1.0 };
+				double sum{ term };
+				double factor{ 1.0 / (2 * x) };
+
+				for (int k = 1; k < maxTerms; ++k)
+				{
+					term *= -factor * (4 * alpha * alpha - (2 * k - 1) * (2 * k - 1)) / (2 * k);
+					if (std::abs(term) < tol)
+						break;
+					sum += term;
+				}
+
+				return std::exp(x) / std::sqrt(2 * PI * x) * sum;
+			}
+			else // Use the series expansion for small x
+			{
+				double sum{ 0.0 };
+				double term{ 1.0 }; // Initial term
+				double x2{ x / 2.0 };
+
+				for (int k = 0; k < maxTerms && std::abs(term) > tol; ++k)
+				{
+					term = std::pow(x2, 2 * k + alpha) / (factorial(k) * std::tgamma(k + alpha + 1));
+					sum += term;
+				}
+
+				return sum;
 			}
 
-			return sum;
 		}
 
+		// Compute the logarithm of the modified Bessel function of the first kind
+		auto logModifiedBessel(double alpha, double x, int maxTerms, double tol) -> double 
+		{
+			// If x is small, use the series expansion
+			if (x < 3.0) 
+			{
+				double sum = 0.0;
+				double term = 1.0;  // Initial term
+				double x2 = x / 2.0;
+
+				for (int k = 0; k < maxTerms && std::abs(term) > tol; ++k) 
+				{
+					term = std::pow(x2, 2 * k + alpha) / (factorial(k) * std::tgamma(k + alpha + 1));
+					sum += term;
+				}
+				return std::log(sum);
+			}
+			/*
+			// If x is large, use the asymptotic expansion
+			return x - 0.5 * std::log(2.0 * PI * x);
+			*/
+			// If x is large, use the asymptotic expansion
+			else 
+			{
+				// Leading term and logarithmic correction
+				double logI = x - 0.5 * std::log(2.0 * PI * x);
+
+				// Add correction terms for higher accuracy
+				double correction = 0.0;
+				double factor = 1.0;  // Tracks (4v^2 - 1)(4v^2 - 9)... for each term
+				double xPower = 1.0;   // Tracks powers of 8x
+
+				for (int k = 1; k <= maxTerms; ++k) {
+					factor *= (4 * alpha * alpha - (2 * k - 1) * (2 * k - 1));
+					xPower *= 8.0 * x;  // Next power of 8x
+					correction += factor / xPower;
+
+					// If the correction term is small, break early
+					if (std::abs(factor / xPower) < 1e-12) {
+						break;
+					}
+				}
+
+				logI += std::log1p(correction);  // Accumulate correction terms
+				return logI;
+			}
+		}
+
+
+		/*
 		// Numerical integration of the marcum Q function(a,b) using the trapezoidal rule
 		auto marcumQ(double nu, double a, double b, int n) -> double
 		{
@@ -136,5 +204,29 @@ namespace Distributions
 			double result{ 1. - 1. / std::pow(a,nu - 1) * sum };
 			return result;
 		}
+		*/
+
+
+		// Numerically integrate the Marcum Q function in logarithmic space
+		auto marcumQ(double nu, double a, double b, int n) -> double 
+		{
+			double h = b / n;  // Step size
+			double logSum = 0.0;
+
+			for (int i = 1; i <= n; ++i) 
+			{
+				double t = i * h;
+				double logTerm = nu * std::log(t) - 0.5 * (t * t + a * a)
+					+ logModifiedBessel(nu - 1, a * t);
+
+				// Convert back from log-space and accumulate
+				logSum += std::exp(logTerm);
+			}
+			logSum *= h;
+
+			// Final adjustment for the Marcum Q definition
+			return 1.0 - (1.0 / std::pow(a, nu - 1)) * logSum;
+		}
+
 	}
 }

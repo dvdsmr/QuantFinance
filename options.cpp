@@ -392,7 +392,7 @@ namespace Options
 			{
 				double spot = 170.0;
 				double strike = 180.0;
-				double maturity = .5;
+				double maturity = .01;
 				double interest = 0.03;
 				double dividendYield = 0.0;
 				double vol = 0.1;

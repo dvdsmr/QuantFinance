@@ -33,7 +33,7 @@ namespace Distributions
 
 		auto lower_incomplete_gamma(double s, double x, int n = 5000) -> double;
 		auto modifiedBessel(double alpha, double x, int maxTerms = 500, double tol = 1e-10) -> double;
-		auto logModifiedBessel(double alpha, double x, int maxTerms = 2, double tol = 1e-10) -> double;
+		auto logModifiedBessel(double alpha, double x, int maxTerms = 5, double tol = 1e-10) -> double;
 		auto marcumQ(double nu, double a, double b, int n = 5000) -> double;
 	}
 }

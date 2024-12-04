@@ -383,40 +383,40 @@ namespace Options
 				double term1{ 4 * nu * nu * std::pow(strike,1. / nu) / (vol * vol * maturity) };
 				double term2{ 4 * nu * nu * std::pow(ST,1. / nu) / (vol * vol * maturity) };
 				return std::exp(-(riskFreeReturn - dividendYield) * maturity) * (
-					ST * (Distributions::CDFs::noncentralChiSquared(term1, 2 * nu + 2., term2))
-					- strike *(1.- Distributions::CDFs::noncentralChiSquared(term2, 2 * nu, term1))
+					strike * (1. - Distributions::CDFs::noncentralChiSquared(term2, 2 * nu, term1))  
+					- ST * Distributions::CDFs::noncentralChiSquared(term1, 2 * nu + 2., term2)     
 					);
 			}
 
 			void test()
 			{
-				double spot = 171.01;
+				double spot = 170.0;
 				double strike = 180.0;
-				double maturity = 1.0;
+				double maturity = .5;
 				double interest = 0.03;
 				double dividendYield = 0.0;
-				double vol = 0.2;
-				double exponent = 0.5;
+				double vol = 0.1;
+				double exponent = 0.9;
 
 				// check connection to BSM price
 				double cevPrice{ call(interest,vol,maturity,strike,spot,dividendYield,exponent) };
 				double bsmPrice{ BSM::call(interest,vol,maturity,strike,spot,dividendYield) };
-				std::cout << "Call :  BSM price is " << bsmPrice << ". CEV price with beta=0.5 is " << cevPrice << ".\n";
+				std::cout << "Call :  BSM price is " << bsmPrice << ". CEV price with beta= "<< exponent << " is " << cevPrice << ".\n";
 
 				cevPrice = put(interest,vol,maturity,strike,spot,dividendYield,exponent);
 				bsmPrice = BSM::put(interest,vol,maturity,strike,spot,dividendYield);
-				std::cout << "Put :  BSM price is " << bsmPrice << ". CEV price with beta=0.5 is " << cevPrice << ".\n";
+				std::cout << "Put :  BSM price is " << bsmPrice << ". CEV price with beta= " << exponent << " is " << cevPrice << ".\n";
 
 				// connection to Bachelier
 				exponent = 0.;
-				vol *= spot;
+				vol = 0.1*spot;
 				cevPrice = call(interest, vol, maturity, strike, spot, dividendYield, exponent);
 				double bachelierPrice{ Bachelier::call(interest, vol, maturity, strike, spot, dividendYield) };
-				std::cout << "Call :  Bachelier price is " << bachelierPrice << ". CEV price with beta=0 is " << cevPrice << ".\n";
+				std::cout << "Call :  Bachelier price is " << bachelierPrice << ". CEV price with beta= " << exponent << " is " << cevPrice << ".\n";
 
 				cevPrice = put(interest, vol, maturity, strike, spot, dividendYield, exponent);
 				bachelierPrice = Bachelier::put(interest, vol, maturity, strike, spot, dividendYield);
-				std::cout << "Put :  Bachelier price is " << bachelierPrice << ". CEV price with beta=0 is " << cevPrice << ".\n";
+				std::cout << "Put :  Bachelier price is " << bachelierPrice << ". CEV price with beta=" << exponent << " is " << cevPrice << ".\n";
 
 			}
 		}

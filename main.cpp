@@ -51,7 +51,7 @@ auto main() -> int
 	
 
 	Options::Pricing::CEV::test();
-	
+
 	/*
 	double riskFreeReturn{ 0.003 };
 	double dividendYield{ 0.0 };

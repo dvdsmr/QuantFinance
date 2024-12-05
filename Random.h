@@ -81,6 +81,11 @@ namespace Random
 		return std::chi_squared_distribution<double>{ k }(mt);
 	}
 
+	inline double poisson(double lam)
+	{
+		return std::poisson_distribution<int>{ lam }(mt);
+	}
+
 	inline double gamma(double alpha, double beta)
 	{
 		return std::gamma_distribution<double>{ alpha, beta }(mt);

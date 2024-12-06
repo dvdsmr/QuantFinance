@@ -42,6 +42,7 @@ auto main() -> int
 	//testPSO();
 
 	//SDE::Testing::saveMCsamples();
+	SDE::Testing::saveMertonJumpPaths();
 
 	//SDE::Testing::saveHestonPaths();
 
@@ -50,7 +51,7 @@ auto main() -> int
 	// save loss curve for BSM calibration
 	
 
-	Options::Pricing::CEV::test();
+	//Options::Pricing::CEV::test();
 
 	/*
 	double riskFreeReturn{ 0.003 };

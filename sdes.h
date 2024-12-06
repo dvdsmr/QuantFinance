@@ -71,6 +71,12 @@ namespace SDE
 	{
 		auto step(double state, double time, double drift, double diffusion, double exponent) -> double;
 	}
+	namespace MertonJump
+	{
+		auto simulate(double initialState, double time, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double;
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> XYVals;
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> XYVals;
+	}
 	namespace Heston
 	{
 		auto varianceStep(double initialVariance, double stepSize, double longVariance, double correlatedNormal, double reversionRate, double volVol) -> double;
@@ -102,6 +108,7 @@ namespace SDE
 		auto saveMCsamples() -> void;
 		auto saveHestonPaths() -> void;
 		auto saveVarianceGammaPaths() -> void;
+		auto saveMertonJumpPaths() -> void;
 	}
 }
 

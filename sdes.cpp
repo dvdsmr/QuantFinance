@@ -25,7 +25,7 @@ namespace SDE
 	{
 		auto simulate(double initialState, double time, double drift, double volatility) -> double
 		{
-			return initialState * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
+			return initialState * std::exp((drift - volatility * volatility / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
 		}
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals
 		{
@@ -37,7 +37,6 @@ namespace SDE
 			{
 				spath.m_xVals[i] = static_cast<double>(i) * time;
 				spath.m_yVals[i] = simulate(spath.m_yVals[i - 1], time, drift, volatility);
-				//spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
 			}
 			return spath;
 		}
@@ -71,7 +70,6 @@ namespace SDE
 			{
 				spath.m_xVals[i] = static_cast<double>(i) * time;
 				spath.m_yVals[i] = simulate(spath.m_yVals[i - 1], time, drift, volatility);
-				//spath.m_yVals[i] = spath.m_yVals[i - 1] * std::exp((drift - std::pow(volatility, 2) / 2) * time + volatility * std::sqrt(time) * Random::normal(0.0, 1.0));
 			}
 			return spath;
 		}
@@ -94,6 +92,41 @@ namespace SDE
 		auto step(double state, double time, double drift, double diffusion, double exponent) -> double
 		{
 			return state + time * drift * state + std::sqrt(time) * diffusion * std::pow(state, exponent) * Random::normal(0.0, 1.0);
+		}
+	}
+
+	namespace MertonJump
+	{
+		auto simulate(double initialState, double time, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double
+		{
+			return initialState * std::exp(
+				(drift - volatility*volatility / 2. - expectedJumpsPerYear*(meanJumpSize-stdJumpSize*stdJumpSize/2.)) * time 
+					+ volatility * std::sqrt(time) * Random::normal(0.0, 1.0)
+					+ Random::normal(meanJumpSize,stdJumpSize) * Random::poisson(expectedJumpsPerYear*time)
+			);
+		}
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> XYVals
+		{
+			XYVals spath{ timePoints };
+			spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
+			spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
+			double time = terminalTime / (timePoints - 1);
+			for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+			{
+				spath.m_xVals[i] = static_cast<double>(i) * time;
+				spath.m_yVals[i] = simulate(spath.m_yVals[i - 1], time, drift, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear);
+			}
+			return spath;
+		}
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> XYVals
+		{
+			XYVals mcSamples{ samples };
+			for (std::size_t i{ 0 }; i < samples; i++)
+			{
+				mcSamples.m_xVals[i] = static_cast<double>(i);
+				mcSamples.m_yVals[i] = simulate(initialState, terminalTime, drift, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear);
+			}
+			return mcSamples;
 		}
 	}
 
@@ -275,6 +308,12 @@ namespace SDE
 			double drift{ 0.05 };
 			double volatility{ 0.4 };
 			XYVals mcSamplesBSM{ BSM::monteCarlo(initialState, terminalTime, samples, drift, volatility) };
+
+			double meanJumpSize{ 0.0 };
+			double stdJumpSize{ 0.2 };
+			double expectedJumpsPerYear{ 2. };
+			XYVals mcSamplesMertonJump{ MertonJump::monteCarlo(initialState, terminalTime, samples, drift, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear) };
+
 			double bachelierVol{ volatility * initialState }; // otherwise Bachelier has comparably tiny vol
 			XYVals mcSamplesBachelier{ Bachelier::monteCarlo(initialState, terminalTime, samples, drift, bachelierVol) };
 
@@ -291,6 +330,7 @@ namespace SDE
 			XYVals mcSamplesVarianceGamma{ VarianceGamma::monteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
 
 			Saving::write_xyvals_to_csv("Data/mcSamplesBSM.csv", mcSamplesBSM);
+			Saving::write_xyvals_to_csv("Data/mcSamplesMertonJump.csv", mcSamplesMertonJump);
 			Saving::write_xyvals_to_csv("Data/mcSamplesBachelier.csv", mcSamplesBachelier);
 			Saving::write_xyvals_to_csv("Data/mcSamplesHeston.csv", mcSamplesHeston);
 			Saving::write_xyvals_to_csv("Data/mcSamplesVarianceGamma.csv", mcSamplesVarianceGamma);
@@ -336,7 +376,17 @@ namespace SDE
 			Saving::write_xyvals_to_csv("Data/VGstockPath2.csv", spath3);
 			XYVals spath4{ VarianceGamma::path(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
 			Saving::write_xyvals_to_csv("Data/VGstockPath3.csv", spath4);
+		}
 
+		auto saveMertonJumpPaths() -> void
+		{
+
+			XYVals spath2{ MertonJump::path(100.0, .5, 1000, 0.05, 0.3,0.0,0.3,2.) };
+			Saving::write_xyvals_to_csv("Data/MJstockPath1.csv", spath2);
+			XYVals spath3{ MertonJump::path(100.0, .5, 1000, 0.05, 0.3,0.0,0.3,2.) };
+			Saving::write_xyvals_to_csv("Data/MJstockPath2.csv", spath3);
+			XYVals spath4{ MertonJump::path(100.0, .5, 1000, 0.05, 0.3,0.0,0.3,2.) };
+			Saving::write_xyvals_to_csv("Data/MJstockPath3.csv", spath4);
 		}
 
 	}

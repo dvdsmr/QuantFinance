@@ -29,6 +29,6 @@ Canonical models for derivative pricing and Hedging are included in the reposito
 
 Greeks with BSM model         |  Stock price distribution with different models
 :-------------------------:|:-------------------------:
-![Price](Plots/optionPrice.gif) |  ![Vol](Plots/mcSamplesHistogramMultiModel.png)
+![Price](Plots/optionPrice.gif) |  ![Vol](Plots/mcSamplesHistogramMultiModel_show.png)
 
 It can be clearly seen that the choice of model affects the forecasts. For instance, both very high and very low returns are more likely in the Variance Gamma model than in the BSM model. The distribution is thus said to have "fat tails" in comparison to the log-normal distribution. In the Heston model very low returns are the likliest. For example, the conditional value at risk at the 5% level is approximately $31 for the BSM model and $37 for the Heston model.

@@ -52,7 +52,7 @@ def plotHistogramCSV(filenames):
     distData = [genfromtxt(filename, delimiter=',') for filename in filenames]
     n_bins = 50
 
-    labels = ["BSM", "Bachelier", "Heston", "VG", "Merton Jump"]
+    labels = ["BSM", "Heston", "VG"]
 
     # We can set the number of bins with the *bins* keyword argument.
     fig = plt.figure(figsize=(14,8))
@@ -141,9 +141,9 @@ def plotOptionCSV(filenames):
 
 if __name__ == "__main__":
     # plotLossCSV(["Data/BSMlossCurve"])
-    # plotHistogramCSV(["Data/mcSamplesBSM.csv","Data/mcSamplesBachelier.csv","Data/mcSamplesHeston.csv","Data/mcSamplesVarianceGamma.csv",\
-    #                  "Data/mcSamplesMertonJump.csv"])
-    plotStockCSV(["Data/MJstockPath1.csv","Data/MJstockPath2.csv","Data/MJstockPath3.csv"])
+    plotHistogramCSV(["Data/mcSamplesBSM.csv","Data/mcSamplesHeston.csv","Data/mcSamplesVarianceGamma.csv",\
+                      ])
+    # plotStockCSV(["Data/MJstockPath1.csv","Data/MJstockPath2.csv","Data/MJstockPath3.csv"])
     # plotStockCSV(["Data/VGstockPath1.csv","Data/VGstockPath2.csv","Data/VGstockPath3.csv"])
     # plotOptionCSV(["Data/callPrices.csv","Data/callDeltas.csv","Data/callGammas.csv"])
     # plotSurface("Data/ArtificialPriceSurface.csv","priceSurfacePlot")

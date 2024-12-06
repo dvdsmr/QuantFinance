@@ -43,6 +43,7 @@ namespace FFT
 	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair;
 	auto pricingfftHeston(const HestonParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair;
 	auto pricingfftBSM(const BSMParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair;
+	auto pricingfftMertonJump(const MertonJumpParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair;
 	auto pricingfftVarianceGamma(const VarianceGammaParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair;
 
 

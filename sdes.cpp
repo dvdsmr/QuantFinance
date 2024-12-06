@@ -252,6 +252,14 @@ namespace SDE
 				- vol * vol * argument * argument * maturity / 2.0);
 		}
 
+		auto MertonJump(std::complex<double> argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> std::complex<double>
+		{
+			double omega{riskFreeReturn-dividendYield-vol*vol/2. - expectedJumpsPerYear*(std::exp(meanJumpSize+stdJumpSize/2.)-1.)};
+			std::complex<double> term1{ IMNUM*argument*std::log(spot) + IMNUM*argument*omega*maturity - 0.5*argument*argument*vol*vol*maturity};
+			std::complex<double> term2{expectedJumpsPerYear*maturity*(std::exp(IMNUM*argument*meanJumpSize-argument*argument*stdJumpSize*stdJumpSize/2.)-1.)};
+			return std::exp(term1 + term2);
+		}
+
 		auto Heston(std::complex<double> argument, double riskFreeReturn, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, double maturity, double spot, double dividendYield) -> std::complex<double>
 		{
 
@@ -287,6 +295,11 @@ namespace SDE
 		{
 			return BSM(argument, marketParams.riskFreeReturn, modelParams.vol, marketParams.maturity, 
 						marketParams.spot, marketParams.dividendYield);
+		}
+		auto generalCF(std::complex<double> argument, const MertonJumpParams& modelParams, const MarketParams& marketParams) -> std::complex<double>
+		{
+			return MertonJump(argument, marketParams.riskFreeReturn, modelParams.vol, marketParams.maturity,
+				marketParams.spot, marketParams.dividendYield, modelParams.meanJumpSize, modelParams.stdJumpSize, modelParams.expectedJumpsPerYear);
 		}
 		auto generalCF(std::complex<double> argument, const VarianceGammaParams& modelParams, const MarketParams& marketParams) -> std::complex<double>
 		{

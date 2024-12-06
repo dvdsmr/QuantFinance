@@ -33,7 +33,6 @@ namespace Calibrate
 		void test();
 		void calibrateToRealData(std::string symbol, double spot);
 		void saveLossShape(double riskFreeReturn, double dividendYield, double maturity, double strike, double spot, double truePrice);
-
 	}
 	
 	namespace Heston

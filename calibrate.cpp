@@ -595,10 +595,10 @@ namespace Calibrate
 			errorSurface.m_tableLabel = "Error";
 
 
-			std::vector<double> vols{ np::linspace<double>(0.01,0.9,10) };
-			std::vector<double> meanJumpSizes{ np::linspace<double>(0.0,0.3,3) };
+			std::vector<double> vols{ np::linspace<double>(0.3,0.9,10) };
+			std::vector<double> meanJumpSizes{ np::linspace<double>(0.0,0.0,1) };
 			std::vector<double> stdJumpSizes{ np::linspace<double>(0.1,0.3,3) };
-			std::vector<double> expectedJumpsPerYears{ np::linspace<double>(0.0,2.0,3) };
+			std::vector<double> expectedJumpsPerYears{ np::linspace<double>(1.0,6.0,6) };
 
 
 			MertonJumpParams finalParams{
@@ -737,7 +737,7 @@ namespace Calibrate
 			std::cout << "vol: " << fitParams.vol << "\n";
 			std::cout << "meanJumpSize: " << fitParams.meanJumpSize << "\n";
 			std::cout << "stdJumpSize: " << fitParams.stdJumpSize << "\n";
-			std::cout << "expectedJumpsPerYears: " << fitParams.expectedJumpsPerYear << "\n";
+			std::cout << "expectedJumpsPerYear: " << fitParams.expectedJumpsPerYear << "\n";
 
 			/*
 			fitParams = Call(priceSurface,riskFreeReturn,spot,dividendYield);

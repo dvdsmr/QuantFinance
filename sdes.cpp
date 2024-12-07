@@ -89,9 +89,40 @@ namespace SDE
 
 	namespace CEV
 	{
-		auto step(double state, double time, double drift, double diffusion, double exponent) -> double
+		auto step(double state, double time, double drift, double volatility, double exponent) -> double
 		{
-			return state + time * drift * state + std::sqrt(time) * diffusion * std::pow(state, exponent) * Random::normal(0.0, 1.0);
+			return state + time * drift * state + std::sqrt(time) * volatility * std::pow(state, exponent) * Random::normal(0.0, 1.0);
+		}
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility, double exponent) -> XYVals
+		{
+
+
+			XYVals spath{ timePoints };
+			spath.m_yVals[static_cast<std::size_t>(0)] = initialState;
+			spath.m_xVals[static_cast<std::size_t>(0)] = 0.0;
+			double time = terminalTime / (timePoints - 1);
+			for (std::size_t i{ 1 }; i <= timePoints - 1; i++)
+			{
+				spath.m_xVals[i] = static_cast<double>(i) * time;
+				spath.m_yVals[i] = step(spath.m_yVals[i - 1], time, drift, volatility, exponent);
+			}
+			return spath;
+		}
+
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility, double exponent) -> XYVals
+		{
+			XYVals mcSamples{ samples };
+
+			// initialize samples with initial state
+			mcSamples.m_yVals = std::vector<double>(samples, initialState);
+
+			for (std::size_t i{ 0 }; i < samples; i++)
+			{
+				mcSamples.m_xVals[i] = static_cast<double>(i);
+				XYVals spath{ path(initialState, terminalTime, timePoints, drift, volatility, exponent) };
+				mcSamples.m_yVals[i] = spath.m_yVals.back();
+			}
+			return mcSamples;
 		}
 	}
 

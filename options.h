@@ -1,6 +1,7 @@
 #ifndef OPTION_RETURNS_H
 #define OPTION_RETURNS_H
 #include "out.h"
+#include "sdes.h"
 #include "securities.h"
 #include "xyvals.h"
 #include "saving.h"
@@ -77,6 +78,8 @@ namespace Options
 			auto _nu(double exponent) -> double;
 			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double;
 			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double;
+			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double;
+			auto MonteCarlo(std::string_view type, double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double;
 			void test();
 		}
 

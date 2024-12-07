@@ -77,7 +77,9 @@ namespace SDE
 	}
 	namespace CEV
 	{
-		auto step(double state, double time, double drift, double diffusion, double exponent) -> double;
+		auto step(double state, double time, double drift, double volatility, double exponent) -> double;
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility, double exponent) -> XYVals;
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility, double exponent) -> XYVals;
 	}
 	namespace MertonJump
 	{

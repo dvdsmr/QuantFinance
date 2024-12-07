@@ -1,7 +1,4 @@
 #include "options.h"
-#include "distributions.h"
-#include "xyvals.h"
-#include "numpy.h"
 #include <algorithm>
 #include <iostream>
 #include <cmath>
@@ -35,6 +32,16 @@ namespace Options
 			return call(strikeCall, spotPrice) + put(strikePut, spotPrice);
 		}
 
+		auto callDebitSpread(double lower, double higher, double spotPrice) -> double
+		{
+			return call(lower, spotPrice) - call(higher, spotPrice);
+		}
+
+		auto callCreditSpread(double lower, double higher, double spotPrice) -> double
+		{
+			return call(higher, spotPrice) - call(lower, spotPrice);
+		}
+
 		auto putDebitSpread(double lower, double higher, double spotPrice) -> double
 		{
 			return put(higher, spotPrice) - put(lower, spotPrice);
@@ -45,15 +52,6 @@ namespace Options
 			return put(lower, spotPrice) - put(higher, spotPrice);
 		}
 
-		auto callDebitSpread(double lower, double higher, double spotPrice) -> double
-		{
-			return call(lower, spotPrice) - call(higher, spotPrice);
-		}
-
-		auto callCreditSpread(double lower, double higher, double spotPrice) -> double
-		{
-			return call(higher, spotPrice) - call(lower, spotPrice);
-		}
 
 	}
 
@@ -217,6 +215,29 @@ namespace Options
 				[[maybe_unused]] double d2derivSpot{ d1derivSpot };
 				[[maybe_unused]] double d2derivStrikeSpot{ 0.0 };
 				return -std::exp(-riskFreeReturn * maturity) * Distributions::PDFs::standardNormal(d2) * d2derivSpot;
+			}
+
+			// only call right now
+			auto monteCarlo(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			{
+				// define payoff function
+				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
+
+				// number of MC samples for simulation
+				std::size_t sampleNum{ 1000000 };
+				std::vector<double> predictedSpots{ SDE::BSM::monteCarlo(spot, maturity, sampleNum, riskFreeReturn - dividendYield, vol).m_yVals };
+
+				// compute future payoffs
+				std::vector<double> predictedPayoffs(std::size(predictedSpots));
+				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
+				{
+					predictedPayoffs[i] = payoff(predictedSpots[i]);
+				}
+
+				// compute discounted expected payoff
+				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
+				return price;
+
 			}
 
 

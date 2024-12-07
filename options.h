@@ -3,21 +3,36 @@
 #include "out.h"
 #include "sdes.h"
 #include "securities.h"
-#include "xyvals.h"
 #include "saving.h"
+#include "distributions.h"
+#include "xyvals.h"
+#include "numpy.h"
 
 namespace Options
 {
 	namespace Payoffs
 	{
+
+		enum class Type
+		{
+			call,
+			put,
+			straddle,
+			strangle,
+			callDebitSpread,
+			callCreditSpread,
+			putDebitSpread,
+			putCreditSpread,
+		};
+
 		auto call(double strikePrice, double spotPrice) -> double;
 		auto put(double strikePrice, double spotPrice) -> double;
 		auto straddle(double strikePrice, double spotPrice) -> double;
 		auto strangle(double strikeCall, double strikePut, double spotPrice) -> double;
-		auto putDebitSpread(double lower, double higher, double spotPrice) -> double;
-		auto putCreditSpread(double lower, double higher, double spotPrice) -> double;
 		auto callDebitSpread(double lower, double higher, double spotPrice) -> double;
 		auto callCreditSpread(double lower, double higher, double spotPrice) -> double;
+		auto putDebitSpread(double lower, double higher, double spotPrice) -> double;
+		auto putCreditSpread(double lower, double higher, double spotPrice) -> double;
 	}
 
 	namespace Pricing
@@ -53,6 +68,7 @@ namespace Options
 			auto callStrikeDerivativeApprox(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto callStrikeSpotDerivativeApprox(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 
+			auto monteCarlo(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 
 			namespace DataGeneration
 			{

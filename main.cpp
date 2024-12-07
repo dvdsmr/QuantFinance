@@ -34,8 +34,8 @@ auto main() -> int
 
 	//Calibrate::Heston::test();
 
-	Calibrate::BSM::test();
-	Calibrate::MertonJump::test();
+	//Calibrate::BSM::test();
+	//Calibrate::MertonJump::test();
 
 	//Calibrate::Bachelier::test();
 
@@ -54,6 +54,16 @@ auto main() -> int
 	
 
 	//Options::Pricing::CEV::test();
+
+	double riskFreeReturn{ 0.003 };
+	double dividendYield{ 0.0 };
+	double maturity{ 0.0136986 };
+	double strike{ 320. };
+	double spot{ 320.72 };
+	double vol{ 0.2 };
+	
+	std::cout << "Price with pricing formula is " << Options::Pricing::BSM::call(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
+	std::cout << "Price with MC is " << Options::Pricing::BSM::monteCarlo(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
 
 	/*
 	double riskFreeReturn{ 0.003 };

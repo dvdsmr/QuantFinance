@@ -6,6 +6,7 @@
 #include <vector>
 #include <cmath>
 #include <cassert>
+#include <numeric>
 
 namespace np
 {
@@ -91,6 +92,13 @@ namespace np
             result[i] = -vec[i];
         }
         return result;
+    }
+
+    template <typename T>
+    T mean(const std::vector<T>& vec)
+    {
+        T sum{ std::accumulate(std::begin(vec),std::end(vec),0.0) };
+        return sum / static_cast<T>(std::size(vec));
     }
 
 }

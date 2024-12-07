@@ -34,7 +34,9 @@ auto main() -> int
 
 	//Calibrate::Heston::test();
 
-	//Calibrate::BSM::test();
+	Calibrate::BSM::test();
+	Calibrate::MertonJump::test();
+
 	//Calibrate::Bachelier::test();
 
 	//Calibrate::VarianceGamma::test();
@@ -53,7 +55,7 @@ auto main() -> int
 
 	//Options::Pricing::CEV::test();
 
-	
+	/*
 	double riskFreeReturn{ 0.003 };
 	double dividendYield{ 0.0 };
 	double maturity{ 0.0136986 };
@@ -63,6 +65,7 @@ auto main() -> int
 
 	Calibrate::BSM::saveLossShape(riskFreeReturn, dividendYield, maturity, strike, spot, truePrice);
 	Calibrate::BSM::calibrateToRealData("TSLA", 338.74);
+	*/
 	
 	
 	

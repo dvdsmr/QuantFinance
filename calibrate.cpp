@@ -580,6 +580,179 @@ namespace Calibrate
 	
 	}
 
+	namespace MertonJump
+	{
+		auto Call(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> MertonJumpParams
+		{
+
+			// Since we need to populate the surface of model generated prices anyway to compute the model error,
+			// we store this surface (initialized as a copy of the true surface) 
+			// to be able to plot it later (and compare it to the true surface)
+			LabeledTable modelPriceSurface{ priceSurface };
+			modelPriceSurface.m_tableName = "Merton Jump price surface";
+			LabeledTable errorSurface{ priceSurface };
+			errorSurface.m_tableName = "Relative squared error";
+			errorSurface.m_tableLabel = "Error";
+
+
+			std::vector<double> vols{ np::linspace<double>(0.01,0.9,10) };
+			std::vector<double> meanJumpSizes{ np::linspace<double>(0.0,0.3,3) };
+			std::vector<double> stdJumpSizes{ np::linspace<double>(0.1,0.3,3) };
+			std::vector<double> expectedJumpsPerYears{ np::linspace<double>(0.0,2.0,3) };
+
+
+			MertonJumpParams finalParams{
+				vols[static_cast<std::size_t>(0)],
+				meanJumpSizes[static_cast<std::size_t>(0)],
+				stdJumpSizes[static_cast<std::size_t>(0)],
+				expectedJumpsPerYears[static_cast<std::size_t>(0)]
+			};
+
+			// define params of FFT pricing method
+			FFT::FFTParams params{};
+
+			// the maturity of the market variable will change later, the other values are fixed
+			MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
+
+			double error{ 1e20 };
+			for (const auto& vl : vols)
+			{
+				for (const auto& mj : meanJumpSizes)
+				{
+					for (const auto& sj : stdJumpSizes)
+					{
+						for (const auto& ej : expectedJumpsPerYears)
+						{
+							// collect model parameters, compute error and update surfaces
+							MertonJumpParams modelParams{ vl,mj,sj,ej };
+							double newError{ computeFFTModelMRSE(priceSurface, marketParams, modelParams, params, modelPriceSurface, errorSurface) };
+
+							if (newError < error)
+							{
+								error = newError;
+								finalParams = modelParams;
+								std::cout << "New optimal parameter set with mean relative squared error " << error << " found.\n";
+							}
+
+						}
+					}
+				}
+			}
+			std::cout << "Final parameter set has error " << error << ".\n";
+
+			// save the model price table to file
+			Saving::write_labeledTable_to_csv("Data/MertonJumpModelPriceSurface.csv", modelPriceSurface);
+			Saving::write_labeledTable_to_csv("Data/MertonJumpModelErrorSurface.csv", errorSurface);
+
+			return finalParams;
+		}
+
+		auto CallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> MertonJumpParams
+		{
+			// Since we need to populate the surface of model generated prices anyway to compute the model error,
+			// we store this surface (initialized as a copy of the true surface) 
+			// to be able to plot it later (and compare it to the true surface)
+			LabeledTable modelPriceSurface{ priceSurface };
+			modelPriceSurface.m_tableName = "Merton Jump price surface";
+			LabeledTable errorSurface{ priceSurface };
+			errorSurface.m_tableName = "Relative squared error";
+			errorSurface.m_tableLabel = "Error";
+
+			MertonJumpParams finalParams{ };
+
+			// define params of FFT pricing method
+			FFT::FFTParams params{};
+
+			// the maturity of the market variable will change later, the other values are fixed
+			MarketParams marketParams{ 1.0,spot,riskFreeReturn,dividendYield };
+
+			// define pso  
+			PSO pso{ 10,4 };
+			pso.set_uniformRandomPositions({ 0.01,0.0,0.01,0. }, { 2.0,0.3,0.5,2.0 });
+			pso.set_uniformRandomVelocities({ 0.01,0.0,0.01,0. }, { 2.0,0.3,0.5,2.0 });
+
+			// define objective function
+			auto func
+			{
+				[&](std::vector<double> paremeters)
+				{
+					MertonJumpParams hparams{ paremeters[0], paremeters[1], paremeters[2], paremeters[3]};
+					return computeFFTModelMRSE(priceSurface, marketParams, hparams, params, modelPriceSurface, errorSurface);
+				}
+			};
+
+			std::vector<double> optParams{ pso.optimize(func,true) };
+			finalParams = { optParams[0], optParams[1], optParams[2], optParams[3] };
+
+			// save the model price table to file
+			Saving::write_labeledTable_to_csv("Data/MertonJumpModelPriceSurface.csv", modelPriceSurface);
+			Saving::write_labeledTable_to_csv("Data/MertonJumpModelErrorSurface.csv", errorSurface);
+
+			return finalParams;
+		}
+
+		void test()
+		{
+			// initialize the price table
+			using namespace std::string_view_literals;
+			LabeledTable priceSurface("Price surface"sv,
+				"Time to maturity"sv,
+				10,
+				"Strikes"sv,
+				16,
+				"European call price"sv
+			);
+
+			priceSurface.m_table =
+			{ {
+			{ 24.75, 22.90, 21.10, 19.35, 17.65, 16.00, 14.40, 12.85, 11.35, 9.90, 8.50, 7.15, 5.85, 4.60, 3.40, 2.50 },
+			{ 25.40, 23.65, 21.90, 20.15, 18.50, 16.90, 15.35, 13.85, 12.40, 11.00, 9.65, 8.35, 7.10, 5.90, 4.75, 3.70 },
+			{ 26.20, 24.35, 22.60, 20.90, 19.25, 17.65, 16.10, 14.60, 13.15, 11.75, 10.40, 9.10, 7.85, 6.65, 5.50, 4.40 },
+			{ 26.90, 25.05, 23.30, 21.60, 19.95, 18.35, 16.80, 15.30, 13.85, 12.45, 11.10, 9.80, 8.55, 7.35, 6.20, 5.10 },
+			{ 27.65, 25.80, 24.05, 22.35, 20.70, 19.10, 17.55, 16.05, 14.60, 13.20, 11.85, 10.55, 9.30, 8.10, 6.95, 5.85 },
+			{ 28.40, 26.55, 24.80, 23.10, 21.45, 19.85, 18.30, 16.80, 15.35, 13.95, 12.60, 11.30, 10.05, 8.85, 7.70, 6.60 },
+			{ 29.15, 27.30, 25.55, 23.85, 22.20, 20.60, 19.05, 17.55, 16.10, 14.70, 13.35, 12.05, 10.80, 9.60, 8.45, 7.35 },
+			{ 29.85, 28.00, 26.25, 24.55, 22.90, 21.30, 19.75, 18.25, 16.80, 15.40, 14.05, 12.75, 11.50, 10.30, 9.15, 8.05 },
+			{ 30.50, 28.65, 26.90, 25.20, 23.55, 21.95, 20.40, 18.90, 17.45, 16.05, 14.70, 13.40, 12.15, 10.95, 9.80, 8.70 },
+			{ 31.10, 29.25, 27.50, 25.80, 24.15, 22.55, 21.00, 19.50, 18.05, 16.65, 15.30, 14.00, 12.75, 11.55, 10.40, 9.30 }
+			} };
+
+
+			priceSurface.m_colVals = { 155, 157.5, 160, 162.5, 165,
+									167.5, 170, 172.5, 175, 177.5, 180, 182.5,
+									185, 187.5, 190, 192.5,
+			};
+			priceSurface.m_rowVals = { 1.0 / 52.,2.0 / 52. ,3.0 / 52. ,4.0 / 52. ,5.0 / 52. ,
+										6.0 / 52. ,7.0 / 52. ,8.0 / 52. ,9.0 / 52., 10.0 / 52. };
+
+
+			const double dividendYield = 0.007;
+			const double spot{ 175.0 };
+			const double riskFreeReturn{ 0.045 };
+
+			MertonJumpParams fitParams{ Call(priceSurface,riskFreeReturn,spot,dividendYield) };
+
+			std::cout << "=== Brute Force ===\n";
+			std::cout << "The optimal params found are: \n";
+			std::cout << "vol: " << fitParams.vol << "\n";
+			std::cout << "meanJumpSize: " << fitParams.meanJumpSize << "\n";
+			std::cout << "stdJumpSize: " << fitParams.stdJumpSize << "\n";
+			std::cout << "expectedJumpsPerYears: " << fitParams.expectedJumpsPerYear << "\n";
+
+			/*
+			fitParams = Call(priceSurface,riskFreeReturn,spot,dividendYield);
+
+			std::cout << "=== Brute Force ===\n";
+			std::cout << "The optimal params found are: \n";
+			std::cout << "vol: " << fitParams.vol << "\n";
+			std::cout << "meanJumpSize: " << fitParams.meanJumpSize << "\n";
+			std::cout << "stdJumpSize: " << fitParams.stdJumpSize << "\n";
+			std::cout << "expectedJumpsPerYears: " << fitParams.expectedJumpsPerYear << "\n";
+			*/
+
+		}
+	}
+
 	namespace Heston
 	{
 

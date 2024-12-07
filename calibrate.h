@@ -34,6 +34,13 @@ namespace Calibrate
 		void calibrateToRealData(std::string symbol, double spot);
 		void saveLossShape(double riskFreeReturn, double dividendYield, double maturity, double strike, double spot, double truePrice);
 	}
+
+	namespace MertonJump
+	{
+		auto Call(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> MertonJumpParams;
+		auto CallPSO(const LabeledTable& priceSurface, double riskFreeReturn, double spot, double dividendYield) -> MertonJumpParams;
+		void test();
+	}
 	
 	namespace Heston
 	{

@@ -7,6 +7,7 @@
 #include "distributions.h"
 #include "xyvals.h"
 #include "numpy.h"
+#include "fft.h"
 #include <functional>
 
 
@@ -113,6 +114,8 @@ namespace Options
 		namespace Heston
 		{
 			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> double;
+			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> double;
+			void testPricing();
 		}
 
 		namespace VarianceGamma

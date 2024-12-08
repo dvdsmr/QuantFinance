@@ -1,4 +1,5 @@
 #include "options.h"
+#include "calibrate.h"
 #include <algorithm>
 #include <iostream>
 #include <cmath>
@@ -590,7 +591,7 @@ namespace Options
 			{
 
 				// number of MC samples for simulation
-				std::size_t sampleNum{ 1000000 };
+				std::size_t sampleNum{ 100000 };
 				std::size_t timePoints{ 100 };
 				std::vector<double> predictedSpots{ SDE::Heston::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol).m_yVals };
 
@@ -604,6 +605,37 @@ namespace Options
 				// compute discounted expected payoff
 				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
 				return price;
+			}
+
+			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> double
+			{
+				HestonParams modelParams{ reversionRate, longVariance, volVol, correlation, initialVariance };
+				MarketParams marketParams{ maturity, spot, riskFreeReturn, dividendYield };
+				FFT::FFTParams params{};
+				FFT::LogStrikePricePair pair{ FFT::pricingfft(modelParams, marketParams, params) };
+				return Calibrate::interpolatePrices(pair, std::vector<double>{spot}).back();
+			}
+
+			void testPricing()
+			{
+				double riskFreeReturn{ 0.003 };
+				double dividendYield{ 0.0 };
+				double maturity{ 0.0336986 };
+				double strike{ 320. };
+				double spot{ 320.72 };
+
+				double initialVariance{ 0.1 };
+				double longVariance{ 0.1 };
+				double correlation{ -0.1 };
+				double reversionRate{ 0.1 };
+				double volVol{ 0.05 };
+
+				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
+
+				std::cout << "\n===Testing Heston Model===\n";
+				std::cout << "Call price with FFT is " << fftCall(riskFreeReturn, maturity, spot, dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol) << "\n";
+				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, maturity, spot, dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol) << "\n";
+
 			}
 		}
 

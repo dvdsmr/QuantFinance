@@ -56,11 +56,10 @@ auto main() -> int
 
 	//Options::Pricing::CEV::test();
 
-	Options::Pricing::BSM::testMonteCarlo();
-
-	Options::Pricing::Bachelier::testMonteCarlo();
-
-	Options::Pricing::CEV::testMonteCarlo();
+	//Options::Pricing::BSM::testMonteCarlo();
+	//Options::Pricing::Bachelier::testMonteCarlo();
+	//Options::Pricing::CEV::testMonteCarlo();
+	Options::Pricing::Heston::testPricing();
 
 	/*
 	double riskFreeReturn{ 0.003 };

@@ -155,14 +155,8 @@ namespace SDE
 
 			// Final price
 			return initialState * std::exp(correctedDrift * time + diffusion + jumpTerm);
-			/*
-			return initialState * std::exp(
-				(drift - volatility*volatility / 2. - expectedJumpsPerYear*(meanJumpSize-stdJumpSize*stdJumpSize/2.)) * time 
-					+ volatility * std::sqrt(time) * Random::normal(0.0, 1.0)
-					+ Random::normal(meanJumpSize,stdJumpSize) * Random::poisson(expectedJumpsPerYear*time)
-			);
-			*/
 		}
+
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> XYVals
 		{
 			XYVals spath{ timePoints };
@@ -312,7 +306,7 @@ namespace SDE
 
 		auto MertonJump(std::complex<double> argument, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> std::complex<double>
 		{
-			double omega{riskFreeReturn-dividendYield-vol*vol/2. - expectedJumpsPerYear*(std::exp(meanJumpSize+stdJumpSize/2.)-1.)};
+			double omega{riskFreeReturn-dividendYield-vol*vol/2. - expectedJumpsPerYear*(std::exp(meanJumpSize+stdJumpSize*stdJumpSize/2.)-1.)};
 			std::complex<double> term1{ IMNUM*argument*std::log(spot) + IMNUM*argument*omega*maturity - 0.5*argument*argument*vol*vol*maturity};
 			std::complex<double> term2{expectedJumpsPerYear*maturity*(std::exp(IMNUM*argument*meanJumpSize-argument*argument*stdJumpSize*stdJumpSize/2.)-1.)};
 			return std::exp(term1 + term2);

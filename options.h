@@ -109,6 +109,8 @@ namespace Options
 		namespace MertonJump
 		{
 			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double;
+			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double;
+			void testPricing();
 		}
 
 		namespace Heston

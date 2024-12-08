@@ -137,11 +137,31 @@ namespace SDE
 	{
 		auto simulate(double initialState, double time, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double
 		{
+			// Drift correction term
+			double correctedDrift{ drift - 0.5 * volatility * volatility
+				- expectedJumpsPerYear * (std::exp(meanJumpSize + 0.5 * stdJumpSize * stdJumpSize) - 1) };
+
+			// Diffusion term
+			double diffusion{ volatility * std::sqrt(time) * Random::normal(0.0, 1.0) };
+
+			// Number of jumps (Poisson-distributed)
+			int numJumps{ Random::poisson(expectedJumpsPerYear * time) };
+
+			// Jump term (sum of log-jumps)
+			double jumpTerm{ 0.0 };
+			for (int i = 0; i < numJumps; ++i) {
+				jumpTerm += Random::normal(meanJumpSize, stdJumpSize);
+			}
+
+			// Final price
+			return initialState * std::exp(correctedDrift * time + diffusion + jumpTerm);
+			/*
 			return initialState * std::exp(
 				(drift - volatility*volatility / 2. - expectedJumpsPerYear*(meanJumpSize-stdJumpSize*stdJumpSize/2.)) * time 
 					+ volatility * std::sqrt(time) * Random::normal(0.0, 1.0)
 					+ Random::normal(meanJumpSize,stdJumpSize) * Random::poisson(expectedJumpsPerYear*time)
 			);
+			*/
 		}
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> XYVals
 		{

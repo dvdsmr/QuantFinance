@@ -583,6 +583,35 @@ namespace Options
 				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
 				return price;
 			}
+
+			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double
+			{
+				MertonJumpParams modelParams{ volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear };
+				MarketParams marketParams{ maturity, spot, riskFreeReturn, dividendYield };
+				FFT::FFTParams params{};
+				FFT::LogStrikePricePair pair{ FFT::pricingfft(modelParams, marketParams, params) };
+				return Calibrate::interpolatePrices(pair, std::vector<double>{spot}).back();
+			}
+
+			void testPricing()
+			{
+				double riskFreeReturn{ 0.003 };
+				double dividendYield{ 0.0 };
+				double maturity{ 0.0336986 };
+				double strike{ 320. };
+				double spot{ 320.72 };
+
+				double volatility{ 0.1 };
+				double meanJumpSize{ 0.0 };
+				double stdJumpSize{ 0.3 };
+				double expectedJumpsPerYear{ 2. };
+
+				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
+
+				std::cout << "\n===Testing Merton Jump Model===\n";
+				std::cout << "Call price with FFT is " << fftCall(riskFreeReturn, maturity, spot, dividendYield, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear) << "\n";
+				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, maturity, spot, dividendYield, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear) << "\n";
+			}
 		}
 
 		namespace Heston
@@ -635,7 +664,6 @@ namespace Options
 				std::cout << "\n===Testing Heston Model===\n";
 				std::cout << "Call price with FFT is " << fftCall(riskFreeReturn, maturity, spot, dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol) << "\n";
 				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, maturity, spot, dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol) << "\n";
-
 			}
 		}
 

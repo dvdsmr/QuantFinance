@@ -60,6 +60,7 @@ auto main() -> int
 	//Options::Pricing::Bachelier::testMonteCarlo();
 	//Options::Pricing::CEV::testMonteCarlo();
 	Options::Pricing::Heston::testPricing();
+	Options::Pricing::MertonJump::testPricing();
 
 	/*
 	double riskFreeReturn{ 0.003 };

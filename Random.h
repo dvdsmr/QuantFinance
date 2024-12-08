@@ -81,7 +81,7 @@ namespace Random
 		return std::chi_squared_distribution<double>{ k }(mt);
 	}
 
-	inline double poisson(double lam)
+	inline int poisson(double lam)
 	{
 		return std::poisson_distribution<int>{ lam }(mt);
 	}

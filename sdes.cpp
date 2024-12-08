@@ -248,14 +248,17 @@ namespace SDE
 
 	namespace VarianceGamma
 	{
-		auto step(double initialState, double stepSize, double drift, double variance, double vol) -> double
+		auto step(double initialState, double stepSize, double drift, double gammaDrift, double variance, double vol) -> double
 		{
 			double gammaIncrement{ Random::gamma(stepSize / variance, variance) };
 			double normalIncrement{ Random::normal(0.,1.) };
-			double VGIncrement{ drift * gammaIncrement + vol * std::sqrt(gammaIncrement) * normalIncrement };
-			return initialState * std::exp(VGIncrement);
+			double VGIncrement{ gammaDrift * gammaIncrement + vol * std::sqrt(gammaIncrement) * normalIncrement };
+			double omega{ std::log(1 - gammaDrift * variance - vol * vol * variance * 0.5) / variance };
+			double logIncrement{ (drift + omega) * stepSize + VGIncrement };
+			return initialState * std::exp(logIncrement);
 		}
-		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double variance, double vol) -> XYVals
+
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double gammaDrift, double variance, double vol) -> XYVals
 		{
 
 			XYVals spath{ timePoints };
@@ -266,11 +269,11 @@ namespace SDE
 			{
 				// update values
 				spath.m_xVals[i] = static_cast<double>(i) * time;
-				spath.m_yVals[i] = step(spath.m_yVals[i - 1], time, drift, variance, vol);
+				spath.m_yVals[i] = step(spath.m_yVals[i - 1], time, drift, gammaDrift, variance, vol);
 			}
 			return spath;
 		}
-		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double variance, double vol) -> XYVals
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double gammaDrift, double variance, double vol) -> XYVals
 		{
 			XYVals mcSamples{ samples };
 
@@ -280,7 +283,7 @@ namespace SDE
 			for (std::size_t i{ 0 }; i < samples; i++)
 			{
 				mcSamples.m_xVals[i] = static_cast<double>(i);
-				XYVals spath{ path(initialState, terminalTime, timePoints, drift, variance, vol) };
+				XYVals spath{ path(initialState, terminalTime, timePoints, drift, gammaDrift, variance, vol) };
 				mcSamples.m_yVals[i] = spath.m_yVals.back();
 			}
 			return mcSamples;
@@ -332,7 +335,6 @@ namespace SDE
 			std::complex<double> factor1{ std::exp(IMNUM * argument * (std::log(spot)+(riskFreeReturn-dividendYield+omega)*maturity)) };
 			std::complex<double> factor2{ std::pow(1.0-IMNUM*argument*drift*variance + volatility*volatility*argument*argument*variance*0.5,-maturity/variance) };
 			return factor1 * factor2;
-
 		}
 
 		auto generalCF(std::complex<double> argument, const HestonParams& modelParams, const MarketParams& marketParams) -> std::complex<double>
@@ -392,7 +394,8 @@ namespace SDE
 			XYVals mcSamplesHeston{ Heston::monteCarlo(initialState, terminalTime, samples, timePoints, hestonDrift, initialVariance, longVariance, correlation, reversionRate, volVol) };
 
 			double variance{ 0.15 };
-			XYVals mcSamplesVarianceGamma{ VarianceGamma::monteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
+			double gammaDrift{ 0.1 };
+			XYVals mcSamplesVarianceGamma{ VarianceGamma::monteCarlo(initialState, terminalTime, samples, timePoints, drift, gammaDrift, variance, volatility) };
 
 			Saving::write_xyvals_to_csv("Data/mcSamplesBSM.csv", mcSamplesBSM);
 			Saving::write_xyvals_to_csv("Data/mcSamplesMertonJump.csv", mcSamplesMertonJump);
@@ -435,11 +438,11 @@ namespace SDE
 		auto saveVarianceGammaPaths() -> void
 		{
 
-			XYVals spath2{ VarianceGamma::path(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
+			XYVals spath2{ VarianceGamma::path(100.0, 0.2, 1000, 0.05, 0.03, 0.002, 0.4) };
 			Saving::write_xyvals_to_csv("Data/VGstockPath1.csv", spath2);
-			XYVals spath3{ VarianceGamma::path(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
+			XYVals spath3{ VarianceGamma::path(100.0, 0.2, 1000, 0.05, 0.03, 0.002, 0.4) };
 			Saving::write_xyvals_to_csv("Data/VGstockPath2.csv", spath3);
-			XYVals spath4{ VarianceGamma::path(100.0, 0.2, 1000, 0.05, 0.002, 0.4) };
+			XYVals spath4{ VarianceGamma::path(100.0, 0.2, 1000, 0.05, 0.03, 0.002, 0.4) };
 			Saving::write_xyvals_to_csv("Data/VGstockPath3.csv", spath4);
 		}
 

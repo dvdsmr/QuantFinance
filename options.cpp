@@ -669,13 +669,13 @@ namespace Options
 
 		namespace VarianceGamma
 		{
-			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double variance, double vol) -> double
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double gammaDrift, double variance, double vol) -> double
 			{
 
 				// number of MC samples for simulation
 				std::size_t sampleNum{ 1000000 };
 				std::size_t timePoints{ 100 };
-				std::vector<double> predictedSpots{ SDE::VarianceGamma::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, variance, vol).m_yVals };
+				std::vector<double> predictedSpots{ SDE::VarianceGamma::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, gammaDrift, variance, vol).m_yVals };
 
 				// compute future payoffs
 				std::vector<double> predictedPayoffs(std::size(predictedSpots));
@@ -687,6 +687,34 @@ namespace Options
 				// compute discounted expected payoff
 				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
 				return price;
+			}
+
+			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double gammaDrift, double variance, double vol) -> double
+			{
+				VarianceGammaParams modelParams{ vol, gammaDrift, variance };
+				MarketParams marketParams{ maturity, spot, riskFreeReturn, dividendYield };
+				FFT::FFTParams params{};
+				FFT::LogStrikePricePair pair{ FFT::pricingfft(modelParams, marketParams, params) };
+				return Calibrate::interpolatePrices(pair, std::vector<double>{spot}).back();
+			}
+
+			void testPricing()
+			{
+				double riskFreeReturn{ 0.003 };
+				double dividendYield{ 0.0 };
+				double maturity{ 0.0336986 };
+				double strike{ 320. };
+				double spot{ 320.72 };
+
+				double vol{ 0.1 };
+				double gammaDrift{ 0.1 };
+				double variance{ 0.3 };
+
+				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
+
+				std::cout << "\n===Testing Variance Gamma Model===\n";
+				std::cout << "Call price with FFT is " << fftCall(riskFreeReturn, maturity, spot, dividendYield, gammaDrift, variance, vol) << "\n";
+				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, maturity, spot, dividendYield, gammaDrift, variance, vol) << "\n";
 			}
 		}
 

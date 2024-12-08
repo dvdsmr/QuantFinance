@@ -96,9 +96,9 @@ namespace SDE
 	}
 	namespace VarianceGamma
 	{
-		auto step(double initialState, double stepSize, double drift, double variance, double vol) -> double;
-		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double variance, double vol) -> XYVals;
-		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double variance, double vol) -> XYVals;
+		auto step(double initialState, double stepSize, double drift, double gammaDrift, double variance, double vol) -> double;
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double gammaDrift, double variance, double vol) -> XYVals;
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double gammaDrift, double variance, double vol) -> XYVals;
 	}
 
 

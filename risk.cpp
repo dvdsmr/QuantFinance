@@ -56,7 +56,8 @@ namespace Risk
 		XYVals mcSamplesHeston{ SDE::Heston::monteCarlo(initialState, terminalTime, samples, timePoints, hestonDrift, initialVariance, longVariance, correlation, reversionRate, volVol) };
 
 		double variance{ 0.15 };
-		XYVals mcSamplesVarianceGamma{ SDE::VarianceGamma::monteCarlo(initialState, terminalTime, samples, timePoints, drift, variance, volatility) };
+		double gammaDrift{ 0.3 };
+		XYVals mcSamplesVarianceGamma{ SDE::VarianceGamma::monteCarlo(initialState, terminalTime, samples, timePoints, drift, gammaDrift, variance, volatility) };
 
 		
 		// compute var and cvar

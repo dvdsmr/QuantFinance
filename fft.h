@@ -24,8 +24,8 @@ namespace FFT
 	struct FFTParams
 	{
 		double decayParam{ 1.5 };
-		double gridWidth{ 0.01 };
-		int gridExponent{ 16 };
+		double gridWidth{ 0.1 };
+		int gridExponent{ 12 };
 	};
 
 	struct LogStrikePricePair

@@ -122,7 +122,9 @@ namespace Options
 
 		namespace VarianceGamma
 		{
-			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double variance, double vol) -> double;
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield,double gammaDrift, double variance, double vol) -> double;
+			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double gammaDrift, double variance, double vol) -> double;
+			void testPricing();
 		}
 
 

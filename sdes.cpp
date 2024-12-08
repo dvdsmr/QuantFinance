@@ -91,7 +91,14 @@ namespace SDE
 	{
 		auto step(double state, double time, double drift, double volatility, double exponent) -> double
 		{
-			return state + time * drift * state + std::sqrt(time) * volatility * std::pow(state, exponent) * Random::normal(0.0, 1.0);
+			double nextState{};
+			double Z{ Random::normal(0.0, 1.0) };
+			// Euler Maruyama
+			nextState = state + time * drift * state + std::sqrt(time) * volatility * std::pow(state, exponent) * Z;
+			// Milstein
+			nextState += 0.5 * volatility * volatility * exponent * std::pow(state, 2 * exponent - 1) * time * (Z * Z - 1.);
+
+			return std::max(nextState, 0.0); // max necessary for stable simulation due to step size
 		}
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility, double exponent) -> XYVals
 		{

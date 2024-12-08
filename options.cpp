@@ -217,11 +217,8 @@ namespace Options
 				return -std::exp(-riskFreeReturn * maturity) * Distributions::PDFs::standardNormal(d2) * d2derivSpot;
 			}
 
-			// only call right now
-			auto monteCarlo(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> double
 			{
-				// define payoff function
-				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
 
 				// number of MC samples for simulation
 				std::size_t sampleNum{ 1000000 };
@@ -237,6 +234,27 @@ namespace Options
 				// compute discounted expected payoff
 				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
 				return price;
+			}
+
+			void testMonteCarlo()
+			{
+				double riskFreeReturn{ 0.003 };
+				double dividendYield{ 0.0 };
+				double maturity{ 0.0136986 };
+				double strike{ 320. };
+				double spot{ 320.72 };
+				double vol{ 0.2 };
+
+				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
+
+				std::cout << "\n===Testing BSM Model===\n";
+				std::cout << "Call price with pricing formula is " << call(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
+				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, vol, maturity, spot, dividendYield) << "\n";
+
+				auto payoff2{ [&](double value) { return Options::Payoffs::put(strike, value); } };
+
+				std::cout << "Put price with pricing formula is " << put(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
+				std::cout << "Put price with MC is " << monteCarlo(payoff2, riskFreeReturn, vol, maturity, spot, dividendYield) << "\n";
 
 			}
 
@@ -377,6 +395,47 @@ namespace Options
 				return term1 + term2;
 			}
 
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> double
+			{
+
+				// number of MC samples for simulation
+				std::size_t sampleNum{ 1000000 };
+				std::vector<double> predictedSpots{ SDE::Bachelier::monteCarlo(spot, maturity, sampleNum, riskFreeReturn - dividendYield, vol).m_yVals };
+
+				// compute future payoffs
+				std::vector<double> predictedPayoffs(std::size(predictedSpots));
+				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
+				{
+					predictedPayoffs[i] = payoff(predictedSpots[i]);
+				}
+
+				// compute discounted expected payoff
+				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
+				return price;
+			}
+
+			void testMonteCarlo()
+			{
+				double riskFreeReturn{ 0.003 };
+				double dividendYield{ 0.0 };
+				double maturity{ 0.0136986 };
+				double strike{ 320. };
+				double spot{ 320.72 };
+				double vol{ 60. };
+
+				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
+
+				std::cout << "\n===Testing Bachlier Model===\n";
+				std::cout << "Call price with pricing formula is " << call(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
+				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, vol, maturity, spot, dividendYield) << "\n";
+
+				auto payoff2{ [&](double value) { return Options::Payoffs::put(strike, value); } };
+
+				std::cout << "Put price with pricing formula is " << put(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
+				std::cout << "Put price with MC is " << monteCarlo(payoff2, riskFreeReturn, vol, maturity, spot, dividendYield) << "\n";
+
+			}
+
 		}
 
 		namespace CEV
@@ -386,6 +445,8 @@ namespace Options
 				assert(exponent < 1.);
 				return 1. / (2 * (1-exponent));
 			}
+
+			// WARNING: CEV PRICING FORMULAS ARE HIGHLY UNSTABLE
 			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double
 			{
 				double nu{ _nu(exponent) };
@@ -404,9 +465,30 @@ namespace Options
 				double term1{ 4 * nu * nu * std::pow(strike,1. / nu) / (vol * vol * maturity) };
 				double term2{ 4 * nu * nu * std::pow(ST,1. / nu) / (vol * vol * maturity) };
 				return std::exp(-(riskFreeReturn - dividendYield) * maturity) * (
-					strike * (1. - Distributions::CDFs::noncentralChiSquared(term2, 2 * nu, term1))  
-					- ST * Distributions::CDFs::noncentralChiSquared(term1, 2 * nu + 2., term2)     
+					strike * (1. - Distributions::CDFs::noncentralChiSquared(term2, 2 * nu, term1))
+					- ST * Distributions::CDFs::noncentralChiSquared(term1, 2 * nu + 2., term2)
 					);
+			}
+
+
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield, double exponent) -> double
+			{
+
+				// number of MC samples for simulation
+				std::size_t sampleNum{ 1000000 };
+				std::size_t timePoints{ 100 };
+				std::vector<double> predictedSpots{ SDE::CEV::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, vol, exponent).m_yVals };
+
+				// compute future payoffs
+				std::vector<double> predictedPayoffs(std::size(predictedSpots));
+				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
+				{
+					predictedPayoffs[i] = payoff(predictedSpots[i]);
+				}
+
+				// compute discounted expected payoff
+				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
+				return price;
 			}
 
 			void test()
@@ -422,15 +504,15 @@ namespace Options
 				// check connection to BSM price
 				double cevPrice{ call(interest,vol,maturity,strike,spot,dividendYield,exponent) };
 				double bsmPrice{ BSM::call(interest,vol,maturity,strike,spot,dividendYield) };
-				std::cout << "Call :  BSM price is " << bsmPrice << ". CEV price with beta= "<< exponent << " is " << cevPrice << ".\n";
+				std::cout << "Call :  BSM price is " << bsmPrice << ". CEV price with beta= " << exponent << " is " << cevPrice << ".\n";
 
-				cevPrice = put(interest,vol,maturity,strike,spot,dividendYield,exponent);
-				bsmPrice = BSM::put(interest,vol,maturity,strike,spot,dividendYield);
+				cevPrice = put(interest, vol, maturity, strike, spot, dividendYield, exponent);
+				bsmPrice = BSM::put(interest, vol, maturity, strike, spot, dividendYield);
 				std::cout << "Put :  BSM price is " << bsmPrice << ". CEV price with beta= " << exponent << " is " << cevPrice << ".\n";
 
 				// connection to Bachelier
 				exponent = 0.;
-				vol = 0.1*spot;
+				vol = 0.1 * spot;
 				cevPrice = call(interest, vol, maturity, strike, spot, dividendYield, exponent);
 				double bachelierPrice{ Bachelier::call(interest, vol, maturity, strike, spot, dividendYield) };
 				std::cout << "Call :  Bachelier price is " << bachelierPrice << ". CEV price with beta= " << exponent << " is " << cevPrice << ".\n";
@@ -439,6 +521,112 @@ namespace Options
 				bachelierPrice = Bachelier::put(interest, vol, maturity, strike, spot, dividendYield);
 				std::cout << "Put :  Bachelier price is " << bachelierPrice << ". CEV price with beta=" << exponent << " is " << cevPrice << ".\n";
 
+			}
+
+			void testMonteCarlo()
+			{
+				double riskFreeReturn{ 0.003 };
+				double dividendYield{ 0.0 };
+				double maturity{ 0.0136986 };
+				double strike{ 320. };
+				double spot{ 320.72 };
+				double vol{ 60. };
+				double exponent{ 0.0 };
+
+				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
+
+				std::cout << "\n===Testing CEV Model===\n";
+				std::cout << "\nExponent is " << exponent << ". Should be equal to Bachelier price.\n";
+				std::cout << "Call price with CEV pricing formula is " << call(riskFreeReturn, vol, maturity, strike, spot, dividendYield, exponent) << "\n";
+				std::cout << "Call price with Bachelier pricing formula is " << Options::Pricing::Bachelier::call(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
+				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, vol, maturity, spot, dividendYield, exponent) << "\n";
+
+				auto payoff2{ [&](double value) { return Options::Payoffs::put(strike, value); } };
+
+				std::cout << "Put price with pricing CEV formula is " << put(riskFreeReturn, vol, maturity, strike, spot, dividendYield, exponent) << "\n";
+				std::cout << "Put price with Bachelier pricing formula is " << Options::Pricing::Bachelier::put(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
+				std::cout << "Put price with MC is " << monteCarlo(payoff2, riskFreeReturn, vol, maturity, spot, dividendYield, exponent) << "\n";
+			
+				exponent = 1.;
+				vol = 0.6;
+				std::cout << "\nExponent is " << exponent << ". Should be equal to BSM price.\n";
+				//std::cout << "Call price with CEV pricing formula is " << call(riskFreeReturn, vol, maturity, strike, spot, dividendYield, exponent) << "\n";
+				std::cout << "Call price with BSM pricing formula is " << Options::Pricing::BSM::call(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
+				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, vol, maturity, spot, dividendYield, exponent) << "\n";
+
+				//std::cout << "Put price with pricing formula is " << put(riskFreeReturn, vol, maturity, strike, spot, dividendYield, exponent) << "\n";
+				std::cout << "Put price with BSM pricing formula is " << Options::Pricing::BSM::put(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
+				std::cout << "Put price with MC is " << monteCarlo(payoff2, riskFreeReturn, vol, maturity, spot, dividendYield, exponent) << "\n";
+				
+			}
+
+		}
+
+		namespace MertonJump
+		{
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double
+			{
+
+				// number of MC samples for simulation
+				std::size_t sampleNum{ 1000000 };
+				std::vector<double> predictedSpots{ SDE::MertonJump::monteCarlo(spot, maturity, sampleNum, riskFreeReturn - dividendYield, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear).m_yVals };
+
+				// compute future payoffs
+				std::vector<double> predictedPayoffs(std::size(predictedSpots));
+				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
+				{
+					predictedPayoffs[i] = payoff(predictedSpots[i]);
+				}
+
+				// compute discounted expected payoff
+				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
+				return price;
+			}
+		}
+
+		namespace Heston
+		{
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> double
+			{
+
+				// number of MC samples for simulation
+				std::size_t sampleNum{ 1000000 };
+				std::size_t timePoints{ 100 };
+				std::vector<double> predictedSpots{ SDE::Heston::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol).m_yVals };
+
+				// compute future payoffs
+				std::vector<double> predictedPayoffs(std::size(predictedSpots));
+				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
+				{
+					predictedPayoffs[i] = payoff(predictedSpots[i]);
+				}
+
+				// compute discounted expected payoff
+				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
+				return price;
+			}
+		}
+
+		namespace VarianceGamma
+		{
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double variance, double vol) -> double
+			{
+
+				// number of MC samples for simulation
+				std::size_t sampleNum{ 1000000 };
+				std::size_t timePoints{ 100 };
+				std::vector<double> predictedSpots{ SDE::VarianceGamma::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, variance, vol).m_yVals };
+
+				// compute future payoffs
+				std::vector<double> predictedPayoffs(std::size(predictedSpots));
+				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
+				{
+					predictedPayoffs[i] = payoff(predictedSpots[i]);
+				}
+
+				// compute discounted expected payoff
+				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
+				return price;
 			}
 		}
 

@@ -17,6 +17,7 @@
 #include "reading.h"
 #include "risk.h"
 #include <iostream>
+#include <functional>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -55,15 +56,11 @@ auto main() -> int
 
 	//Options::Pricing::CEV::test();
 
-	double riskFreeReturn{ 0.003 };
-	double dividendYield{ 0.0 };
-	double maturity{ 0.0136986 };
-	double strike{ 320. };
-	double spot{ 320.72 };
-	double vol{ 0.2 };
-	
-	std::cout << "Price with pricing formula is " << Options::Pricing::BSM::call(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
-	std::cout << "Price with MC is " << Options::Pricing::BSM::monteCarlo(riskFreeReturn, vol, maturity, strike, spot, dividendYield) << "\n";
+	Options::Pricing::BSM::testMonteCarlo();
+
+	Options::Pricing::Bachelier::testMonteCarlo();
+
+	Options::Pricing::CEV::testMonteCarlo();
 
 	/*
 	double riskFreeReturn{ 0.003 };
@@ -75,6 +72,7 @@ auto main() -> int
 
 	Calibrate::BSM::saveLossShape(riskFreeReturn, dividendYield, maturity, strike, spot, truePrice);
 	Calibrate::BSM::calibrateToRealData("TSLA", 338.74);
+	
 	*/
 	
 	

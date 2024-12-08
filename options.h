@@ -7,6 +7,8 @@
 #include "distributions.h"
 #include "xyvals.h"
 #include "numpy.h"
+#include <functional>
+
 
 namespace Options
 {
@@ -68,14 +70,14 @@ namespace Options
 			auto callStrikeDerivativeApprox(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto callStrikeSpotDerivativeApprox(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 
-			auto monteCarlo(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> double;
+			void testMonteCarlo();
 
 			namespace DataGeneration
 			{
 				auto call(double riskFreeReturn, double vol, double maturity, double strike, double dividendYield) -> DataTable;
 				auto callPriceSurface(double riskFreeReturn, double vol, double spot, double dividendYield) -> LabeledTable;
 			}
-
 		}
 
 		namespace Bachelier
@@ -87,17 +89,38 @@ namespace Options
 
 			auto callVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			auto putVega(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> double;
+			void testMonteCarlo();
 		}
 
 		namespace CEV
 		{
 			auto _nu(double exponent) -> double;
+			// WARNING: CEV PRICING FORMULAS ARE HIGHLY UNSTABLE
 			auto call(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double;
 			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double;
-			auto put(double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double;
-			auto MonteCarlo(std::string_view type, double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield, double exponent) -> double;
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield, double exponent) -> double;
 			void test();
+			void testMonteCarlo();
 		}
+
+		namespace MertonJump
+		{
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double;
+		}
+
+		namespace Heston
+		{
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> double;
+		}
+
+		namespace VarianceGamma
+		{
+			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double variance, double vol) -> double;
+		}
+
+
 
 	}
 	

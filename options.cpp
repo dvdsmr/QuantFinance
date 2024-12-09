@@ -226,15 +226,7 @@ namespace Options
 				std::vector<double> predictedSpots{ SDE::BSM::monteCarlo(spot, maturity, sampleNum, riskFreeReturn - dividendYield, vol).m_yVals };
 
 				// compute future payoffs
-				std::vector<double> predictedPayoffs(std::size(predictedSpots));
-				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
-				{
-					predictedPayoffs[i] = payoff(predictedSpots[i]);
-				}
-
-				// compute discounted expected payoff
-				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
-				return price;
+				return Options::Pricing::Utils::_discountedExpectedPayoff(payoff, predictedSpots, riskFreeReturn, maturity);
 			}
 
 			void testMonteCarlo()
@@ -404,15 +396,7 @@ namespace Options
 				std::vector<double> predictedSpots{ SDE::Bachelier::monteCarlo(spot, maturity, sampleNum, riskFreeReturn - dividendYield, vol).m_yVals };
 
 				// compute future payoffs
-				std::vector<double> predictedPayoffs(std::size(predictedSpots));
-				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
-				{
-					predictedPayoffs[i] = payoff(predictedSpots[i]);
-				}
-
-				// compute discounted expected payoff
-				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
-				return price;
+				return Options::Pricing::Utils::_discountedExpectedPayoff(payoff, predictedSpots, riskFreeReturn, maturity);
 			}
 
 			void testMonteCarlo()
@@ -481,15 +465,7 @@ namespace Options
 				std::vector<double> predictedSpots{ SDE::CEV::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, vol, exponent).m_yVals };
 
 				// compute future payoffs
-				std::vector<double> predictedPayoffs(std::size(predictedSpots));
-				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
-				{
-					predictedPayoffs[i] = payoff(predictedSpots[i]);
-				}
-
-				// compute discounted expected payoff
-				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
-				return price;
+				return Options::Pricing::Utils::_discountedExpectedPayoff(payoff, predictedSpots, riskFreeReturn, maturity);
 			}
 
 			void test()
@@ -573,15 +549,7 @@ namespace Options
 				std::vector<double> predictedSpots{ SDE::MertonJump::monteCarlo(spot, maturity, sampleNum, riskFreeReturn - dividendYield, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear).m_yVals };
 
 				// compute future payoffs
-				std::vector<double> predictedPayoffs(std::size(predictedSpots));
-				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
-				{
-					predictedPayoffs[i] = payoff(predictedSpots[i]);
-				}
-
-				// compute discounted expected payoff
-				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
-				return price;
+				return Options::Pricing::Utils::_discountedExpectedPayoff(payoff, predictedSpots, riskFreeReturn, maturity);
 			}
 
 			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double
@@ -625,15 +593,7 @@ namespace Options
 				std::vector<double> predictedSpots{ SDE::Heston::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol).m_yVals };
 
 				// compute future payoffs
-				std::vector<double> predictedPayoffs(std::size(predictedSpots));
-				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
-				{
-					predictedPayoffs[i] = payoff(predictedSpots[i]);
-				}
-
-				// compute discounted expected payoff
-				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
-				return price;
+				return Options::Pricing::Utils::_discountedExpectedPayoff(payoff, predictedSpots, riskFreeReturn, maturity);
 			}
 
 			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> double
@@ -678,15 +638,8 @@ namespace Options
 				std::vector<double> predictedSpots{ SDE::VarianceGamma::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, gammaDrift, variance, vol).m_yVals };
 
 				// compute future payoffs
-				std::vector<double> predictedPayoffs(std::size(predictedSpots));
-				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
-				{
-					predictedPayoffs[i] = payoff(predictedSpots[i]);
-				}
+				return Options::Pricing::Utils::_discountedExpectedPayoff(payoff, predictedSpots, riskFreeReturn, maturity);
 
-				// compute discounted expected payoff
-				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
-				return price;
 			}
 
 			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double gammaDrift, double variance, double vol) -> double
@@ -715,6 +668,23 @@ namespace Options
 				std::cout << "\n===Testing Variance Gamma Model===\n";
 				std::cout << "Call price with FFT is " << fftCall(riskFreeReturn, maturity, spot, dividendYield, gammaDrift, variance, vol) << "\n";
 				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, maturity, spot, dividendYield, gammaDrift, variance, vol) << "\n";
+			}
+		}
+
+		namespace Utils
+		{
+			auto _discountedExpectedPayoff(const std::function<double(double)>& payoff, std::vector<double> predictedSpots, double riskFreeReturn, double maturity) -> double
+			{
+				// compute future payoffs
+				std::vector<double> predictedPayoffs(std::size(predictedSpots));
+				for (std::size_t i{ 0 }; i < std::size(predictedSpots); ++i)
+				{
+					predictedPayoffs[i] = payoff(predictedSpots[i]);
+				}
+
+				// compute discounted expected payoff
+				double price{ std::exp(-riskFreeReturn * maturity) * np::mean<double>(predictedPayoffs) };
+				return price;
 			}
 		}
 

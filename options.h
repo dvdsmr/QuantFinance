@@ -127,6 +127,10 @@ namespace Options
 			void testPricing();
 		}
 
+		namespace Utils
+		{
+			auto _discountedExpectedPayoff(const std::function<double(double)>& payoff, std::vector<double> predictedSpots, double riskFreeReturn, double maturity) -> double;
+		}
 
 
 	}

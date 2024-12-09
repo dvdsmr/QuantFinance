@@ -569,7 +569,7 @@ namespace Options
 			{
 
 				// number of MC samples for simulation
-				std::size_t sampleNum{ 1000000 };
+				std::size_t sampleNum{ 10000000 };
 				std::vector<double> predictedSpots{ SDE::MertonJump::monteCarlo(spot, maturity, sampleNum, riskFreeReturn - dividendYield, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear).m_yVals };
 
 				// compute future payoffs
@@ -620,8 +620,8 @@ namespace Options
 			{
 
 				// number of MC samples for simulation
-				std::size_t sampleNum{ 100000 };
-				std::size_t timePoints{ 100 };
+				std::size_t sampleNum{ 10000 };
+				std::size_t timePoints{ 1000 };
 				std::vector<double> predictedSpots{ SDE::Heston::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol).m_yVals };
 
 				// compute future payoffs
@@ -673,8 +673,8 @@ namespace Options
 			{
 
 				// number of MC samples for simulation
-				std::size_t sampleNum{ 1000000 };
-				std::size_t timePoints{ 100 };
+				std::size_t sampleNum{ 10000 };
+				std::size_t timePoints{ 1000 };
 				std::vector<double> predictedSpots{ SDE::VarianceGamma::monteCarlo(spot, maturity, sampleNum, timePoints, riskFreeReturn - dividendYield, gammaDrift, variance, vol).m_yVals };
 
 				// compute future payoffs

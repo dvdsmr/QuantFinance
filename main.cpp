@@ -61,6 +61,7 @@ auto main() -> int
 	//Options::Pricing::CEV::testMonteCarlo();
 	Options::Pricing::Heston::testPricing();
 	Options::Pricing::MertonJump::testPricing();
+	Options::Pricing::VarianceGamma::testPricing();
 
 	/*
 	double riskFreeReturn{ 0.003 };

@@ -40,11 +40,11 @@ namespace FFT
 	auto concatenate(std::vector<T>& vec1, const std::vector<T>& vec2) -> std::vector<T>;
 	auto dft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
 	auto fft(const std::vector<std::complex<double>>& vec) -> std::vector<std::complex<double>>;
-	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair;
-	auto pricingfftHeston(const HestonParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair;
-	auto pricingfftBSM(const BSMParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair;
-	auto pricingfftMertonJump(const MertonJumpParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair;
-	auto pricingfftVarianceGamma(const VarianceGammaParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair;
+	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const FFTParams& params, std::string_view type = "call") -> LogStrikePricePair;
+	auto pricingfftHeston(const HestonParams& modelParams, const MarketParams& marketParams, const FFTParams& params, std::string_view type = "call") -> LogStrikePricePair;
+	auto pricingfftBSM(const BSMParams& modelParams, const MarketParams& marketParams, const FFTParams& params, std::string_view type = "call") -> LogStrikePricePair;
+	auto pricingfftMertonJump(const MertonJumpParams& modelParams, const MarketParams& marketParams, const FFTParams& params, std::string_view type = "call") -> LogStrikePricePair;
+	auto pricingfftVarianceGamma(const VarianceGammaParams& modelParams, const MarketParams& marketParams, const FFTParams& params, std::string_view type = "call") -> LogStrikePricePair;
 
 
 	namespace UnitTests

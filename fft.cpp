@@ -97,11 +97,12 @@ namespace FFT
 
 	}
 
-	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair
+	auto pricingfft(const auto& modelParams, const MarketParams& marketParams, const FFTParams& params, std::string_view type) -> LogStrikePricePair
 	{
 
 		// Parameters setting in fourier transform
 		double decayParam{ params.decayParam };
+		if (type == "put") { decayParam = -params.decayParam; }
 		double gridWidth{ params.gridWidth };
 		int gridExponent{ params.gridExponent };
 
@@ -161,24 +162,24 @@ namespace FFT
 		return result;
 	}
 
-	auto pricingfftHeston(const HestonParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair
+	auto pricingfftHeston(const HestonParams& modelParams, const MarketParams& marketParams, const FFTParams& params, std::string_view type) -> LogStrikePricePair
 	{
-		return pricingfft(modelParams, marketParams, params);
+		return pricingfft(modelParams, marketParams, params, type);
 	}
 
-	auto pricingfftBSM(const BSMParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair
+	auto pricingfftBSM(const BSMParams& modelParams, const MarketParams& marketParams, const FFTParams& params, std::string_view type) -> LogStrikePricePair
 	{
-		return pricingfft(modelParams, marketParams, params);
+		return pricingfft(modelParams, marketParams, params, type);
 	}
 
-	auto pricingfftMertonJump(const MertonJumpParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair
+	auto pricingfftMertonJump(const MertonJumpParams& modelParams, const MarketParams& marketParams, const FFTParams& params, std::string_view type) -> LogStrikePricePair
 	{
-		return pricingfft(modelParams, marketParams, params);
+		return pricingfft(modelParams, marketParams, params, type);
 	}
 
-	auto pricingfftVarianceGamma(const VarianceGammaParams& modelParams, const MarketParams& marketParams, const FFTParams& params) -> LogStrikePricePair
+	auto pricingfftVarianceGamma(const VarianceGammaParams& modelParams, const MarketParams& marketParams, const FFTParams& params, std::string_view type) -> LogStrikePricePair
 	{
-		return pricingfft(modelParams, marketParams, params);
+		return pricingfft(modelParams, marketParams, params, type);
 	}
 
 

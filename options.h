@@ -109,21 +109,21 @@ namespace Options
 		namespace MertonJump
 		{
 			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double;
-			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double;
+			auto fft(double strike, double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear, std::string_view type = "call") -> double;
 			void testPricing();
 		}
 
 		namespace Heston
 		{
 			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> double;
-			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> double;
+			auto fft(double strike, double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, std::string_view type = "call") -> double;
 			void testPricing();
 		}
 
 		namespace VarianceGamma
 		{
 			auto monteCarlo(const std::function<double(double)>& payoff, double riskFreeReturn, double maturity, double spot, double dividendYield,double gammaDrift, double variance, double vol) -> double;
-			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double gammaDrift, double variance, double vol) -> double;
+			auto fft(double strike, double riskFreeReturn, double maturity, double spot, double dividendYield, double gammaDrift, double variance, double vol, std::string_view type = "call") -> double;
 			void testPricing();
 		}
 

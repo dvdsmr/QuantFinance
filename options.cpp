@@ -552,13 +552,13 @@ namespace Options
 				return Options::Pricing::Utils::_discountedExpectedPayoff(payoff, predictedSpots, riskFreeReturn, maturity);
 			}
 
-			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double
+			auto fft(double strike, double riskFreeReturn, double maturity, double spot, double dividendYield, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear, std::string_view type) -> double
 			{
 				MertonJumpParams modelParams{ volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear };
 				MarketParams marketParams{ maturity, spot, riskFreeReturn, dividendYield };
 				FFT::FFTParams params{};
-				FFT::LogStrikePricePair pair{ FFT::pricingfft(modelParams, marketParams, params) };
-				return Calibrate::interpolatePrices(pair, std::vector<double>{spot}).back();
+				FFT::LogStrikePricePair pair{ FFT::pricingfft(modelParams, marketParams, params, type) };
+				return Calibrate::interpolatePrices(pair, std::vector<double>{strike}).back();
 			}
 
 			void testPricing()
@@ -577,8 +577,15 @@ namespace Options
 				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
 
 				std::cout << "\n===Testing Merton Jump Model===\n";
-				std::cout << "Call price with FFT is " << fftCall(riskFreeReturn, maturity, spot, dividendYield, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear) << "\n";
+				std::cout << "Call price with FFT is " << fft(strike, riskFreeReturn, maturity, spot, dividendYield, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear) << "\n";
 				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, maturity, spot, dividendYield, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear) << "\n";
+			
+				strike = 330;
+				auto payoff2{ [&](double value) { return Options::Payoffs::put(strike, value); } };
+
+				std::cout << "Put price with FFT is " << fft(strike, riskFreeReturn, maturity, spot, dividendYield, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear, "put") << "\n";
+				std::cout << "Put price with MC is " << monteCarlo(payoff2, riskFreeReturn, maturity, spot, dividendYield, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear) << "\n";
+			
 			}
 		}
 
@@ -596,13 +603,13 @@ namespace Options
 				return Options::Pricing::Utils::_discountedExpectedPayoff(payoff, predictedSpots, riskFreeReturn, maturity);
 			}
 
-			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> double
+			auto fft(double strike, double riskFreeReturn, double maturity, double spot, double dividendYield, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol, std::string_view type) -> double
 			{
 				HestonParams modelParams{ reversionRate, longVariance, volVol, correlation, initialVariance };
 				MarketParams marketParams{ maturity, spot, riskFreeReturn, dividendYield };
 				FFT::FFTParams params{};
-				FFT::LogStrikePricePair pair{ FFT::pricingfft(modelParams, marketParams, params) };
-				return Calibrate::interpolatePrices(pair, std::vector<double>{spot}).back();
+				FFT::LogStrikePricePair pair{ FFT::pricingfft(modelParams, marketParams, params, type) };
+				return Calibrate::interpolatePrices(pair, std::vector<double>{strike}).back();
 			}
 
 			void testPricing()
@@ -622,8 +629,15 @@ namespace Options
 				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
 
 				std::cout << "\n===Testing Heston Model===\n";
-				std::cout << "Call price with FFT is " << fftCall(riskFreeReturn, maturity, spot, dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol) << "\n";
+				std::cout << "Call price with FFT is " << fft(strike, riskFreeReturn, maturity, spot, dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol) << "\n";
 				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, maturity, spot, dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol) << "\n";
+			
+				strike = 330;
+				auto payoff2{ [&](double value) { return Options::Payoffs::put(strike, value); } };
+
+				std::cout << "Put price with FFT is " << fft(strike, riskFreeReturn, maturity, spot, dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol, "put") << "\n";
+				std::cout << "Put price with MC is " << monteCarlo(payoff2, riskFreeReturn, maturity, spot, dividendYield, initialVariance, longVariance, correlation, reversionRate, volVol) << "\n";
+
 			}
 		}
 
@@ -642,13 +656,13 @@ namespace Options
 
 			}
 
-			auto fftCall(double riskFreeReturn, double maturity, double spot, double dividendYield, double gammaDrift, double variance, double vol) -> double
+			auto fft(double strike, double riskFreeReturn, double maturity, double spot, double dividendYield, double gammaDrift, double variance, double vol, std::string_view type) -> double
 			{
 				VarianceGammaParams modelParams{ vol, gammaDrift, variance };
 				MarketParams marketParams{ maturity, spot, riskFreeReturn, dividendYield };
 				FFT::FFTParams params{};
-				FFT::LogStrikePricePair pair{ FFT::pricingfft(modelParams, marketParams, params) };
-				return Calibrate::interpolatePrices(pair, std::vector<double>{spot}).back();
+				FFT::LogStrikePricePair pair{ FFT::pricingfft(modelParams, marketParams, params, type) };
+				return Calibrate::interpolatePrices(pair, std::vector<double>{strike}).back();
 			}
 
 			void testPricing()
@@ -666,8 +680,15 @@ namespace Options
 				auto payoff{ [&](double value) { return Options::Payoffs::call(strike, value); } };
 
 				std::cout << "\n===Testing Variance Gamma Model===\n";
-				std::cout << "Call price with FFT is " << fftCall(riskFreeReturn, maturity, spot, dividendYield, gammaDrift, variance, vol) << "\n";
+				std::cout << "Call price with FFT is " << fft(strike, riskFreeReturn, maturity, spot, dividendYield, gammaDrift, variance, vol) << "\n";
 				std::cout << "Call price with MC is " << monteCarlo(payoff, riskFreeReturn, maturity, spot, dividendYield, gammaDrift, variance, vol) << "\n";
+			
+				strike = 330;
+				auto payoff2{ [&](double value) { return Options::Payoffs::put(strike, value); } };
+
+				std::cout << "Put price with FFT is " << fft(strike, riskFreeReturn, maturity, spot, dividendYield, gammaDrift, variance, vol, "put") << "\n";
+				std::cout << "Put price with MC is " << monteCarlo(payoff2, riskFreeReturn, maturity, spot, dividendYield, gammaDrift, variance, vol) << "\n";
+
 			}
 		}
 

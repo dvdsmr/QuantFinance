@@ -59,9 +59,11 @@ auto main() -> int
 	//Options::Pricing::BSM::testMonteCarlo();
 	//Options::Pricing::Bachelier::testMonteCarlo();
 	//Options::Pricing::CEV::testMonteCarlo();
-	Options::Pricing::Heston::testPricing();
-	Options::Pricing::MertonJump::testPricing();
-	Options::Pricing::VarianceGamma::testPricing();
+	//Options::Pricing::Heston::testPricing();
+	//Options::Pricing::MertonJump::testPricing();
+	//Options::Pricing::VarianceGamma::testPricing();
+
+	SDE::Testing::saveVarianceGammaPaths();
 
 	/*
 	double riskFreeReturn{ 0.003 };

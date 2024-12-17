@@ -141,10 +141,10 @@ def plotOptionCSV(filenames):
 
 if __name__ == "__main__":
     # plotLossCSV(["Data/BSMlossCurve"])
-    # plotHistogramCSV(["Data/mcSamplesBSM.csv","Data/mcSamplesHeston.csv","Data/mcSamplesVarianceGamma.csv",\
-    #                  ])
+    plotHistogramCSV(["Data/mcSamplesBSM.csv","Data/mcSamplesHeston.csv","Data/mcSamplesVarianceGamma.csv",\
+                      ])
     # plotStockCSV(["Data/MJstockPath1.csv","Data/MJstockPath2.csv","Data/MJstockPath3.csv"])
-    plotStockCSV(["Data/VGstockPath1.csv","Data/VGstockPath2.csv","Data/VGstockPath3.csv"])
+    # plotStockCSV(["Data/VGstockPath1.csv","Data/VGstockPath2.csv","Data/VGstockPath3.csv"])
     # plotOptionCSV(["Data/callPrices.csv","Data/callDeltas.csv","Data/callGammas.csv"])
     # plotSurface("Data/ArtificialPriceSurface.csv","priceSurfacePlot")
     # plotSurface("Data/ArtificalVolSurface.csv","volSurfacePlot")

@@ -144,6 +144,7 @@
     <ClCompile Include="fft.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="adam.cpp" />
+    <ClCompile Include="optionClass.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="out.cpp" />
     <ClCompile Include="pso.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="distributions.h" />
     <ClInclude Include="adam.h" />
     <ClInclude Include="fft.h" />
+    <ClInclude Include="optionClass.h" />
     <ClInclude Include="risk.h" />
     <ClInclude Include="out.h" />
     <ClInclude Include="pso.h" />

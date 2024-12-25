@@ -6,11 +6,15 @@
 // for later definitions of more complex member functions
 namespace Securities
 {
+	
+	/*
 	template <typename Params>
 	auto ModelStock<Params>::path(double terminalTime, std::size_t timePoints, double drift) -> XYVals
 	{
 		return SDE::path(getSpot(), terminalTime, timePoints, drift, m_params);
 	}
+	*/
+	
 
 	double SimpleStock::samplePrice(double time, std::string_view model)
 	{

@@ -65,7 +65,7 @@ namespace Securities
 
 		void setParams(Params params) { m_params = params; }
 		Params getParams() const { return m_params; }
-		XYVals path(double finalTime, std::size_t timePoints, double drift);
+		XYVals path(double terminalTime, std::size_t timePoints, double drift) { return SDE::path(getSpot(), terminalTime, timePoints, drift, m_params);}
 
 
 	private:

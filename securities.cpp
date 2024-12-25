@@ -4,19 +4,21 @@
 #include <iostream>
 
 // for later definitions of more complex member functions
-
-double SimpleStock::samplePrice(double time, std::string_view model)
+namespace Securities
 {
-	if (model == "bsm")
+	double SimpleStock::samplePrice(double time, std::string_view model)
 	{
-		return SDE::BSM::simulate(m_initialPrice, time, m_drift, m_vol);
-	}
-	else if (model == "bachelier")
-	{
-		return SDE::OrnsteinUhlenbeck::simulate(m_initialPrice, time, m_drift, 0.0, m_vol);
-	}
-	else // default is BSM
-	{
-		return SDE::BSM::simulate(m_initialPrice, time, m_drift, m_vol);
+		if (model == "bsm")
+		{
+			return SDE::BSM::simulate(getSpot(), time, m_drift, m_vol);
+		}
+		else if (model == "bachelier")
+		{
+			return SDE::OrnsteinUhlenbeck::simulate(getSpot(), time, m_drift, 0.0, m_vol);
+		}
+		else // default is BSM
+		{
+			return SDE::BSM::simulate(getSpot(), time, m_drift, m_vol);
+		}
 	}
 }

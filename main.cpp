@@ -38,6 +38,13 @@ auto main() -> int
 	//Calibrate::BSM::test();
 	//Calibrate::MertonJump::test();
 
+	BSMParams bsmParams{ 0.5 };
+	Securities::ModelStock bsmStock(100., bsmParams);
+
+	MertonJumpParams mjParams{ };
+	Securities::ModelStock mjStock(100., mjParams);
+
+
 	//Calibrate::Bachelier::test();
 
 	//Calibrate::VarianceGamma::test();
@@ -63,7 +70,7 @@ auto main() -> int
 	//Options::Pricing::MertonJump::testPricing();
 	//Options::Pricing::VarianceGamma::testPricing();
 
-	SDE::Testing::saveVarianceGammaPaths();
+	//SDE::Testing::saveVarianceGammaPaths();
 
 	/*
 	double riskFreeReturn{ 0.003 };

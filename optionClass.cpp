@@ -1,6 +1,7 @@
 #include "optionClass.h"
 #include "options.h"
 
+/*
 // currently only simple options with a single strike price considered
 double Option::samplePayoff(double time)
 {
@@ -12,6 +13,7 @@ double Option::samplePayoff(double time)
 	default: return Options::Payoffs::call(m_strike, spot);
 	}
 }
+*/
 
 // overload operators for Options
 Option operator-(const Option& opt)

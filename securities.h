@@ -21,6 +21,8 @@ namespace Securities
 		double m_spot{ 100. };
 	};
 
+
+	// TO BE REMOVED
 	class SimpleStock : public Stock
 	{
 		// This is a class of modelled stocks which follow GBM/Bachelier.
@@ -63,6 +65,8 @@ namespace Securities
 
 		void setParams(Params params) { m_params = params; }
 		Params getParams() const { return m_params; }
+		XYVals path(double finalTime, std::size_t timePoints, double drift);
+
 
 	private:
 		Params m_params{};

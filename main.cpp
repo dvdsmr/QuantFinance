@@ -47,6 +47,8 @@ auto main() -> int
 
 	std::cout << returnParams.vol << " " << returnParams.meanJumpSize << " " << returnParams.stdJumpSize;
 
+	//XYVals xyvals{ bsmStock.path(1.,100,0.05) };
+
 	//Calibrate::Bachelier::test();
 
 	//Calibrate::VarianceGamma::test();

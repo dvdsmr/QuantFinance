@@ -68,6 +68,11 @@ namespace SDE
 		auto simulate(double initialState, double time, double drift, double volatility) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals;
+	
+		auto simulate(double initialState, double time, double drift, BSMParams params) -> double;
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, BSMParams params) -> XYVals;
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, BSMParams params) -> XYVals;
+
 	}
 	namespace Bachelier
 	{
@@ -121,6 +126,8 @@ namespace SDE
 		auto saveVarianceGammaPaths() -> void;
 		auto saveMertonJumpPaths() -> void;
 	}
+
+	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, BSMParams params) -> XYVals;
 }
 
 #endif

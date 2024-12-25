@@ -50,6 +50,20 @@ namespace SDE
 			}
 			return mcSamples;
 		}
+
+		// Overloads with Param structs
+		auto simulate(double initialState, double time, double drift, BSMParams params) -> double
+		{
+			return simulate(initialState, time, drift, params.vol);
+		}
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, BSMParams params) -> XYVals
+		{
+			return path(initialState, terminalTime, timePoints, drift, params.vol);
+		}
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, BSMParams params) -> XYVals
+		{
+			return monteCarlo(initialState, terminalTime, samples, drift, params.vol);
+		}
 	}
 
 	namespace Bachelier
@@ -292,8 +306,10 @@ namespace SDE
 	}
 
 
-
-
+	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, BSMParams params) -> XYVals
+	{
+		return SDE::BSM::path(initialState, terminalTime, timePoints, drift, params);
+	}
 
 
 

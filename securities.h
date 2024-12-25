@@ -62,6 +62,7 @@ namespace Securities
 		{}
 
 		void setParams(Params params) { m_params = params; }
+		Params getParams() const { return m_params; }
 
 	private:
 		Params m_params{};

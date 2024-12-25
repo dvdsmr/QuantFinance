@@ -43,7 +43,9 @@ auto main() -> int
 
 	MertonJumpParams mjParams{ };
 	Securities::ModelStock mjStock(100., mjParams);
+	MertonJumpParams returnParams{ mjStock.getParams() };
 
+	std::cout << returnParams.vol << " " << returnParams.meanJumpSize << " " << returnParams.stdJumpSize;
 
 	//Calibrate::Bachelier::test();
 

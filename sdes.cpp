@@ -99,6 +99,19 @@ namespace SDE
 			return mcSamples;
 		}
 
+		// Overloads with Param structs
+		auto simulate(double initialState, double time, double drift, BachelierParams params) -> double
+		{
+			return simulate(initialState, time, drift, params.vol);
+		}
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, BachelierParams params) -> XYVals
+		{
+			return path(initialState, terminalTime, timePoints, drift, params.vol);
+		}
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, BachelierParams params) -> XYVals
+		{
+			return monteCarlo(initialState, terminalTime, samples, drift, params.vol);
+		}
 	}
 
 	namespace CEV
@@ -145,6 +158,7 @@ namespace SDE
 			}
 			return mcSamples;
 		}
+
 	}
 
 	namespace MertonJump
@@ -194,7 +208,22 @@ namespace SDE
 			}
 			return mcSamples;
 		}
+
+		// Overloads with Param structs
+		auto simulate(double initialState, double time, double drift, MertonJumpParams params) -> double
+		{
+			return simulate(initialState, time, drift, params.vol, params.meanJumpSize, params.stdJumpSize, params.expectedJumpsPerYear);
+		}
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, MertonJumpParams params) -> XYVals
+		{
+			return path(initialState, terminalTime, timePoints, drift, params.vol, params.meanJumpSize, params.stdJumpSize, params.expectedJumpsPerYear);
+		}
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, MertonJumpParams params) -> XYVals
+		{
+			return monteCarlo(initialState, terminalTime, samples, drift, params.vol, params.meanJumpSize, params.stdJumpSize, params.expectedJumpsPerYear);
+		}
 	}
+
 
 	namespace Heston
 	{
@@ -258,6 +287,16 @@ namespace SDE
 			}
 			return mcSamples;
 		}
+
+		
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, HestonParams params) -> XYVals
+		{
+			return path(initialState, terminalTime, timePoints, drift, params.initialVariance, params.longVariance, params.correlation, params.reversionRate, params.volVol);
+		}
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, HestonParams params) -> XYVals
+		{
+			return monteCarlo(initialState, terminalTime, samples, timePoints, drift, params.initialVariance, params.longVariance, params.correlation, params.reversionRate, params.volVol);
+		}
 	}
 
 	namespace VarianceGamma
@@ -309,6 +348,18 @@ namespace SDE
 	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, BSMParams params) -> XYVals
 	{
 		return SDE::BSM::path(initialState, terminalTime, timePoints, drift, params);
+	}
+	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, BachelierParams params) -> XYVals
+	{
+		return SDE::Bachelier::path(initialState, terminalTime, timePoints, drift, params);
+	}
+	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, MertonJumpParams params) -> XYVals
+	{
+		return SDE::MertonJump::path(initialState, terminalTime, timePoints, drift, params);
+	}
+	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, HestonParams params) -> XYVals
+	{
+		return SDE::Heston::path(initialState, terminalTime, timePoints, drift, params);
 	}
 
 

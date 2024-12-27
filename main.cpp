@@ -38,7 +38,7 @@ auto main() -> int
 	//Calibrate::BSM::test();
 	//Calibrate::MertonJump::test();
 
-	BSMParams bsmParams{ 0.5 };
+	BSMParams bsmParams{ 0.2 };
 	Securities::ModelStock bsmStock(100., bsmParams);
 
 	MertonJumpParams mjParams{ };
@@ -47,7 +47,8 @@ auto main() -> int
 
 	std::cout << returnParams.vol << " " << returnParams.meanJumpSize << " " << returnParams.stdJumpSize;
 
-	XYVals xyvals{ bsmStock.path(1.,100,0.05) };
+	XYVals xyvals{ mjStock.path(1.,100,0.05) };
+	std::cout << "\nPrice after simulation: " << xyvals.m_yVals.back();
 
 	//Calibrate::Bachelier::test();
 

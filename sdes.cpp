@@ -391,6 +391,35 @@ namespace SDE
 		return SDE::VarianceGamma::path(initialState, terminalTime, timePoints, drift, params);
 	}
 
+	auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, BSMParams params) -> XYVals
+	{
+		return SDE::BSM::monteCarlo(initialState, terminalTime, samples, drift, params);
+	}
+	auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, BachelierParams params) -> XYVals
+	{
+		return SDE::Bachelier::monteCarlo(initialState, terminalTime, samples, drift, params);
+	}
+	auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, CEVParams params) -> XYVals
+	{
+		std::size_t timePoints{ 1000 };
+		return SDE::CEV::monteCarlo(initialState, terminalTime, samples, timePoints, drift, params);
+	}
+	auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, MertonJumpParams params) -> XYVals
+	{
+		return SDE::MertonJump::monteCarlo(initialState, terminalTime, samples, drift, params);
+	}
+	auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, HestonParams params) -> XYVals
+	{
+		std::size_t timePoints{ 1000 };
+		return SDE::Heston::monteCarlo(initialState, terminalTime, samples, timePoints, drift, params);
+	}
+	auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, VarianceGammaParams params) -> XYVals
+	{
+		std::size_t timePoints{ 1000 };
+		return SDE::VarianceGamma::monteCarlo(initialState, terminalTime, samples, timePoints, drift, params);
+	}
+
+
 
 
 

@@ -52,9 +52,11 @@ auto main() -> int
 
 	VarianceGammaParams vgparams{};
 	Securities::ModelStock vgStock(100., vgparams);
-	XYVals vgXyvals{ mjStock.path(1.,100,0.05) };
+	XYVals vgXyvals{ vgStock.path(1.,100,0.05) };
 	std::cout << "\nVG model\nPrice after simulation: " << vgXyvals.m_yVals.back();
 
+	XYVals mcSamples{ vgStock.monteCarlo(1.,100,0.05) };
+	std::cout << "\nOne MC sample: " << mcSamples.m_yVals.back();
 
 	//Calibrate::Bachelier::test();
 

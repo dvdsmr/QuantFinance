@@ -50,6 +50,12 @@ auto main() -> int
 	XYVals xyvals{ mjStock.path(1.,100,0.05) };
 	std::cout << "\nPrice after simulation: " << xyvals.m_yVals.back();
 
+	VarianceGammaParams vgparams{};
+	Securities::ModelStock vgStock(100., vgparams);
+	XYVals vgXyvals{ mjStock.path(1.,100,0.05) };
+	std::cout << "\nVG model\nPrice after simulation: " << vgXyvals.m_yVals.back();
+
+
 	//Calibrate::Bachelier::test();
 
 	//Calibrate::VarianceGamma::test();

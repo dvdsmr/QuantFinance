@@ -20,6 +20,17 @@ struct BSMParams
 	double vol{ 0.1 };
 };
 
+struct BachelierParams
+{
+	double vol{ 0.1 };
+};
+
+struct CEVParams
+{
+	double vol{ 0.5 };
+	double exponent{ 0.5 };
+};
+
 struct MertonJumpParams
 {
 	double vol{ 0.1 };
@@ -28,10 +39,6 @@ struct MertonJumpParams
 	double expectedJumpsPerYear{ 1. };
 };
 
-struct BachelierParams
-{
-	double vol{ 0.1 };
-};
 
 struct HestonParams
 {
@@ -91,6 +98,10 @@ namespace SDE
 		auto step(double state, double time, double drift, double volatility, double exponent) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility, double exponent) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility, double exponent) -> XYVals;
+	
+		// overloads for param structs
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, CEVParams params) -> XYVals;
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, CEVParams params) -> XYVals;
 	}
 	namespace MertonJump
 	{
@@ -119,6 +130,10 @@ namespace SDE
 		auto step(double initialState, double stepSize, double drift, double gammaDrift, double variance, double vol) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double gammaDrift, double variance, double vol) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double gammaDrift, double variance, double vol) -> XYVals;
+	
+		// overloads for param structs
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, VarianceGammaParams params) -> XYVals;
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, VarianceGammaParams params) -> XYVals;
 	}
 
 
@@ -145,8 +160,10 @@ namespace SDE
 	// general overload for includsion into ModelStock class
 	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, BSMParams params) -> XYVals;
 	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, BachelierParams params) -> XYVals;
+	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, CEVParams params) -> XYVals;
 	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, MertonJumpParams params) -> XYVals;
 	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, HestonParams params) -> XYVals;
+	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, VarianceGammaParams params) -> XYVals;
 }
 
 #endif

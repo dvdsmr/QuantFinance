@@ -159,6 +159,17 @@ namespace SDE
 			return mcSamples;
 		}
 
+		// overloads for param structs
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, CEVParams params) -> XYVals
+		{
+			return path(initialState, terminalTime, timePoints, drift, params.vol, params.exponent);
+		}
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, CEVParams params) -> XYVals
+		{
+			return monteCarlo(initialState, terminalTime, samples, timePoints, drift, params.vol, params.exponent);
+		}
+
+
 	}
 
 	namespace MertonJump
@@ -342,6 +353,16 @@ namespace SDE
 			return mcSamples;
 		}
 
+		// overloads for param structs
+		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, VarianceGammaParams params) -> XYVals
+		{
+			return path(initialState, terminalTime, timePoints, drift, params.drift, params.variance, params.vol);
+		}
+		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, VarianceGammaParams params) -> XYVals
+		{
+			return monteCarlo(initialState, terminalTime, samples, timePoints, drift, params.drift, params.variance, params.vol);
+		}
+	
 	}
 
 
@@ -353,6 +374,10 @@ namespace SDE
 	{
 		return SDE::Bachelier::path(initialState, terminalTime, timePoints, drift, params);
 	}
+	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, CEVParams params) -> XYVals
+	{
+		return SDE::CEV::path(initialState, terminalTime, timePoints, drift, params);
+	}
 	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, MertonJumpParams params) -> XYVals
 	{
 		return SDE::MertonJump::path(initialState, terminalTime, timePoints, drift, params);
@@ -360,6 +385,10 @@ namespace SDE
 	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, HestonParams params) -> XYVals
 	{
 		return SDE::Heston::path(initialState, terminalTime, timePoints, drift, params);
+	}
+	auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, VarianceGammaParams params) -> XYVals
+	{
+		return SDE::VarianceGamma::path(initialState, terminalTime, timePoints, drift, params);
 	}
 
 

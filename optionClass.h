@@ -28,10 +28,11 @@ public:
 		shortPosition,
 	};
 
+
 	constexpr Option(Option::PayoffType pay,
 		Option::ExerciseType ex,
 		Option::Position pos,
-		Securities::Stock underlying = Securities::Stock(),
+		const Securities::Stock& underlying,
 		double quantity = 1)
 		: m_type{ pay }
 		, m_etype{ ex }
@@ -40,7 +41,8 @@ public:
 		, m_quantity{ quantity }
 	{}
 
-	explicit constexpr Option() = default;
+	// disable default constructor
+	explicit constexpr Option() = delete;
 	//double samplePayoff(double time = 0.);
 
 	// setters
@@ -48,14 +50,13 @@ public:
 	void set_exerciseType(Option::ExerciseType ex) { m_etype = ex; }
 	void set_position(Option::Position pos) { m_position = pos; }
 	void set_quantity(double quant) { m_quantity = quant; }
-	void set_underlying(Securities::Stock stock) { m_underlying = stock; }
 
 	// getters
 	Option::PayoffType get_payoffType() const { return m_type; }
 	Option::ExerciseType get_exerciseType() const { return m_etype; }
 	Option::Position get_position() const { return m_position; }
 	double get_quantity() const { return m_quantity; }
-	Securities::Stock get_underlying() const { return m_underlying; }
+	const Securities::Stock& get_underlying() const { return m_underlying; }
 
 private:
 	double m_strike{ 100. };
@@ -64,7 +65,7 @@ private:
 	PayoffType m_type{ call };
 	ExerciseType m_etype{ european };
 	Position m_position{ longPosition };
-	Securities::Stock m_underlying{ Securities::Stock() };
+	const Securities::Stock& m_underlying{ Securities::Stock(100.)};
 };
 
 

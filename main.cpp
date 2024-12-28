@@ -16,6 +16,7 @@
 #include "pso.h"
 #include "reading.h"
 #include "risk.h"
+#include "optionClass.h"
 #include <iostream>
 #include <functional>
 #include <iostream>
@@ -57,6 +58,22 @@ auto main() -> int
 
 	XYVals mcSamples{ vgStock.monteCarlo(1.,100,0.05) };
 	std::cout << "\nOne MC sample: " << mcSamples.m_yVals.back();
+
+	Securities::Stock underlying(100.);
+	Option option(Option::PayoffType::call,
+		Option::ExerciseType::european,
+		Option::Position::longPosition,
+		underlying,
+		1.);
+
+	Option option2(Option::PayoffType::call,
+		Option::ExerciseType::european,
+		Option::Position::longPosition,
+		Securities::Stock(100.),
+		1.);
+
+	std::cout << option.get_underlying().getSpot();
+	std::cout << option2.get_underlying().getSpot();
 
 	//Calibrate::Bachelier::test();
 

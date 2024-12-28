@@ -21,38 +21,6 @@ namespace Securities
 		double m_spot{ 100. };
 	};
 
-
-	// TO BE REMOVED
-	class SimpleStock : public Stock
-	{
-		// This is a class of modelled stocks which follow GBM/Bachelier.
-		// The stock's possible sample paths are entirely determined
-		// by its starting value, its drift and its volatility
-	public:
-		// Constructor
-		explicit constexpr SimpleStock(double spot = 100.,
-			double drift = 0.1,
-			double vol = 0.05)
-			: Stock{ spot }
-			, m_drift{ drift }
-			, m_vol{ vol }
-		{}
-		// Setters
-		constexpr void setDrift(double drift) { m_drift = drift; }
-		constexpr void setVol(double vol) { m_vol = vol; }
-		// Getters
-		constexpr const double& getDrift() const { return m_drift; }
-		constexpr const double& getVol() const { return m_vol; }
-
-		double samplePrice(double time = 0., std::string_view model = "bsm");
-
-	private:
-		double m_drift{ 0.1 };
-		double m_vol{ 0.05 };
-
-	};
-
-
 	// Stock class following a specified stochastic model.
 	// The model is determied by the parameter struct passed to the class.
 	template <typename Params>

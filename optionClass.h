@@ -29,10 +29,10 @@ public:
 	};
 
 
-	constexpr Option(Option::PayoffType pay,
+	const Option(Option::PayoffType pay,
 		Option::ExerciseType ex,
 		Option::Position pos,
-		const Securities::Stock& underlying,
+		std::shared_ptr<Securities::AbstractStock> underlying,
 		double quantity = 1)
 		: m_type{ pay }
 		, m_etype{ ex }
@@ -56,7 +56,7 @@ public:
 	Option::ExerciseType get_exerciseType() const { return m_etype; }
 	Option::Position get_position() const { return m_position; }
 	double get_quantity() const { return m_quantity; }
-	const Securities::Stock& get_underlying() const { return m_underlying; }
+	const std::shared_ptr<Securities::AbstractStock>& get_underlying() const { return m_underlying; }
 
 private:
 	double m_strike{ 100. };
@@ -65,7 +65,7 @@ private:
 	PayoffType m_type{ call };
 	ExerciseType m_etype{ european };
 	Position m_position{ longPosition };
-	const Securities::Stock& m_underlying{ Securities::Stock(100.)};
+	const std::shared_ptr<Securities::AbstractStock> m_underlying;
 };
 
 

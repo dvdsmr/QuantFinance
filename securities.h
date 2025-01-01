@@ -6,8 +6,21 @@
 
 namespace Securities
 {
+	class AbstractStock
+	{
+	public:
+		virtual ~AbstractStock() = default; // Polymorphic base requires a virtual destructor
 
-	class Stock
+		virtual const double& getSpot() const = 0; // Pure virtual function to get the spot price
+		virtual void setSpot(double spot) = 0;
+
+		// Add virtual methods for stochastic behavior
+		virtual auto path(double terminalTime, std::size_t timePoints, double drift) -> XYVals = 0;
+		virtual auto monteCarlo(double terminalTime, std::size_t samples, double drift) -> XYVals = 0;
+
+	};
+
+	class Stock : public AbstractStock
 	{
 	public:
 		explicit constexpr Stock(double spot = 100.)
@@ -16,6 +29,15 @@ namespace Securities
 
 		constexpr void setSpot(double spot) { m_spot = spot; }
 		constexpr const double& getSpot() const { return m_spot; }
+
+		// Default implementation for stochastic behavior
+		auto path([[maybe_unused]] double terminalTime, [[maybe_unused]] std::size_t timePoints, [[maybe_unused]] double drift) -> XYVals {
+			throw std::runtime_error("path not supported for Stock without stochastic model");
+		}
+
+		auto monteCarlo([[maybe_unused]] double terminalTime, [[maybe_unused]] std::size_t samples, [[maybe_unused]] double drift) -> XYVals {
+			throw std::runtime_error("monteCarlo not supported for Stock without stochastic model");
+		}
 
 	private:
 		double m_spot{ 100. };

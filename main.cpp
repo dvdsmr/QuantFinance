@@ -58,7 +58,8 @@ auto main() -> int
 
 	XYVals mcSamples{ vgStock.monteCarlo(1.,100,0.05) };
 	std::cout << "\nOne MC sample: " << mcSamples.m_yVals.back();
-
+	
+	/*
 	Securities::Stock underlying(100.);
 	Option option(Option::PayoffType::call,
 		Option::ExerciseType::european,
@@ -71,9 +72,24 @@ auto main() -> int
 		Option::Position::longPosition,
 		Securities::Stock(100.),
 		1.);
+	*/
 
-	std::cout << option.get_underlying().getSpot();
-	std::cout << option2.get_underlying().getSpot();
+	std::shared_ptr<Securities::AbstractStock> mjStockPtr = std::make_shared<Securities::ModelStock<MertonJumpParams>>(100., mjParams);
+	Option option3(Option::PayoffType::call,
+		Option::ExerciseType::european,
+		Option::Position::longPosition,
+		mjStockPtr,
+		1.);
+
+
+	//std::cout << option.get_underlying().getSpot();
+	//std::cout << option2.get_underlying().getSpot();
+	std::cout << option3.get_underlying()->getSpot();
+
+	XYVals xyvals555{ option3.get_underlying()->path(1.,100,0.05) };
+	std::cout << "\nPrice after simulation: " << xyvals555.m_yVals.back();
+
+
 
 	//Calibrate::Bachelier::test();
 

@@ -1,19 +1,43 @@
 #include "optionClass.h"
 #include "options.h"
 
-/*
-// currently only simple options with a single strike price considered
-double Option::samplePayoff(double time)
+
+void Option::printInfo()
 {
-	double spot = m_underlying.samplePrice(time);
-	switch (m_type)
+	std::cout << "\n";
+
+	// print exercise type
+	switch (get_exerciseType())
 	{
-	case call: return Options::Payoffs::call(m_strike, spot);
-	case put: return Options::Payoffs::put(m_strike, spot);
-	default: return Options::Payoffs::call(m_strike, spot);
+	case Option::european:
+		std::cout << "European ";
+		break;
+	case Option::american:
+		std::cout << "American ";
+		break;
+	case Option::asian:
+		std::cout << "Asian ";
+		break;
+	default:
+		std::cout << "Unspecified ";
+		break;
 	}
+
+	// print payoff type
+	switch (get_payoffType())
+	{
+	case Option::call:
+		std::cout << "call ";
+		break;
+	case Option::put:
+		std::cout << "put ";
+		break;
+	default:
+		std::cout << "call ";
+		break;
+	}
+	std::cout << "option.\n";
 }
-*/
 
 // overload operators for Options
 Option operator-(const Option& opt)

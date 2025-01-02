@@ -81,6 +81,7 @@ auto main() -> int
 		mjStockPtr,
 		1.);
 
+	option3.printInfo();
 
 	//std::cout << option.get_underlying().getSpot();
 	//std::cout << option2.get_underlying().getSpot();

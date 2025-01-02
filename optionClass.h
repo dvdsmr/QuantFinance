@@ -58,6 +58,9 @@ public:
 	double get_quantity() const { return m_quantity; }
 	const std::shared_ptr<Securities::AbstractStock>& get_underlying() const { return m_underlying; }
 
+	// functionality
+	void printInfo();
+
 private:
 	double m_strike{ 100. };
 	double m_maturity{ 10. };

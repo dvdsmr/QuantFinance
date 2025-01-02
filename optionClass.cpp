@@ -1,5 +1,4 @@
 #include "optionClass.h"
-#include "options.h"
 
 
 void Option::printInfo()
@@ -36,12 +35,44 @@ void Option::printInfo()
 		std::cout << "call ";
 		break;
 	}
-	std::cout << "option.\n";
+	std::cout << "option with strike $" << m_strike << ".\n";
 
 	std::cout << "=== Information on underlying ===\n";
 	get_underlying()->printInfo();
 	std::cout << "\n";
 }
+
+
+auto Option::price(double riskFreeReturn, double dividendYield) -> double
+{
+	// number of MC samples for simulation
+	std::size_t sampleNum{ 10000 };
+	switch (m_etype)
+	{
+	case Option::european:
+	{
+		std::vector<double> predictedSpots{ m_underlying->monteCarlo(m_maturity, sampleNum, riskFreeReturn - dividendYield).m_yVals };
+		switch (m_type)
+		{
+		case Option::call:
+		{
+			auto payoff_call{ [&](double value) { return Options::Payoffs::call(m_strike, value); } };
+			return Options::Pricing::Utils::_discountedExpectedPayoff(payoff_call, predictedSpots, riskFreeReturn, m_maturity);
+		}
+		case Option::put:
+		{
+			auto payoff_put{ [&](double value) { return Options::Payoffs::put(m_strike, value); } };
+			return Options::Pricing::Utils::_discountedExpectedPayoff(payoff_put, predictedSpots, riskFreeReturn, m_maturity);
+		}
+		default:
+			throw std::runtime_error("Invalid payoff type.");
+		}
+	}
+	default:
+		throw std::runtime_error("No exercise types other than European supported at the moment.");
+	}
+}
+
 
 // overload operators for Options
 Option operator-(const Option& opt)

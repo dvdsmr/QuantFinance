@@ -32,6 +32,7 @@ namespace Securities
 		constexpr void setSpot(double spot) { m_spot = spot; }
 		constexpr const double& getSpot() const { return m_spot; }
 
+
 		void printInfo() const;
 
 		// Default implementation for stochastic behavior

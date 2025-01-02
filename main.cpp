@@ -95,6 +95,8 @@ auto main() -> int
 	option3.printInfo();
 	option3.get_underlying()->printInfo();
 
+	std::cout << "Option price with monte Carlo is " << option3.price(0.05, 0.01);
+
 
 	//Calibrate::Bachelier::test();
 

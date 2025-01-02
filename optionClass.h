@@ -2,6 +2,7 @@
 #define OPTION_CLASS_H
 
 #include "securities.h"
+#include "options.h"
 
 // Template for option class
 // todo: make payoffs etc friend functions
@@ -52,14 +53,15 @@ public:
 	void set_quantity(double quant) { m_quantity = quant; }
 
 	// getters
-	Option::PayoffType get_payoffType() const { return m_type; }
-	Option::ExerciseType get_exerciseType() const { return m_etype; }
-	Option::Position get_position() const { return m_position; }
-	double get_quantity() const { return m_quantity; }
-	const std::shared_ptr<Securities::AbstractStock>& get_underlying() const { return m_underlying; }
+	auto get_payoffType() const -> Option::PayoffType { return m_type; }
+	auto get_exerciseType() const -> Option::ExerciseType { return m_etype; }
+	auto get_position() const -> Option::Position { return m_position; }
+	auto get_quantity() const -> double { return m_quantity; }
+	auto get_underlying() const -> const std::shared_ptr<Securities::AbstractStock>& { return m_underlying; }
 
 	// functionality
 	void printInfo();
+	auto price(double riskFreeReturn, double dividendYield) -> double;
 
 private:
 	double m_strike{ 100. };
@@ -77,6 +79,8 @@ Option operator-(const Option& opt);
 Option operator+(const Option& opt);
 Option operator*(double quantity, const Option& opt);
 Option operator*(const Option& opt, double quantity);
+
+
 
 
 

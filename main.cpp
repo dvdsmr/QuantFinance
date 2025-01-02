@@ -81,7 +81,7 @@ auto main() -> int
 		mjStockPtr,
 		1.);
 
-	option3.printInfo();
+
 
 	//std::cout << option.get_underlying().getSpot();
 	//std::cout << option2.get_underlying().getSpot();
@@ -90,6 +90,10 @@ auto main() -> int
 	XYVals xyvals555{ option3.get_underlying()->path(1.,100,0.05) };
 	std::cout << "\nPrice after simulation: " << xyvals555.m_yVals.back();
 
+
+
+	option3.printInfo();
+	option3.get_underlying()->printInfo();
 
 
 	//Calibrate::Bachelier::test();

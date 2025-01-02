@@ -4,7 +4,7 @@
 
 void Option::printInfo()
 {
-	std::cout << "\n";
+	std::cout << "\n=== Information on option ===\n";
 
 	// print exercise type
 	switch (get_exerciseType())
@@ -37,6 +37,10 @@ void Option::printInfo()
 		break;
 	}
 	std::cout << "option.\n";
+
+	std::cout << "=== Information on underlying ===\n";
+	get_underlying()->printInfo();
+	std::cout << "\n";
 }
 
 // overload operators for Options

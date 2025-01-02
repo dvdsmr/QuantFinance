@@ -14,6 +14,8 @@ namespace Securities
 		virtual const double& getSpot() const = 0; // Pure virtual function to get the spot price
 		virtual void setSpot(double spot) = 0;
 
+		virtual void printInfo() const = 0;
+
 		// Add virtual methods for stochastic behavior
 		virtual auto path(double terminalTime, std::size_t timePoints, double drift) -> XYVals = 0;
 		virtual auto monteCarlo(double terminalTime, std::size_t samples, double drift) -> XYVals = 0;
@@ -29,6 +31,8 @@ namespace Securities
 
 		constexpr void setSpot(double spot) { m_spot = spot; }
 		constexpr const double& getSpot() const { return m_spot; }
+
+		void printInfo() const;
 
 		// Default implementation for stochastic behavior
 		auto path([[maybe_unused]] double terminalTime, [[maybe_unused]] std::size_t timePoints, [[maybe_unused]] double drift) -> XYVals {
@@ -57,13 +61,45 @@ namespace Securities
 
 		void setParams(Params params) { m_params = params; }
 		Params getParams() const { return m_params; }
+		
+		void printInfo() const;
+		
 		auto path(double terminalTime, std::size_t timePoints, double drift) -> XYVals { return SDE::path(getSpot(), terminalTime, timePoints, drift, m_params); }
 		auto monteCarlo(double terminalTime, std::size_t samples, double drift) -> XYVals { return SDE::monteCarlo(getSpot(), terminalTime, samples, drift, m_params); }
+
 
 	private:
 		Params m_params{};
 	};
 
+
+	template <typename Params>
+	void ModelStock<Params>::printInfo() const
+	{
+		std::cout << "Stock with initial spot price of $" << getSpot() << " following a ";
+		if constexpr (std::is_same_v<Params, BSMParams>) {
+			std::cout << "Black-Scholes-Merton ";
+		}
+		else if constexpr (std::is_same_v<Params, BachelierParams>) {
+			std::cout << "Bachelier ";
+		}
+		else if constexpr (std::is_same_v<Params, MertonJumpParams>) {
+			std::cout << "Merton Jump ";
+		}
+		else if constexpr (std::is_same_v<Params, CEVParams>) {
+			std::cout << "CEV ";
+		}
+		else if constexpr (std::is_same_v<Params, HestonParams>) {
+			std::cout << "Heston ";
+		}
+		else if constexpr (std::is_same_v<Params, VarianceGammaParams>) {
+			std::cout << "Variance Gamma ";
+		}
+		else {
+			std::cout << "<Unknown type> ";
+		}
+		std::cout << "model.\n";
+	}
 
 }
 

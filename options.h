@@ -150,7 +150,9 @@ namespace Options
 		{
 			namespace BSM
 			{
-				auto arithmeticAverage(std::size_t days, double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+				auto arithmeticAverage(std::size_t days, std::size_t numPaths, double riskFreeReturn, double vol, double maturity, double spot, double dividendYield) -> double;
+				auto call(std::size_t days, double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+				auto put(std::size_t days, double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
 			}
 		}
 	}

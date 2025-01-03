@@ -51,6 +51,16 @@ namespace SDE
 			return mcSamples;
 		}
 
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility) -> DataTable
+		{
+			DataTable paths(samples, timePoints);
+			for (std::size_t num{ 0 }; num < samples; ++num)
+			{
+				paths.m_table[num] = SDE::BSM::path(initialState, terminalTime, timePoints, drift, volatility).m_yVals;
+			}
+			return paths;
+		}
+
 		// Overloads with Param structs
 		auto simulate(double initialState, double time, double drift, BSMParams params) -> double
 		{

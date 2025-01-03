@@ -890,4 +890,30 @@ namespace Options
 	
 	}
 
+
+	namespace Exotic
+	{
+		namespace Asian
+		{
+			namespace BSM
+			{
+				auto arithmeticAverage(std::size_t days, double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double
+				{
+
+					std::size_t numPaths{ 100000 };
+					std::size_t timePoints{ static_cast<std::size_t>(maturity * 250) }; // one year has appr. 250 trading days
+					DataTable paths{ SDE::BSM::monteCarloPaths(spot, maturity, numPaths, timePoints, riskFreeReturn - dividendYield, vol) };
+
+					double sampleAverage{ 0.0 };
+					for (std::size_t num{ 0 }; num < numPaths; ++num)
+					{
+						auto subVec{ std::vector<double>(paths.m_table[num].rbegin(), paths.m_table[num].rbegin() + static_cast<int>(days)) }; // get last prices
+						sampleAverage += np::mean(subVec);
+					}
+					return std::max(sampleAverage / static_cast<double>(numPaths)-strike,0.0);
+				}
+			}
+		}
+	}
+
 }

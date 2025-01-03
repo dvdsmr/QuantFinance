@@ -97,6 +97,9 @@ auto main() -> int
 
 	std::cout << "Option price with monte Carlo is " << option3.price(0.05, 0.01);
 
+	// asian option pricing
+	std::cout << "\nAsian option price: " << Options::Exotic::Asian::BSM::arithmeticAverage(100, 0.05, 0.2, 1, 100., 100., 0.01);
+
 
 	//Calibrate::Bachelier::test();
 

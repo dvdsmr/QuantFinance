@@ -141,7 +141,22 @@ namespace Options
 	void strangleUnitTest();
 	void callCreditSpreadUnitTest();
 	void binomialPricingUnitTest();
+
+
+	// Pricing method for asian options
+	namespace Exotic
+	{
+		namespace Asian
+		{
+			namespace BSM
+			{
+				auto arithmeticAverage(std::size_t days, double riskFreeReturn, double vol, double maturity, double strike, double spot, double dividendYield) -> double;
+			}
+		}
+	}
+
 }
+
 
 
 

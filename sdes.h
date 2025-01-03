@@ -75,6 +75,7 @@ namespace SDE
 		auto simulate(double initialState, double time, double drift, double volatility) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility) -> XYVals;
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility) -> DataTable;
 	
 		// overloads with param structs
 		auto simulate(double initialState, double time, double drift, BSMParams params) -> double;

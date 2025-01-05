@@ -98,9 +98,10 @@ auto main() -> int
 	std::cout << "Option price with monte Carlo is " << option3.price(0.05, 0.01);
 
 	// asian option pricing
-	std::cout << "\nAsian option price: " << Options::Exotic::Asian::BSM::call(100, 0.05, 0.2, 1, 100., 100., 0.01);
-	std::cout << "\nAsian option price: " << Options::Exotic::Asian::BSM::put(100, 0.05, 0.2, 1, 100., 100., 0.01);
+	std::cout << "\nAsian option price: " << Options::Exotic::Asian::call<MertonJumpParams>(100, 0.05, 1, 100., 100., 0.01, mjParams);
+	std::cout << "\nAsian option price: " << Options::Exotic::Asian::put<MertonJumpParams>(100, 0.05, 1, 100., 100., 0.01, mjParams);
 
+	DataTable paths{ SDE::monteCarloPaths(100., 1., 1000, 1000, 0.05, mjParams) };
 
 	//Calibrate::Bachelier::test();
 

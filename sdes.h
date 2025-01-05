@@ -81,6 +81,8 @@ namespace SDE
 		auto simulate(double initialState, double time, double drift, BSMParams params) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, BSMParams params) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, BSMParams params) -> XYVals;
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BSMParams params) -> DataTable;
+
 
 	}
 	namespace Bachelier
@@ -99,21 +101,26 @@ namespace SDE
 		auto step(double state, double time, double drift, double volatility, double exponent) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility, double exponent) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility, double exponent) -> XYVals;
-	
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility, double exponent) -> DataTable;
+
 		// overloads for param structs
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, CEVParams params) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, CEVParams params) -> XYVals;
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, CEVParams params) -> DataTable;
+
 	}
 	namespace MertonJump
 	{
 		auto simulate(double initialState, double time, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> XYVals;
-	
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> DataTable;
+
 		// Overloads with Param structs
 		auto simulate(double initialState, double time, double drift, MertonJumpParams params) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, MertonJumpParams params) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, MertonJumpParams params) -> XYVals;
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, MertonJumpParams params) -> DataTable;
 	}
 	namespace Heston
 	{
@@ -121,20 +128,26 @@ namespace SDE
 		auto priceStep(double initialState, double stepSize, double drift, double variance, double correlatedNormal) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> XYVals;
-	
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> DataTable;
+
 		// overloads for param structs
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, HestonParams params) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, HestonParams params) -> XYVals;
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, HestonParams params) -> DataTable;
+
 	}
 	namespace VarianceGamma
 	{
 		auto step(double initialState, double stepSize, double drift, double gammaDrift, double variance, double vol) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, double gammaDrift, double variance, double vol) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double gammaDrift, double variance, double vol) -> XYVals;
-	
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double gammaDrift, double variance, double vol) -> DataTable;
+
 		// overloads for param structs
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, VarianceGammaParams params) -> XYVals;
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, VarianceGammaParams params) -> XYVals;
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, VarianceGammaParams params) -> DataTable;
+
 	}
 
 
@@ -173,6 +186,12 @@ namespace SDE
 	auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, HestonParams params) -> XYVals;
 	auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, VarianceGammaParams params) -> XYVals;
 
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BSMParams params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BachelierParams params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, CEVParams params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, MertonJumpParams params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, HestonParams params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, VarianceGammaParams params) -> DataTable;
 }
 
 #endif

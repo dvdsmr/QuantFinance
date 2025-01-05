@@ -56,7 +56,7 @@ namespace SDE
 			DataTable paths(samples, timePoints);
 			for (std::size_t num{ 0 }; num < samples; ++num)
 			{
-				paths.m_table[num] = SDE::BSM::path(initialState, terminalTime, timePoints, drift, volatility).m_yVals;
+				paths.m_table[num] = path(initialState, terminalTime, timePoints, drift, volatility).m_yVals;
 			}
 			return paths;
 		}
@@ -73,6 +73,10 @@ namespace SDE
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, BSMParams params) -> XYVals
 		{
 			return monteCarlo(initialState, terminalTime, samples, drift, params.vol);
+		}
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BSMParams params) -> DataTable
+		{
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params.vol);
 		}
 	}
 
@@ -109,6 +113,16 @@ namespace SDE
 			return mcSamples;
 		}
 
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility) -> DataTable
+		{
+			DataTable paths(samples, timePoints);
+			for (std::size_t num{ 0 }; num < samples; ++num)
+			{
+				paths.m_table[num] = path(initialState, terminalTime, timePoints, drift, volatility).m_yVals;
+			}
+			return paths;
+		}
+
 		// Overloads with Param structs
 		auto simulate(double initialState, double time, double drift, BachelierParams params) -> double
 		{
@@ -121,6 +135,10 @@ namespace SDE
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, BachelierParams params) -> XYVals
 		{
 			return monteCarlo(initialState, terminalTime, samples, drift, params.vol);
+		}
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BachelierParams params) -> DataTable
+		{
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params.vol);
 		}
 	}
 
@@ -169,6 +187,16 @@ namespace SDE
 			return mcSamples;
 		}
 
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility, double exponent) -> DataTable
+		{
+			DataTable paths(samples, timePoints);
+			for (std::size_t num{ 0 }; num < samples; ++num)
+			{
+				paths.m_table[num] = path(initialState, terminalTime, timePoints, drift, volatility, exponent).m_yVals;
+			}
+			return paths;
+		}
+
 		// overloads for param structs
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, CEVParams params) -> XYVals
 		{
@@ -178,7 +206,10 @@ namespace SDE
 		{
 			return monteCarlo(initialState, terminalTime, samples, timePoints, drift, params.vol, params.exponent);
 		}
-
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, CEVParams params) -> DataTable
+		{
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params.vol, params.exponent);
+		}
 
 	}
 
@@ -230,6 +261,16 @@ namespace SDE
 			return mcSamples;
 		}
 
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double volatility, double meanJumpSize, double stdJumpSize, double expectedJumpsPerYear) -> DataTable
+		{
+			DataTable paths(samples, timePoints);
+			for (std::size_t num{ 0 }; num < samples; ++num)
+			{
+				paths.m_table[num] = path(initialState, terminalTime, timePoints, drift, volatility, meanJumpSize, stdJumpSize, expectedJumpsPerYear).m_yVals;
+			}
+			return paths;
+		}
+
 		// Overloads with Param structs
 		auto simulate(double initialState, double time, double drift, MertonJumpParams params) -> double
 		{
@@ -242,6 +283,10 @@ namespace SDE
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, MertonJumpParams params) -> XYVals
 		{
 			return monteCarlo(initialState, terminalTime, samples, drift, params.vol, params.meanJumpSize, params.stdJumpSize, params.expectedJumpsPerYear);
+		}
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, MertonJumpParams params) -> DataTable
+		{
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params.vol, params.meanJumpSize, params.stdJumpSize, params.expectedJumpsPerYear);
 		}
 	}
 
@@ -309,6 +354,16 @@ namespace SDE
 			return mcSamples;
 		}
 
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double initialVariance, double longVariance, double correlation, double reversionRate, double volVol) -> DataTable
+		{
+			DataTable paths(samples, timePoints);
+			for (std::size_t num{ 0 }; num < samples; ++num)
+			{
+				paths.m_table[num] = path(initialState, terminalTime, timePoints, drift, initialVariance, longVariance, correlation, reversionRate, volVol).m_yVals;
+			}
+			return paths;
+		}
+
 		
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, HestonParams params) -> XYVals
 		{
@@ -317,6 +372,10 @@ namespace SDE
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, HestonParams params) -> XYVals
 		{
 			return monteCarlo(initialState, terminalTime, samples, timePoints, drift, params.initialVariance, params.longVariance, params.correlation, params.reversionRate, params.volVol);
+		}
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, HestonParams params) -> DataTable
+		{
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params.initialVariance, params.longVariance, params.correlation, params.reversionRate, params.volVol);
 		}
 	}
 
@@ -362,6 +421,15 @@ namespace SDE
 			}
 			return mcSamples;
 		}
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, double gammaDrift, double variance, double vol) -> DataTable
+		{
+			DataTable paths(samples, timePoints);
+			for (std::size_t num{ 0 }; num < samples; ++num)
+			{
+				paths.m_table[num] = path(initialState, terminalTime, timePoints, drift, gammaDrift, variance, vol).m_yVals;
+			}
+			return paths;
+		}
 
 		// overloads for param structs
 		auto path(double initialState, double terminalTime, std::size_t timePoints, double drift, VarianceGammaParams params) -> XYVals
@@ -371,6 +439,10 @@ namespace SDE
 		auto monteCarlo(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, VarianceGammaParams params) -> XYVals
 		{
 			return monteCarlo(initialState, terminalTime, samples, timePoints, drift, params.drift, params.variance, params.vol);
+		}
+		auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, VarianceGammaParams params) -> DataTable
+		{
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params.drift, params.variance, params.vol);
 		}
 	
 	}
@@ -429,7 +501,30 @@ namespace SDE
 		return SDE::VarianceGamma::monteCarlo(initialState, terminalTime, samples, timePoints, drift, params);
 	}
 
-
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BSMParams params) -> DataTable
+	{
+		return SDE::BSM::monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params);
+	}
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BachelierParams params) -> DataTable
+	{
+		return SDE::Bachelier::monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params);
+	}
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, CEVParams params) -> DataTable
+	{
+		return SDE::CEV::monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params);
+	}
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, MertonJumpParams params) -> DataTable
+	{
+		return SDE::MertonJump::monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params);
+	}
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, HestonParams params) -> DataTable
+	{
+		return SDE::Heston::monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params);
+	}
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, VarianceGammaParams params) -> DataTable
+	{
+		return SDE::VarianceGamma::monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, params);
+	}
 
 
 

@@ -15,24 +15,43 @@ template<typename T>
 struct has_vol<T, std::void_t<decltype(std::declval<T>().vol)>> : std::true_type {};
 
 
-struct BSMParams
+// Base struct for parameter polymorphism
+struct ParamsBase {};
+
+struct BSMParams : public ParamsBase
 {
+	BSMParams(double vola = 0.1)
+		: vol{ vola } 
+	{}
 	double vol{ 0.1 };
 };
 
-struct BachelierParams
+struct BachelierParams : public ParamsBase
 {
-	double vol{ 0.1 };
+	BachelierParams(double vola = 10.0)
+		: vol{ vola }
+	{}
+	double vol{ 10.0 };
 };
 
-struct CEVParams
+struct CEVParams : public ParamsBase
 {
+	CEVParams(double vola = 0.1, double exp = 0.5)
+		: vol{ vola }
+		, exponent{exp}
+	{}
 	double vol{ 0.5 };
 	double exponent{ 0.5 };
 };
 
-struct MertonJumpParams
+struct MertonJumpParams : public ParamsBase
 {
+	MertonJumpParams(double vola = 0.1, double mean = 0.0, double std = 0.2, double exp = 1.)
+		: vol{ vola }
+		, meanJumpSize{ mean }
+		, stdJumpSize{ std }
+		, expectedJumpsPerYear{ exp }
+	{}
 	double vol{ 0.1 };
 	double meanJumpSize{ 0.0 };
 	double stdJumpSize{ 0.2 };
@@ -40,8 +59,15 @@ struct MertonJumpParams
 };
 
 
-struct HestonParams
+struct HestonParams : public ParamsBase
 {
+	HestonParams(double rr = 0.3, double lv = 15., double vv = 0.2, double cr = 0.2, double iv = 8.)
+		: reversionRate{ rr }
+		, longVariance{ lv }
+		, volVol{ vv }
+		, correlation{ cr }
+		, initialVariance{ iv }
+	{}
 	double reversionRate{ 0.3 };
 	double longVariance{ 15. };
 	double volVol{ 0.2 };
@@ -49,12 +75,19 @@ struct HestonParams
 	double initialVariance{ 8. };
 };
 
-struct VarianceGammaParams
+struct VarianceGammaParams : public ParamsBase
 {
+	VarianceGammaParams(double vola = 0.1, double gdrift = 0.5, double var = 0.2)
+		: vol{ vola }
+		, drift{ gdrift }
+		, variance{ var }
+	{}
 	double vol{ 0.1 };
 	double drift{ 0.5 };
 	double variance{ 0.2 };
 };
+
+
 
 struct MarketParams
 {

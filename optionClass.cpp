@@ -68,6 +68,24 @@ auto Option::price(double riskFreeReturn, double dividendYield) -> double
 			throw std::runtime_error("Invalid payoff type.");
 		}
 	}
+	/*
+	case Option::asian:
+	{
+		switch (m_type)
+		{
+		case Option::call:
+		{
+			return Options::Pricing::Exotic::Asian::call(static_cast<std::size_t>(m_maturity * 250), riskFreeReturn, m_maturity, m_strike, m_underlying->getSpot(), dividendYield, m_underlying->getParams());
+		}
+		case Option::put:
+		{
+			return Options::Pricing::Exotic::Asian::put(static_cast<std::size_t>(m_maturity * 250), riskFreeReturn, m_maturity, m_strike, m_underlying->getSpot(), dividendYield, m_underlying->getParams());
+		}
+		default:
+			throw std::runtime_error("Invalid payoff type.");
+		}
+	}
+	*/
 	default:
 		throw std::runtime_error("No exercise types other than European supported at the moment.");
 	}

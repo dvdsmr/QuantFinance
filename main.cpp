@@ -98,10 +98,20 @@ auto main() -> int
 	std::cout << "Option price with monte Carlo is " << option3.price(0.05, 0.01);
 
 	// asian option pricing
-	std::cout << "\nAsian option price: " << Options::Exotic::Asian::call<MertonJumpParams>(100, 0.05, 1, 100., 100., 0.01, mjParams);
-	std::cout << "\nAsian option price: " << Options::Exotic::Asian::put<MertonJumpParams>(100, 0.05, 1, 100., 100., 0.01, mjParams);
+	std::cout << "\nAsian option price: " << Options::Pricing::Exotic::Asian::call<MertonJumpParams>(100, 0.05, 1, 100., 100., 0.01, mjParams);
+	std::cout << "\nAsian option price: " << Options::Pricing::Exotic::Asian::put<MertonJumpParams>(100, 0.05, 1, 100., 100., 0.01, mjParams);
 
 	DataTable paths{ SDE::monteCarloPaths(100., 1., 1000, 1000, 0.05, mjParams) };
+
+
+	std::shared_ptr<Securities::AbstractStock> mjStockPtr2{ mjStockPtr };
+	Option option4(Option::PayoffType::call,
+		Option::ExerciseType::asian,
+		Option::Position::longPosition,
+		mjStockPtr2,
+		1.);
+
+	//std::cout << "\nAsian option price: " << option4.price(0.05,0.01);
 
 	//Calibrate::Bachelier::test();
 

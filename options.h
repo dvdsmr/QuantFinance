@@ -132,6 +132,45 @@ namespace Options
 			auto _discountedExpectedPayoff(const std::function<double(double)>& payoff, std::vector<double> predictedSpots, double riskFreeReturn, double maturity) -> double;
 		}
 
+		// Pricing method for asian options
+		namespace Exotic
+		{
+			namespace Asian
+			{
+				template <typename Params>
+				auto arithmeticAverage(std::size_t days, std::size_t numPaths, double riskFreeReturn, double maturity, double spot, double dividendYield, Params params) -> double
+				{
+
+					std::size_t timePoints{ static_cast<std::size_t>(maturity * 250) }; // one year has appr. 250 trading days
+					DataTable paths{ SDE::monteCarloPaths(spot, maturity, numPaths, timePoints, riskFreeReturn - dividendYield, params) };
+
+					double sampleAverage{ 0.0 };
+					for (std::size_t num{ 0 }; num < numPaths; ++num)
+					{
+						auto subVec{ std::vector<double>(paths.m_table[num].rbegin(), paths.m_table[num].rbegin() + static_cast<int>(days)) }; // get last prices
+						sampleAverage += np::mean(subVec);
+					}
+					return sampleAverage;
+				}
+
+				template <typename Params>
+				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params params) -> double
+				{
+					std::size_t numPaths{ 100000 };
+					double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
+					return std::max(sampleAverage / static_cast<double>(numPaths) - strike, 0.0);
+				}
+
+				template <typename Params>
+				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params params) -> double
+				{
+					std::size_t numPaths{ 100000 };
+					double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
+					return std::max(strike - sampleAverage / static_cast<double>(numPaths), 0.0);
+				}
+
+			}
+		}
 
 	}
 	
@@ -143,45 +182,7 @@ namespace Options
 	void binomialPricingUnitTest();
 
 
-	// Pricing method for asian options
-	namespace Exotic
-	{
-		namespace Asian
-		{
-			template <typename Params>
-			auto arithmeticAverage(std::size_t days, std::size_t numPaths, double riskFreeReturn, double maturity, double spot, double dividendYield, Params params) -> double
-			{
 
-				std::size_t timePoints{ static_cast<std::size_t>(maturity * 250) }; // one year has appr. 250 trading days
-				DataTable paths{ SDE::monteCarloPaths(spot, maturity, numPaths, timePoints, riskFreeReturn - dividendYield, params) };
-
-				double sampleAverage{ 0.0 };
-				for (std::size_t num{ 0 }; num < numPaths; ++num)
-				{
-					auto subVec{ std::vector<double>(paths.m_table[num].rbegin(), paths.m_table[num].rbegin() + static_cast<int>(days)) }; // get last prices
-					sampleAverage += np::mean(subVec);
-				}
-				return sampleAverage;
-			}
-
-			template <typename Params>
-			auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params params) -> double
-			{
-				std::size_t numPaths{ 100000 };
-				double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
-				return std::max(sampleAverage / static_cast<double>(numPaths) - strike, 0.0);
-			}
-
-			template <typename Params>
-			auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params params) -> double
-			{
-				std::size_t numPaths{ 100000 };
-				double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
-				return std::max(strike - sampleAverage / static_cast<double>(numPaths), 0.0);
-			}
-			
-		}
-	}
 
 }
 

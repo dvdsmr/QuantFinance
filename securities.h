@@ -16,6 +16,8 @@ namespace Securities
 
 		virtual void printInfo() const = 0;
 
+		//virtual ParamsBase getParams() const = 0;
+
 		// Add virtual methods for stochastic behavior
 		virtual auto path(double terminalTime, std::size_t timePoints, double drift) -> XYVals = 0;
 		virtual auto monteCarlo(double terminalTime, std::size_t samples, double drift) -> XYVals = 0;
@@ -34,6 +36,13 @@ namespace Securities
 
 
 		void printInfo() const;
+
+		/*
+		auto getParams() const -> ParamsBase { 
+			throw std::runtime_error("No model params for Stock without stochastic model");
+		}
+		*/
+
 
 		// Default implementation for stochastic behavior
 		auto path([[maybe_unused]] double terminalTime, [[maybe_unused]] std::size_t timePoints, [[maybe_unused]] double drift) -> XYVals {

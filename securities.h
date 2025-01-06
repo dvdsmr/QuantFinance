@@ -16,7 +16,7 @@ namespace Securities
 
 		virtual void printInfo() const = 0;
 
-		//virtual ParamsBase getParams() const = 0;
+		virtual ParamsBase& getParams() = 0;
 
 		// Add virtual methods for stochastic behavior
 		virtual auto path(double terminalTime, std::size_t timePoints, double drift) -> XYVals = 0;
@@ -31,25 +31,25 @@ namespace Securities
 			: m_spot{ spot }
 		{}
 
-		constexpr void setSpot(double spot) { m_spot = spot; }
-		constexpr const double& getSpot() const { return m_spot; }
+		constexpr void setSpot(double spot) override { m_spot = spot; }
+		constexpr const double& getSpot() const override { return m_spot; }
 
 
-		void printInfo() const;
+		void printInfo() const override;
 
-		/*
-		auto getParams() const -> ParamsBase { 
+	
+		auto getParams() -> ParamsBase& override {
 			throw std::runtime_error("No model params for Stock without stochastic model");
 		}
-		*/
+		
 
 
 		// Default implementation for stochastic behavior
-		auto path([[maybe_unused]] double terminalTime, [[maybe_unused]] std::size_t timePoints, [[maybe_unused]] double drift) -> XYVals {
+		auto path([[maybe_unused]] double terminalTime, [[maybe_unused]] std::size_t timePoints, [[maybe_unused]] double drift) -> XYVals override {
 			throw std::runtime_error("path not supported for Stock without stochastic model");
 		}
 
-		auto monteCarlo([[maybe_unused]] double terminalTime, [[maybe_unused]] std::size_t samples, [[maybe_unused]] double drift) -> XYVals {
+		auto monteCarlo([[maybe_unused]] double terminalTime, [[maybe_unused]] std::size_t samples, [[maybe_unused]] double drift) -> XYVals override {
 			throw std::runtime_error("monteCarlo not supported for Stock without stochastic model");
 		}
 
@@ -70,12 +70,12 @@ namespace Securities
 		{}
 
 		void setParams(Params params) { m_params = params; }
-		Params getParams() const { return m_params; }
+		auto getParams() -> Params& override { return m_params; }
 		
-		void printInfo() const;
+		void printInfo() const override;
 		
-		auto path(double terminalTime, std::size_t timePoints, double drift) -> XYVals { return SDE::path(getSpot(), terminalTime, timePoints, drift, m_params); }
-		auto monteCarlo(double terminalTime, std::size_t samples, double drift) -> XYVals { return SDE::monteCarlo(getSpot(), terminalTime, samples, drift, m_params); }
+		auto path(double terminalTime, std::size_t timePoints, double drift) -> XYVals override { return SDE::path(getSpot(), terminalTime, timePoints, drift, m_params); }
+		auto monteCarlo(double terminalTime, std::size_t samples, double drift) -> XYVals override { return SDE::monteCarlo(getSpot(), terminalTime, samples, drift, m_params); }
 
 
 	private:

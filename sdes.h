@@ -219,12 +219,37 @@ namespace SDE
 	auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, HestonParams params) -> XYVals;
 	auto monteCarlo(double initialState, double terminalTime, std::size_t samples, double drift, VarianceGammaParams params) -> XYVals;
 
-	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BSMParams params) -> DataTable;
-	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BachelierParams params) -> DataTable;
-	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, CEVParams params) -> DataTable;
-	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, MertonJumpParams params) -> DataTable;
-	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, HestonParams params) -> DataTable;
-	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, VarianceGammaParams params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BSMParams& params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, BachelierParams& params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, CEVParams& params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, MertonJumpParams& params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, HestonParams& params) -> DataTable;
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, VarianceGammaParams& params) -> DataTable;
+	template <typename Params>
+	auto monteCarloPaths(double initialState, double terminalTime, std::size_t samples, std::size_t timePoints, double drift, Params& params) -> DataTable
+	{
+		if constexpr (std::is_same_v<Params, BSMParams>) {
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, static_cast<BSMParams&>(params));
+		}
+		else if constexpr (std::is_same_v<Params, BachelierParams>) {
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, static_cast<BachelierParams&>(params));
+		}
+		else if constexpr (std::is_same_v<Params, MertonJumpParams>) {
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, static_cast<MertonJumpParams&>(params));
+		}
+		else if constexpr (std::is_same_v<Params, CEVParams>) {
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, static_cast<CEVParams&>(params));
+		}
+		else if constexpr (std::is_same_v<Params, HestonParams>) {
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, static_cast<HestonParams&>(params));
+		}
+		else if constexpr (std::is_same_v<Params, VarianceGammaParams>) {
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, static_cast<VarianceGammaParams&>(params));
+		}
+		else {
+			return monteCarloPaths(initialState, terminalTime, samples, timePoints, drift, static_cast<BSMParams&>(params));
+		}
+	}
 }
 
 #endif

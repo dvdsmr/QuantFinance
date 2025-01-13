@@ -138,7 +138,7 @@ namespace Options
 			namespace Asian
 			{
 				template <typename Params>
-				auto arithmeticAverage(std::size_t days, std::size_t numPaths, double riskFreeReturn, double maturity, double spot, double dividendYield, Params params) -> double
+				auto arithmeticAverage(std::size_t days, std::size_t numPaths, double riskFreeReturn, double maturity, double spot, double dividendYield, Params& params) -> double
 				{
 
 					std::size_t timePoints{ static_cast<std::size_t>(maturity * 250) }; // one year has appr. 250 trading days
@@ -154,21 +154,35 @@ namespace Options
 				}
 
 				template <typename Params>
-				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params params) -> double
+				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params& params) -> double
 				{
-					std::size_t numPaths{ 100000 };
+					std::size_t numPaths{ 10000 };
 					double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
 					return std::max(sampleAverage / static_cast<double>(numPaths) - strike, 0.0);
 				}
 
 				template <typename Params>
-				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params params) -> double
+				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params& params) -> double
 				{
-					std::size_t numPaths{ 100000 };
+					std::size_t numPaths{ 10000 };
 					double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
 					return std::max(strike - sampleAverage / static_cast<double>(numPaths), 0.0);
 				}
 
+				/*
+				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, BSMParams params) -> double;
+				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, BSMParams params) -> double;
+				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, BachelierParams params) -> double;
+				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, BachelierParams params) -> double;
+				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, CEVParams params) -> double;
+				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, CEVParams params) -> double;
+				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, MertonJumpParams params) -> double;
+				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, MertonJumpParams params) -> double;
+				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, HestonParams params) -> double;
+				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, HestonParams params) -> double;
+				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, VarianceGammaParams params) -> double;
+				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, VarianceGammaParams params) -> double;
+				*/
 			}
 		}
 

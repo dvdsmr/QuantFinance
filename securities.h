@@ -60,7 +60,7 @@ namespace Securities
 	// Stock class following a specified stochastic model.
 	// The model is determied by the parameter struct passed to the class.
 	template <typename Params>
-	class ModelStock : public Stock
+	class ModelStock final : public Stock
 	{
 	public:
 		explicit constexpr ModelStock(double spot = 100.,

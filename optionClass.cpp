@@ -68,7 +68,6 @@ auto Option::price(double riskFreeReturn, double dividendYield) -> double
 			throw std::runtime_error("Invalid payoff type.");
 		}
 	}
-	/*
 	case Option::asian:
 	{
 		switch (m_type)
@@ -85,7 +84,6 @@ auto Option::price(double riskFreeReturn, double dividendYield) -> double
 			throw std::runtime_error("Invalid payoff type.");
 		}
 	}
-	*/
 	default:
 		throw std::runtime_error("No exercise types other than European supported at the moment.");
 	}

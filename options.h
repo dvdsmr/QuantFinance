@@ -168,21 +168,6 @@ namespace Options
 					double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
 					return std::max(strike - sampleAverage / static_cast<double>(numPaths), 0.0);
 				}
-
-				/*
-				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, BSMParams params) -> double;
-				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, BSMParams params) -> double;
-				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, BachelierParams params) -> double;
-				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, BachelierParams params) -> double;
-				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, CEVParams params) -> double;
-				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, CEVParams params) -> double;
-				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, MertonJumpParams params) -> double;
-				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, MertonJumpParams params) -> double;
-				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, HestonParams params) -> double;
-				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, HestonParams params) -> double;
-				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, VarianceGammaParams params) -> double;
-				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, VarianceGammaParams params) -> double;
-				*/
 			}
 		}
 

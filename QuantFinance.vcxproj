@@ -142,6 +142,7 @@
     <ClCompile Include="copola.cpp" />
     <ClCompile Include="distributions.cpp" />
     <ClCompile Include="fft.cpp" />
+    <ClCompile Include="interestModels.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="adam.cpp" />
     <ClCompile Include="optionClass.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="distributions.h" />
     <ClInclude Include="adam.h" />
     <ClInclude Include="fft.h" />
+    <ClInclude Include="interestModels.h" />
     <ClInclude Include="optionClass.h" />
     <ClInclude Include="risk.h" />
     <ClInclude Include="out.h" />

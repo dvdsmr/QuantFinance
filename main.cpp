@@ -91,7 +91,6 @@ auto main() -> int
 	std::cout << "\nPrice after simulation: " << xyvals555.m_yVals.back();
 
 
-
 	option3.printInfo();
 	option3.get_underlying()->printInfo();
 

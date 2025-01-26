@@ -101,6 +101,7 @@ namespace np
         return sum / static_cast<T>(std::size(vec));
     }
 
+
 }
 
 #endif

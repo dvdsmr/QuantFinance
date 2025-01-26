@@ -150,15 +150,16 @@ namespace Options
 						auto subVec{ std::vector<double>(paths.m_table[num].rbegin(), paths.m_table[num].rbegin() + static_cast<int>(days)) }; // get last prices
 						sampleAverage += np::mean(subVec);
 					}
-					return sampleAverage;
+					return sampleAverage / static_cast<double>(numPaths);
 				}
+
 
 				template <typename Params>
 				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params& params) -> double
 				{
 					std::size_t numPaths{ 10000 };
 					double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
-					return std::max(sampleAverage / static_cast<double>(numPaths) - strike, 0.0);
+					return std::max(sampleAverage - strike, 0.0);
 				}
 
 				template <typename Params>
@@ -166,7 +167,7 @@ namespace Options
 				{
 					std::size_t numPaths{ 10000 };
 					double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
-					return std::max(strike - sampleAverage / static_cast<double>(numPaths), 0.0);
+					return std::max(strike - sampleAverage, 0.0);
 				}
 			}
 		}

@@ -102,6 +102,18 @@ namespace np
     }
 
 
+    // vectorized functions
+    template <typename T>
+    std::vector<T> log(const std::vector<T>& vec)
+    {
+        std::vector<T> result(vec.size());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+        {
+            result[i] = std::log(vec[i]);
+        }
+        return result;
+    }
+
 }
 
 #endif

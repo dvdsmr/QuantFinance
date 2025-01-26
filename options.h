@@ -9,7 +9,7 @@
 #include "numpy.h"
 #include "fft.h"
 #include <functional>
-
+#include <string_view>
 
 namespace Options
 {
@@ -137,20 +137,35 @@ namespace Options
 		{
 			namespace Asian
 			{
+			
 				template <typename Params>
-				auto arithmeticAverage(std::size_t days, std::size_t numPaths, double riskFreeReturn, double maturity, double spot, double dividendYield, Params& params) -> double
+				auto average(std::string_view type, std::size_t days, std::size_t numPaths, double riskFreeReturn, double maturity, double spot, double dividendYield, Params& params) -> double
 				{
 
 					std::size_t timePoints{ static_cast<std::size_t>(maturity * 250) }; // one year has appr. 250 trading days
 					DataTable paths{ SDE::monteCarloPaths(spot, maturity, numPaths, timePoints, riskFreeReturn - dividendYield, params) };
 
-					double sampleAverage{ 0.0 };
-					for (std::size_t num{ 0 }; num < numPaths; ++num)
+					//double sampleAverage{ 0.0 };
+					std::vector<double> pathAverages(numPaths);
+					if (type == "geometric")
 					{
-						auto subVec{ std::vector<double>(paths.m_table[num].rbegin(), paths.m_table[num].rbegin() + static_cast<int>(days)) }; // get last prices
-						sampleAverage += np::mean(subVec);
+						for (std::size_t num{ 0 }; num < numPaths; ++num)
+						{
+							auto subVec{ std::vector<double>(paths.m_table[num].rbegin(), paths.m_table[num].rbegin() + static_cast<int>(days)) }; // get last prices
+							//sampleAverage += np::mean(subVec);
+							pathAverages[num] = std::exp(np::mean(np::log(subVec)));
+						}
 					}
-					return sampleAverage / static_cast<double>(numPaths);
+					else // artithmetic average
+					{
+						for (std::size_t num{ 0 }; num < numPaths; ++num)
+						{
+							auto subVec{ std::vector<double>(paths.m_table[num].rbegin(), paths.m_table[num].rbegin() + static_cast<int>(days)) }; // get last prices
+							//sampleAverage += np::mean(subVec);
+							pathAverages[num] = np::mean(subVec);
+						}
+					}
+					return np::mean(pathAverages);
 				}
 
 
@@ -158,7 +173,7 @@ namespace Options
 				auto call(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params& params) -> double
 				{
 					std::size_t numPaths{ 10000 };
-					double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
+					double sampleAverage{ average("arithmetic", days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params)};
 					return std::max(sampleAverage - strike, 0.0);
 				}
 
@@ -166,7 +181,7 @@ namespace Options
 				auto put(std::size_t days, double riskFreeReturn, double maturity, double strike, double spot, double dividendYield, Params& params) -> double
 				{
 					std::size_t numPaths{ 10000 };
-					double sampleAverage{ arithmeticAverage(days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
+					double sampleAverage{ average("arithmetic", days, numPaths, riskFreeReturn, maturity, spot, dividendYield, params) };
 					return std::max(strike - sampleAverage, 0.0);
 				}
 			}

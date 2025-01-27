@@ -1,13 +1,13 @@
 #include "interestModels.h"
+#include "Random.h"
 
 namespace ShortRateModels
 {
 	namespace HullWhite
 	{
-		auto step(const std::function<double(double)>& drift, double time, double meanReversion, double vol) -> double
+		auto step(double time, double state, double timeStep, const std::function<double(double)>& drift, double meanReversion, double vol) -> double
 		{
-			// TODO
-			return drift(time) + meanReversion + vol;
+			return state + (drift(time) - meanReversion*state)*timeStep + vol*std::sqrt(timeStep) * Random::normal(0.0, 1.0);
 		}
 	}
 }

@@ -23,9 +23,13 @@
 #include <vector>
 #include <string>
 #include <cassert>
+#include <exception>
 
 auto main() -> int
 {
+	try
+	{
+
 
 	//LabeledTable volSurface{ Volatility::Surface::testCalibration() };
 	//Saving::write_labeledTable_to_csv("Data/ArtificalVolSurface.csv", volSurface);
@@ -156,6 +160,12 @@ auto main() -> int
 	
 
 	//Risk::testSampleRiskMeasures();
+	}
+
+	catch (const std::exception& exception)
+	{
+		std::cout << "Standard exception: " << exception.what() << "\n";
+	}
 
 	return 0;
 }

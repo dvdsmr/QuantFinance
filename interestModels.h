@@ -7,6 +7,7 @@ namespace ShortRateModels
 	namespace HullWhite
 	{
 		auto step(double time, double state, double timeStep, const std::function<double(double)>& drift, double meanReversion, double vol) -> double;
+		auto simulate(double time, double state, double constDrift, double meanReversion, double vol) -> double;
 	}
 }
 

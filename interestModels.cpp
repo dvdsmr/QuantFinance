@@ -15,5 +15,29 @@ namespace ShortRateModels
 			double rateVar{ vol * vol / 2. / meanReversion * (1 - std::exp(-2 * meanReversion * time)) };
 			return Random::normal(rateMean,rateVar);
 		}
+		auto simulate(double time, double state, const std::function<double(double)>& drift, double meanReversion, double vol) -> double
+		{
+			double rateMean{ std::exp(-meanReversion * time) * state + Utils::integrateDriftTrapezoidal(time, meanReversion, drift)};
+			double rateVar{ vol * vol / 2. / meanReversion * (1 - std::exp(-2 * meanReversion * time)) };
+			return Random::normal(rateMean, rateVar);
+		}
+	}
+
+	namespace Utils
+	{
+		auto integrateDriftTrapezoidal(double time, double meanReversion, const std::function<double(double)>& drift) -> double
+		{
+			std::size_t numPoints{ 100 };
+			double tDelta{ time / static_cast<double>(numPoints) };
+			double integral{ 0.5 * tDelta * std::exp(meanReversion * (0. - time)) * drift(0.) };
+			double currentTime{ tDelta };
+			for (std::size_t i{ 1 }; i < numPoints; ++i)
+			{
+				integral += tDelta * std::exp(meanReversion * (currentTime - time)) * drift(currentTime);
+				currentTime += tDelta;
+			}
+			integral += 0.5 * tDelta * std::exp(meanReversion * (currentTime - time)) * drift(currentTime);
+			return integral;
+		}
 	}
 }

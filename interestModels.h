@@ -15,6 +15,11 @@ namespace ShortRateModels
 	{
 		auto integrateDriftTrapezoidal(double time, double meanReversion, const std::function<double(double)>& drift) -> double;
 	}
+
+	namespace Testing
+	{
+		void hullWhite();
+	}
 }
 
 #endif

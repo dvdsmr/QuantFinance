@@ -17,6 +17,7 @@
 #include "reading.h"
 #include "risk.h"
 #include "optionClass.h"
+#include "interestModels.h"
 #include <iostream>
 #include <functional>
 #include <iostream>
@@ -43,6 +44,7 @@ auto main() -> int
 	//Calibrate::BSM::test();
 	//Calibrate::MertonJump::test();
 
+	/*
 	BSMParams bsmParams{ 0.2 };
 	Securities::ModelStock bsmStock(100., bsmParams);
 
@@ -62,6 +64,7 @@ auto main() -> int
 
 	XYVals mcSamples{ vgStock.monteCarlo(1.,100,0.05) };
 	std::cout << "\nOne MC sample: " << mcSamples.m_yVals.back();
+	*/
 	
 	/*
 	Securities::Stock underlying(100.);
@@ -105,7 +108,6 @@ auto main() -> int
 	std::cout << "\nAsian option price: " << Options::Pricing::Exotic::Asian::put<MertonJumpParams>(100, 0.05, 1, 100., 100., 0.01, mjParams);
 
 	DataTable paths{ SDE::monteCarloPaths(100., 1., 1000, 1000, 0.05, mjParams) };
-	*/
 
 	std::shared_ptr<Securities::AbstractStock> mjStockPtr = std::make_shared<Securities::ModelStock<MertonJumpParams>>(100., mjParams);
 	Option option4(Option::PayoffType::call,
@@ -115,6 +117,7 @@ auto main() -> int
 		1.);
 
 	std::cout << "\nAsian option price: " << option4.price(0.05,0.01);
+	*/
 
 	//Calibrate::Bachelier::test();
 
@@ -160,6 +163,11 @@ auto main() -> int
 	
 
 	//Risk::testSampleRiskMeasures();
+	
+	
+	ShortRateModels::Testing::hullWhite();
+	
+
 	}
 
 	catch (const std::exception& exception)

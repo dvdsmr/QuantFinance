@@ -40,4 +40,24 @@ namespace ShortRateModels
 			return integral;
 		}
 	}
+
+
+	namespace Testing
+	{
+		void hullWhite()
+		{
+			// simulate with constant drift
+			double constDrift{ 0.2 };
+			double meanReversion{ 0.4 };
+			double vol{ 0.3 };
+			double time{ 1. };
+			double state{ 0.05 };
+			[[maybe_unused]]double shortRate{ HullWhite::simulate(time, state, constDrift, meanReversion, vol) };
+		
+			// with function drift
+			auto drift{ [&](double time) -> double { return time; } };
+			[[maybe_unused]]double newShortRate{ HullWhite::simulate(time, state, drift, meanReversion, vol) };
+		}
+	}
+
 }

@@ -1,6 +1,7 @@
 #include "interestModels.h"
 #include "Random.h"
 #include "xyvals.h"
+#include "saving.h"
 #include <cassert>
 
 namespace ShortRateModels
@@ -68,17 +69,18 @@ namespace ShortRateModels
 			// simulate with constant drift
 			double constDrift{ 0.2 };
 			double meanReversion{ 0.4 };
-			double vol{ 0.3 };
+			double vol{ 0.6 };
 			double time{ 1. };
 			double state{ 0.05 };
 			[[maybe_unused]]double shortRate{ HullWhite::simulate(time, state, constDrift, meanReversion, vol) };
 		
 			// with function drift
-			auto drift{ [&](double time) -> double { return time; } };
+			auto drift{ [&](double time) -> double { return 0.3*time; } };
 			[[maybe_unused]]double newShortRate{ HullWhite::simulate(0., time, state, drift, meanReversion, vol) };
 
 
-			[[maybe_unused]]XYVals shortPath{ ShortRateModels::HullWhite::path(state, time, 100, drift, meanReversion, vol) };
+			XYVals shortPath{ ShortRateModels::HullWhite::path(state, time, 100, drift, meanReversion, vol) };
+			Saving::write_xyvals_to_csv("Data/hullWhitePath.csv", shortPath);
 		}
 	}
 

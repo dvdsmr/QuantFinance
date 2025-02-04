@@ -48,6 +48,18 @@ def plotStockCSV(filenames):
     plt.savefig("Plots/VGstockPath.png")     
     plt.plot()
 
+def plotShortRateCSV(filenames):
+    stockData = [genfromtxt(filename, delimiter=',') for filename in filenames]
+    fig, ax = plt.subplots(figsize=(14, 8))
+    for data in stockData:
+        ax.plot(data[:,0],data[:,1])
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Short rate")
+    plt.title("Paths of a short rate model")
+    plt.grid(True)
+    plt.savefig("Plots/shortRatePath.png")     
+    plt.plot()
+
 def plotHistogramCSV(filenames):
     distData = [genfromtxt(filename, delimiter=',') for filename in filenames]
     n_bins = 50
@@ -141,9 +153,10 @@ def plotOptionCSV(filenames):
 
 if __name__ == "__main__":
     # plotLossCSV(["Data/BSMlossCurve"])
-    plotHistogramCSV(["Data/mcSamplesBSM.csv","Data/mcSamplesHeston.csv","Data/mcSamplesVarianceGamma.csv",\
-                      ])
+    # plotHistogramCSV(["Data/mcSamplesBSM.csv","Data/mcSamplesHeston.csv","Data/mcSamplesVarianceGamma.csv",\
+    #                  ])
     # plotStockCSV(["Data/MJstockPath1.csv","Data/MJstockPath2.csv","Data/MJstockPath3.csv"])
+    plotShortRateCSV(["Data/hullWhitePath.csv"])
     # plotStockCSV(["Data/VGstockPath1.csv","Data/VGstockPath2.csv","Data/VGstockPath3.csv"])
     # plotOptionCSV(["Data/callPrices.csv","Data/callDeltas.csv","Data/callGammas.csv"])
     # plotSurface("Data/ArtificialPriceSurface.csv","priceSurfacePlot")

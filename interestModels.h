@@ -11,6 +11,7 @@ namespace ShortRateModels
 		auto simulate(double time, double state, double constDrift, double meanReversion, double vol) -> double;
 		auto simulate(double startTime, double endTime, double state, const std::function<double(double)>& drift, double meanReversion, double vol) -> double;
 		auto path(double initialState, double terminalTime, std::size_t timePoints, const std::function<double(double)>& drift, double meanReversion, double vol) -> XYVals;
+		auto drift(const std::function<double(double)>& instaForwardRate, std::function<double(double)> instaForwardRateDeriv, double meanReversion, double vol) -> std::function<double(double)>;
 	}
 
 	namespace Utils

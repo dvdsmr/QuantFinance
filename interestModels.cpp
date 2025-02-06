@@ -39,6 +39,14 @@ namespace ShortRateModels
 			}
 			return spath;
 		}
+
+		auto drift(const std::function<double(double)>& instaForwardRate, std::function<double(double)> instaForwardRateDeriv, double meanReversion, double vol) -> std::function<double(double)>
+		{
+			auto driftFunc{ [&](double time) -> double { return instaForwardRateDeriv(time)
+																+ meanReversion*instaForwardRate(time)
+																+ vol*vol/2/meanReversion*(1-std::exp(-2*meanReversion*time)); } };
+			return driftFunc;
+		}
 	}
 
 	namespace Utils

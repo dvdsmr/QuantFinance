@@ -22,6 +22,7 @@ namespace ShortRateModels
 	namespace Testing
 	{
 		void hullWhite();
+		void getDrift();
 	}
 }
 

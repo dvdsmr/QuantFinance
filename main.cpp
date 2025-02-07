@@ -166,6 +166,7 @@ auto main() -> int
 	
 	
 	ShortRateModels::Testing::hullWhite();
+	ShortRateModels::Testing::getDrift();
 	
 
 	}

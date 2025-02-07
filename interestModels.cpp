@@ -3,6 +3,7 @@
 #include "xyvals.h"
 #include "saving.h"
 #include <cassert>
+#include <iostream>
 
 namespace ShortRateModels
 {
@@ -42,9 +43,10 @@ namespace ShortRateModels
 
 		auto drift(const std::function<double(double)>& instaForwardRate, std::function<double(double)> instaForwardRateDeriv, double meanReversion, double vol) -> std::function<double(double)>
 		{
-			auto driftFunc{ [&](double time) -> double { return instaForwardRateDeriv(time)
+			auto driftFunc{ [=](double time) -> double { return instaForwardRateDeriv(time)
 																+ meanReversion*instaForwardRate(time)
 																+ vol*vol/2/meanReversion*(1-std::exp(-2*meanReversion*time)); } };
+
 			return driftFunc;
 		}
 	}
@@ -89,6 +91,25 @@ namespace ShortRateModels
 
 			XYVals shortPath{ ShortRateModels::HullWhite::path(state, time, 100, drift, meanReversion, vol) };
 			Saving::write_xyvals_to_csv("Data/hullWhitePath.csv", shortPath);
+
+
+		}
+
+		void getDrift()
+		{
+			double meanReversion{ 0.4 };
+			double vol{ 0.6 };
+
+			// test the continuous drift function as dependent on the instantaneous forward rate
+			auto instantaneousForwardRate{ [&](double time) -> double { return 0.05 + std::sqrt(time + 1); } };
+			auto instantaneousForwardRateDeriv{ [&]([[maybe_unused]] double time) -> double { return 0.5 / std::sqrt(time + 1); } };
+
+			auto newDrift = ShortRateModels::HullWhite::drift(instantaneousForwardRate, instantaneousForwardRateDeriv, meanReversion, vol);
+
+			for (int i{ 0 }; i <= 10; ++i)
+			{
+				std::cout << " " << newDrift(static_cast<double>(i));
+			}
 		}
 	}
 
